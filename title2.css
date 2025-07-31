@@ -1,0 +1,58 @@
+.title2 {
+  font-family: 'Cinzel', serif;
+  font-size: 4.5rem;
+  text-align: center;
+
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+
+  color: #d9d9d9;
+  background: linear-gradient(to bottom, #e0e0e0, #aaa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  text-shadow:
+    0 0 2px rgba(255, 255, 255, 0.6),
+    0 0 5px rgba(200, 200, 200, 0.1),
+    1px 1px 2px #000;
+
+  display: block;
+  margin: 60px auto 40px auto;
+  padding-bottom: 0.3em;
+  border-bottom: 3px solid rgba(255, 255, 255, 0.15);
+
+  animation: fluorescentFlicker 3.5s infinite;
+}
+
+/* Fluorescent flicker with occasional spark */
+@keyframes fluorescentFlicker {
+  0%, 19%, 21%, 23%, 100% {
+    opacity: 1;
+    text-shadow:
+      0 0 2px rgba(255, 255, 255, 0.6),
+      1px 1px 2px #000;
+  }
+  20%, 22% {
+    opacity: 0.3;
+    text-shadow:
+      0 0 2px rgba(255, 255, 255, 0.2),
+      1px 1px 2px #000;
+  }
+  40%, 41% {
+    opacity: 0.5;
+    text-shadow:
+      0 0 5px rgba(255, 255, 255, 0.8),
+      0 0 20px rgba(255, 255, 0, 0.2),
+      1px 1px 2px #000;
+  }
+  70% {
+    opacity: 0.2;
+    text-shadow:
+      0 0 10px rgba(255, 255, 255, 0.2),
+      0 0 30px rgba(255, 255, 255, 0.4),
+      1px 1px 2px #000;
+  }
+  71%, 73% {
+    opacity: 1;
+  }
+  }
