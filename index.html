@@ -4,89 +4,97 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Faction Seven</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header>
-    <div>
-      <button class="circle-button">☻</button>
-      <div class="popup">
-        <a href="#">Profile Pic</a><br/>
-        <a href="#">Bio</a><br/>
-        <a href="#">Creator Page</a>
+  <!-- Background Overlay -->
+  <div class="background"></div>
+
+  <!-- Profile Button -->
+  <div class="circle-button profile-button" onclick="togglePopup('profilePopup')"></div>
+  <div id="profilePopup" class="popup">
+    <a href="#">Profile Pic</a>
+    <a href="#">Bio</a>
+    <a href="#">Creator Page</a>
+  </div>
+
+  <!-- Menu Button -->
+  <div class="circle-button menu-button" onclick="togglePopup('menuPopup')"></div>
+  <div id="menuPopup" class="popup">
+    <a href="#">Search</a>
+    <a href="#">Movies</a>
+    <a href="#">Games</a>
+    <a href="#">Stories</a>
+    <a href="#">Art</a>
+    <a href="#">Events</a>
+    <a href="#">Home</a>
+  </div>
+
+  <!-- Banner -->
+  <div class="banner">Faction Seven</div>
+
+  <!-- Slogan -->
+  <div class="slogan">Whispers in the Wire</div>
+
+  <div class="main-container">
+    <!-- Suggested Links (Left Sidebar) -->
+    <div class="sidebar left">
+      <div class="suggested">
+        <img src="media1.jpg" alt="Media 1" />
+        <a href="#">Urban Echoes</a>
+      </div>
+      <div class="suggested">
+        <img src="media2.jpg" alt="Media 2" />
+        <a href="#">Moonlit Strands</a>
+      </div>
+      <!-- Add more links as needed -->
+    </div>
+
+    <!-- Featured Showcase -->
+    <div class="featured">
+      <img src="featured.jpg" alt="Featured Media" />
+      <h2>Featured Story: The Reed Crown</h2>
+    </div>
+
+    <!-- Site News (Right Sidebar) -->
+    <div class="sidebar right">
+      <div class="news">
+        <h3>Site News</h3>
+        <p>New release: Neon Thistle premieres August 12.</p>
       </div>
     </div>
 
-    <div class="banner">
-      <img src="banner.png" alt="Faction Seven" height="80" />
-    </div>
-
-    <div>
-      <button class="circle-button">☰</button>
-      <div class="popup">
-        <a href="#">Search</a><br/>
-        <a href="#">Movies</a><br/>
-        <a href="#">Games</a><br/>
-        <a href="#">Stories</a><br/>
-        <a href="#">Art</a><br/>
-        <a href="#">Events</a><br/>
-        <a href="#">Home</a>
+    <!-- Showcase 2 & 3 -->
+    <div class="showcases">
+      <div class="showcase-2">
+        <img src="showcase2.jpg" />
+        <h4>Game: Veilcrash</h4>
+      </div>
+      <div class="showcase-3">
+        <img src="showcase3.jpg" />
+        <h4>Short: Echo Drift</h4>
       </div>
     </div>
-  </header>
 
-  <div class="slogan">“Where stories awaken the sevenfold soul.”</div>
+    <!-- Media Spotlights 4-10 -->
+    <div class="spotlight-list">
+      <ul>
+        <li><a href="#">[4] Iris.exe – Short horror game</a></li>
+        <li><a href="#">[5] Selene’s Vault – Digital comic</a></li>
+        <li><a href="#">[6] Synth Sketches – Concept art</a></li>
+        <li><a href="#">[7] Rooftop Hymns – Poetry</a></li>
+        <li><a href="#">[8] Last Light – Animated short</a></li>
+        <li><a href="#">[9] Outskirts – Creator podcast</a></li>
+        <li><a href="#">[10] F7 Monthly Jam Results</a></li>
+      </ul>
+    </div>
+  </div>
 
-  <main>
-    <section class="left">
-      <div class="media-box">
-        <img src="suggested1.jpg" alt="Suggested Media 1" />
-        <a href="#">Suggested Media Link 1</a>
-      </div>
-      <div class="media-box">
-        <img src="suggested2.jpg" alt="Suggested Media 2" />
-        <a href="#">Suggested Media Link 2</a>
-      </div>
-    </section>
-
-    <section class="feature">
-      <div class="feature-box">
-        <img src="feature1.jpg" alt="Featured Media 1" />
-        <h3>Featured Media Title</h3>
-        <p>Short description of featured media.</p>
-      </div>
-      <div style="display: flex; gap: 10px; margin-top: 20px;">
-        <div class="media-box" style="flex: 2;">
-          <img src="feature2.jpg" alt="Featured Media 2" />
-          <p>Feature 2</p>
-        </div>
-        <div class="media-box" style="flex: 1;">
-          <img src="feature3.jpg" alt="Featured Media 3" />
-          <p>Feature 3</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="news">
-      <div class="news-box">
-        <h4>Site News</h4>
-        <ul>
-          <li>Update 1: new features live!</li>
-          <li>Update 2: dev log posted</li>
-          <li>Community event Friday</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="spotlights">
-      <div class="media-box">Spotlight 4</div>
-      <div class="media-box">Spotlight 5</div>
-      <div class="media-box">Spotlight 6</div>
-      <div class="media-box">Spotlight 7</div>
-      <div class="media-box">Spotlight 8</div>
-      <div class="media-box">Spotlight 9</div>
-      <div class="media-box">Spotlight 10</div>
-    </section>
-  </main>
+  <script>
+    function togglePopup(id) {
+      const popup = document.getElementById(id);
+      popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+    }
+  </script>
 </body>
 </html>
