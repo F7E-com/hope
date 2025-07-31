@@ -52,35 +52,40 @@ body { background: url('bg-nightcity.jpg') no-repeat center center fixed; backgr
 .spotlight-list a:hover { text-decoration: underline; }
 
 .title {
-  font-family: 'Orbitron', sans-serif; /* Futuristic, techy */
-  font-size: 4rem;
-  color: #c4c4c4;
-  letter-spacing: 2px;
+  font-family: 'Cinzel', serif; /* Gothic authority with mythic weight */
+  font-size: 4.5rem;
+  color: #d7d7d7;
+
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 
+  background: linear-gradient(to bottom, #444, #111);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
   text-shadow:
-    1px 1px 0 #000,
-    2px 2px 0 #333,
-    -1px -1px 2px rgba(0, 255, 255, 0.2),
-    0 0 5px rgba(255, 0, 0, 0.3);
+    0 0 5px rgba(255, 255, 255, 0.1),
+    0 0 10px rgba(255, 0, 0, 0.1),
+    2px 2px 1px #000;
 
-  background: linear-gradient(to right, #1a1a1a, #2e2e2e);
-  padding: 20px 40px;
-  border: 2px solid #444;
-  border-radius: 6px;
-  box-shadow:
-    0 0 10px rgba(0, 255, 255, 0.1),
-    inset 0 0 10px rgba(255, 0, 0, 0.05);
+  border-bottom: 3px solid rgba(255, 0, 0, 0.2);
+  display: inline-block;
+  padding-bottom: 0.3em;
+  margin-bottom: 0.6em;
 
-  animation: flicker 2.5s infinite alternate;
+  animation: pulseGlow 2s ease-in-out infinite alternate;
 }
 
-/* Flickering glitch effect */
-@keyframes flicker {
-  0%   { opacity: 1; text-shadow: 0 0 5px #ff0000; }
-  45%  { opacity: 0.8; text-shadow: 1px 1px 3px #00ffff; }
-  50%  { opacity: 0.4; text-shadow: 0 0 10px #ff0000; }
-  55%  { opacity: 0.9; text-shadow: 2px 2px 5px #00ffff; }
-  100% { opacity: 1; text-shadow: 0 0 3px #ff0000; }
+@keyframes pulseGlow {
+  0% {
+    text-shadow:
+      0 0 3px rgba(255, 0, 0, 0.2),
+      2px 2px 1px #000;
+  }
+  100% {
+    text-shadow:
+      0 0 8px rgba(255, 0, 0, 0.5),
+      2px 2px 1px #000;
+  }
 }
 
