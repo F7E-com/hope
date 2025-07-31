@@ -13,8 +13,8 @@
 
     body {
       font-family: 'Helvetica Neue', sans-serif;
-      color: #222;
-      background: linear-gradient(to bottom, rgba(255,255,255,0.2), #111), url('background.jpg') no-repeat center center fixed;
+      color: #ffffff;
+      background: linear-gradient(to bottom, rgba(30,0,60,0.8), #000), url('background.jpg') no-repeat center center fixed;
       background-size: cover;
       overflow-x: hidden;
     }
@@ -31,167 +31,23 @@
       width: 60px;
       height: 60px;
       border-radius: 50%;
-      background-color: rgba(255,255,255,0.7);
-      border: none;
+      background-color: rgba(255,255,255,0.1);
+      border: 2px solid #b388ff;
+      color: #fff;
+      font-size: 1.2em;
       cursor: pointer;
       display: flex;
       justify-content: center;
       align-items: center;
+      transition: background 0.3s;
+    }
+
+    .circle-button:hover {
+      background-color: rgba(179,136,255,0.3);
     }
 
     .banner {
       position: absolute;
       top: 10px;
       left: 50%;
-      transform: translateX(-50%);
-    }
-
-    .slogan {
-      text-align: center;
-      margin: 100px 0 40px;
-      font-size: 1.5em;
-      font-style: italic;
-    }
-
-    main {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      grid-template-areas:
-        "left feature"
-        "left news"
-        "spotlights spotlights";
-      gap: 30px;
-      padding: 0 5% 100px;
-    }
-
-    .left {
-      grid-area: left;
-    }
-
-    .feature {
-      grid-area: feature;
-    }
-
-    .news {
-      grid-area: news;
-    }
-
-    .spotlights {
-      grid-area: spotlights;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .media-box, .news-box, .feature-box {
-      background-color: rgba(255,255,255,0.8);
-      padding: 15px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    }
-
-    .media-box img, .feature-box img {
-      width: 100%;
-      border-radius: 8px;
-    }
-
-    .popup {
-      display: none;
-      position: absolute;
-      top: 70px;
-      background: rgba(255,255,255,0.95);
-      padding: 10px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-
-    .circle-button:hover + .popup {
-      display: block;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <div>
-      <button class="circle-button">☻</button>
-      <div class="popup">
-        <a href="#">Profile Pic</a><br/>
-        <a href="#">Bio</a><br/>
-        <a href="#">Creator Page</a>
-      </div>
-    </div>
-
-    <div class="banner">
-      <img src="banner.png" alt="Faction Seven" height="80" />
-    </div>
-
-    <div>
-      <button class="circle-button">☰</button>
-      <div class="popup">
-        <a href="#">Search</a><br/>
-        <a href="#">Movies</a><br/>
-        <a href="#">Games</a><br/>
-        <a href="#">Stories</a><br/>
-        <a href="#">Art</a><br/>
-        <a href="#">Events</a><br/>
-        <a href="#">Home</a>
-      </div>
-    </div>
-  </header>
-
-  <div class="slogan">“Where stories awaken the sevenfold soul.”</div>
-
-  <main>
-    <section class="left">
-      <div class="media-box">
-        <img src="suggested1.jpg" alt="Suggested Media 1" />
-        <a href="#">Suggested Media Link 1</a>
-      </div>
-      <div class="media-box">
-        <img src="suggested2.jpg" alt="Suggested Media 2" />
-        <a href="#">Suggested Media Link 2</a>
-      </div>
-    </section>
-
-    <section class="feature">
-      <div class="feature-box">
-        <img src="feature1.jpg" alt="Featured Media 1" />
-        <h3>Featured Media Title</h3>
-        <p>Short description of featured media.</p>
-      </div>
-      <div style="display: flex; gap: 10px; margin-top: 20px;">
-        <div class="media-box" style="flex: 2;">
-          <img src="feature2.jpg" alt="Featured Media 2" />
-          <p>Feature 2</p>
-        </div>
-        <div class="media-box" style="flex: 1;">
-          <img src="feature3.jpg" alt="Featured Media 3" />
-          <p>Feature 3</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="news">
-      <div class="news-box">
-        <h4>Site News</h4>
-        <ul>
-          <li>Update 1: new features live!</li>
-          <li>Update 2: dev log posted</li>
-          <li>Community event Friday</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="spotlights">
-      <div class="media-box">Spotlight 4</div>
-      <div class="media-box">Spotlight 5</div>
-      <div class="media-box">Spotlight 6</div>
-      <div class="media-box">Spotlight 7</div>
-      <div class="media-box">Spotlight 8</div>
-      <div class="media-box">Spotlight 9</div>
-      <div class="media-box">Spotlight 10</div>
-    </section>
-  </main>
-</body>
-</html>
-
+      transform: translateX(-
