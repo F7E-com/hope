@@ -19,7 +19,7 @@ body { background: url('bg-nightcity.jpg') no-repeat center center fixed; backgr
 
 .popup a:hover { background: #222; color: #fff; }
 
-.banner { text-align: center; font-size: 3em; padding-top: 80px; color: #ffeedd; text-shadow: 0 0 10px #ffbb88; }
+.banner { text-align: center; font-size: 3em; padding-top: 80px; color: rgba(200, 10, 100, 1.0); text-shadow: 0 0 10px rgba(100, 12, 50, 0.7); }
 
 .slogan { text-align: center; font-size: 1.2em; color: #ccccff; margin-top: 10px; font-style: italic; }
 
