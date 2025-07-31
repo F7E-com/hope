@@ -8,6 +8,7 @@ body {
   background-attachment: fixed;
   color: #fff;
   overflow-x: hidden;
+  text-align: center;
 }
 
 .module, .showcase, .spotlight {
