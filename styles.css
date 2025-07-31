@@ -1,6 +1,6 @@
 /* Base Reset */
 
-{ margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
+*{ margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
 
 
 body { background: url('bg-nightcity.jpg') no-repeat center center fixed; background-size: cover; color: #e0e0f0; overflow-x: hidden; }
