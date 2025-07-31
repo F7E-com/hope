@@ -1,81 +1,53 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: "Cinzel", serif;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), rgba(10, 0, 20, 0.7), rgba(0, 0, 0, 0));
-  background-image: url('background.jpg');
-  background-size: cover;
-  background-attachment: fixed;
-  color: #fff;
-  overflow-x: hidden;
-  text-align: center;
-}
+/* Base Reset */
 
-.module, .showcase, .spotlight {
-  background: rgba(20, 0, 30, 0.7);
-  border: 1px solid #a68eff;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 0 10px rgba(168, 142, 255, 0.6);
-  animation: pulseGlow 4s ease-in-out infinite;
-}
+{ margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
 
-@keyframes pulseGlow {
-  0%, 100% {
-    box-shadow: 0 0 10px rgba(168, 142, 255, 0.6);
-  }
-  50% {
-    box-shadow: 0 0 20px rgba(168, 142, 255, 0.9);
-  }
-}
 
-#profile-button, #menu-button {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid #a68eff;
-  color: #fff;
-  position: absolute;
-  top: 20px;
-  cursor: pointer;
-  z-index: 1000;
-}
+body { background: url('bg-nightcity.jpg') no-repeat center center fixed; background-size: cover; color: #e0e0f0; overflow-x: hidden; }
 
-#profile-button {
-  left: 20px;
-}
+.background::after { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 300%; background: linear-gradient(to bottom, rgba(0,0,0,0) 60%, rgba(0,0,0,0.9)); pointer-events: none; z-index: -1; }
 
-#menu-button {
-  right: 20px;
-}
+.circle-button { width: 50px; height: 50px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255,255,255,0.3); position: fixed; top: 20px; cursor: pointer; z-index: 10; backdrop-filter: blur(6px); transition: background 0.3s; }
 
-.popup {
-  display: none;
-  position: absolute;
-  top: 70px;
-  background: rgba(0, 0, 0, 0.85);
-  border: 1px solid #a68eff;
-  border-radius: 8px;
-  padding: 10px;
-  z-index: 1000;
-}
+.profile-button { left: 20px; }
 
-#profile-popup {
-  left: 20px;
-}
+.menu-button { right: 20px; }
 
-#menu-popup {
-  right: 20px;
-}
+.popup { display: none; position: fixed; top: 80px; background: rgba(0, 0, 0, 0.7); border: 1px solid #444; padding: 10px; border-radius: 10px; backdrop-filter: blur(4px); z-index: 15; }
 
-.popup a {
-  display: block;
-  color: #fff;
-  text-decoration: none;
-  padding: 5px 0;
-}
+.popup a { display: block; color: #ccc; padding: 5px 10px; text-decoration: none; }
 
-.popup a:hover {
-  text-decoration: underline;
-}
+.popup a:hover { background: #222; color: #fff; }
+
+.banner { text-align: center; font-size: 3em; padding-top: 80px; color: #ffeedd; text-shadow: 0 0 10px #ffbb88; }
+
+.slogan { text-align: center; font-size: 1.2em; color: #ccccff; margin-top: 10px; font-style: italic; }
+
+.main-container { display: flex; flex-direction: row; justify-content: space-between; padding: 30px; flex-wrap: wrap; }
+
+.sidebar { width: 20%; display: flex; flex-direction: column; gap: 20px; }
+
+.left { align-items: flex-start; }
+
+.right { align-items: flex-end; }
+
+.suggested, .news { background: rgba(20, 20, 30, 0.7); padding: 10px; border-radius: 10px; box-shadow: 0 0 15px rgba(100, 255, 200, 0.2); }
+
+.suggested img, .featured img, .showcase-2 img, .showcase-3 img { width: 100%; border-radius: 10px; }
+
+.featured { width: 55%; text-align: center; background: rgba(0, 0, 0, 0.5); padding: 20px; border-radius: 20px; box-shadow: 0 0 25px rgba(255, 255, 255, 0.1); }
+
+.showcases { width: 100%; display: flex; margin-top: 20px; gap: 20px; }
+
+.showcase-2, .showcase-3 { flex: 1; background: rgba(10, 10, 20, 0.6); padding: 10px; border-radius: 10px; box-shadow: 0 0 10px rgba(100, 200, 255, 0.2); }
+
+.spotlight-list { width: 100%; margin-top: 20px; background: rgba(30, 30, 50, 0.6); padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(255, 100, 255, 0.2); }
+
+.spotlight-list ul { list-style: none; }
+
+.spotlight-list li { padding: 5px 0; }
+
+.spotlight-list a { color: #e0d0ff; text-decoration: none; }
+
+.spotlight-list a:hover { text-decoration: underline; }
+
