@@ -1,133 +1,175 @@
-/* Faction Seven Stylesheet */
-
-@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&display=swap');
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* styles.css */
 
 body {
-  font-family: 'Crimson Pro', serif;
-  color: #e0dce5;
-  background: linear-gradient(to bottom, rgba(10, 0, 20, 0.8), #000), url('background.jpg') no-repeat center center fixed;
+  margin: 0;
+  padding: 0;
+  font-family: "Cinzel", serif;
+  background: linear-gradient(to bottom, #0a0a0a, #1a001a);
+  color: #ffffff;
+  background-image: url('background.jpg');
+  background-attachment: fixed;
   background-size: cover;
-  overflow-x: hidden;
 }
 
 header {
-  position: relative;
-  padding: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 10px;
 }
 
-.circle-button {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background-color: rgba(0,0,0,0.4);
-  border: 2px solid #985eff;
-  color: #fff;
-  font-size: 1.2em;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: background 0.3s;
-}
-
-.circle-button:hover {
-  background-color: rgba(152, 94, 255, 0.2);
-}
-
-.banner {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
+h1 {
+  font-size: 3em;
+  margin: 0;
+  color: #bfaaff;
 }
 
 .slogan {
   text-align: center;
-  margin: 100px 0 40px;
   font-size: 1.5em;
-  font-style: italic;
-  color: #d6baff;
+  color: #ccccff;
+  margin-bottom: 30px;
 }
 
-main {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  grid-template-areas:
-    "left feature"
-    "left news"
-    "spotlights spotlights";
-  gap: 30px;
-  padding: 0 5% 100px;
-}
-
-.left {
-  grid-area: left;
-}
-
-.feature {
-  grid-area: feature;
-}
-
-.news {
-  grid-area: news;
-}
-
-.spotlights {
-  grid-area: spotlights;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.media-box, .news-box, .feature-box {
-  background-color: rgba(20,10,30,0.85);
-  padding: 15px;
-  border-radius: 12px;
-  border: 1px solid #c2a1ff;
-  box-shadow: 0 4px 12px rgba(152,94,255,0.4);
-}
-
-.media-box img, .feature-box img {
+.top-buttons {
+  position: absolute;
   width: 100%;
-  border-radius: 8px;
-  border: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  top: 10px;
+  padding: 0 20px;
+  z-index: 2;
+}
+
+.profile-button, .menu-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  border: 2px solid #a076ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2em;
+  cursor: pointer;
+  box-shadow: 0 0 10px #a076ff;
+  transition: box-shadow 0.3s ease-in-out;
+  animation: pulse 2.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 10px #a076ff;
+  }
+  50% {
+    box-shadow: 0 0 20px #a076ff;
+  }
+  100% {
+    box-shadow: 0 0 10px #a076ff;
+  }
 }
 
 .popup {
-  display: none;
   position: absolute;
-  top: 70px;
-  background: rgba(20,0,40,0.95);
-  padding: 10px;
+  background-color: rgba(20, 0, 40, 0.95);
+  color: #fff;
+  padding: 15px;
   border-radius: 10px;
-  border: 1px solid #985eff;
-  box-shadow: 0 2px 8px rgba(152,94,255,0.5);
-  color: #eee;
-  z-index: 10;
+  border: 1px solid #663399;
+  top: 80px;
+  z-index: 5;
 }
 
 .popup a {
-  color: #d6baff;
-  text-decoration: none;
   display: block;
+  color: #ddccff;
+  text-decoration: none;
   margin: 5px 0;
 }
 
-.circle-button:hover + .popup {
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.suggested, .sitenews {
+  width: 30%;
+  padding: 20px;
+  background: rgba(30, 0, 50, 0.7);
+  border-radius: 15px;
+  margin-bottom: 20px;
+  height: 66vh;
+  overflow-y: auto;
+  box-shadow: 0 0 15px #a076ff;
+  animation: pulse 2.5s infinite ease-in-out;
+}
+
+.suggested a, .sitenews a {
   display: block;
+  margin: 10px 0;
+  color: #ccbbff;
+  text-decoration: none;
+}
+
+.featured {
+  width: 35%;
+  padding: 40px 20px;
+  background: rgba(40, 0, 60, 0.9);
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 0 25px #a076ff;
+  animation: pulse 2.5s infinite ease-in-out;
+}
+
+.featured img {
+  max-width: 100%;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.media-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px auto;
+  max-width: 1200px;
+  padding: 0 20px;
+}
+
+.media-box {
+  background: rgba(20, 0, 40, 0.75);
+  border-radius: 12px;
+  padding: 15px;
+  width: 48%;
+  box-shadow: 0 0 15px #a076ff;
+  animation: pulse 2.5s infinite ease-in-out;
+}
+
+.spotlights {
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 20px;
+  background: rgba(15, 0, 30, 0.8);
+  border-radius: 15px;
+  box-shadow: 0 0 12px #663399;
+  animation: pulse 2.5s infinite ease-in-out;
+}
+
+.spotlights ul {
+  list-style: none;
+  padding: 0;
+}
+
+.spotlights li {
+  margin: 10px 0;
+  color: #ddd;
 }
 
 
-All set — your HTML now links to a separate styles.css, which uses a darker black-and-purple palette with soft white-violet highlights. The font has been switched to Crimson Pro, a serif typeface with ancient elegance — more refined than Papyrus, but still evocative of scrolls and reeds.
+Done! All major modules and boxes now have a subtle, pulsing glow—ghostly and soft, just enough to breathe a little life into the layout. 💀🕸️
 
-You can drop both files into your GitHub repo as index.html and styles.css, and it'll render beautifully. Want hover glow or animated transitions next?
+Want to animate anything else, like floating text headers or drifting mist behind the content?
 
