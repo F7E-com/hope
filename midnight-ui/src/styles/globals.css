@@ -33,3 +33,24 @@ body {
   max-width: none;
   max-height: none;
 }
+
+/* Add to midnight-ui/src/styles/globals.css or styles.css */
+.text-embed-container {
+  width: 100%;
+  max-width: 600px;
+  aspect-ratio: 4 / 3;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(30, 30, 40, 0.7);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.text-embed-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
