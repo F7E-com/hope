@@ -17,6 +17,19 @@
     "autoprefixer": "^10.4.15",
     "postcss": "^8.4.27",
     "tailwindcss": "^3.3.3",
-    "vite": "^4.5.0"
-  }
+    "vite": "^7.1.1"
+  },
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/F7E-com/hope.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/F7E-com/hope/issues"
+  },
+  "homepage": "https://github.com/F7E-com/hope#readme",
+  "description": ""
 }

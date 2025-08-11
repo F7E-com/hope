@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Faction Seven</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="title2.css" />
+  <link rel="stylesheet" crossorigin href="/assets/index-D-lE4DOG.css">
+</head>
+<body>
+  <!-- Background Overlay -->
+  <div class="background"></div>
+
+  <!-- Profile Button -->
+  <div class="circle-button profile-button" onclick="togglePopup('profilePopup')"></div>
+  <div id="profilePopup" class="popup">
+    <a href="#">Profile Pic</a>
+    <a href="#">Bio</a>
+    <a href="#">Creator Page</a>
+  </div>
+
+  <!-- Menu Button -->
+  <div class="circle-button menu-button" onclick="togglePopup('menuPopup')"></div>
+  <div id="menuPopup" class="popup">
+    <a href="#">Search</a>
+    <a href="#">Movies</a>
+    <a href="#">Games</a>
+    <a href="#">Stories</a>
+    <a href="#">Art</a>
+    <a href="#">Events</a>
+    <a href="#">Home</a>
+  </div>
+
+  <!-- Banner -->
+  <div class="title2">Faction Seven</div>
+
+  <!-- Slogan -->
+  <div class="slogan">Horizon's over</div>
+
+  <div class="main-container">
+    <!-- Suggested Links (Left Sidebar) -->
+    <div class="sidebar left">
+      <div class="suggested">
+        <img src="media1.jpg" alt="Media 1" />
+        <a href="#">Urban Echoes</a>
+      </div>
+      <div class="suggested">
+        <img src="media2.jpg" alt="Media 2" />
+        <a href="#">Moonlit Strands</a>
+      </div>
+      <!-- Add more links as needed -->
+    </div>
+
+    <!-- Featured Showcase -->
+    <div class="featured">
+      <img src="featured.jpg" alt="Featured Media" />
+      <h2>Featured Story: The Reed Crown</h2>
+    </div>
+
+    <!-- Site News (Right Sidebar) -->
+    <div class="sidebar right">
+      <div class="news">
+        <h3>Site News</h3>
+        <p>New release: Neon Thistle premieres August 12.</p>
+      </div>
+    </div>
+
+    <!-- Showcase 2 & 3 -->
+    <div class="showcases">
+      <div class="showcase-2">
+        <img src="showcase2.jpg" />
+        <h4>Game: Veilcrash</h4>
+      </div>
+      <div class="showcase-3">
+        <img src="showcase3.jpg" />
+        <h4>Short: Echo Drift</h4>
+      </div>
+    </div>
+
+    <!-- Media Spotlights 4-10 -->
+    <div class="spotlight-list">
+      <ul>
+        <li><a href="#">[4] Iris.exe – Short horror game</a></li>
+        <li><a href="#">[5] Selene’s Vault – Digital comic</a></li>
+        <li><a href="#">[6] Synth Sketches – Concept art</a></li>
+        <li><a href="#">[7] Rooftop Hymns – Poetry</a></li>
+        <li><a href="#">[8] Last Light – Animated short</a></li>
+        <li><a href="#">[9] Outskirts – Creator podcast</a></li>
+        <li><a href="#">[10] F7 Monthly Jam Results</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    function togglePopup(id) {
+      const popup = document.getElementById(id);
+      popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+    }
+  </script>
+</body>
+</html>
