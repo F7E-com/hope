@@ -10,9 +10,11 @@ Open Project Collab Boards allow creators to host open source projects, or those
 
 FEATURES
 
+
 Hosting:
 
 Media is uploaded to host sites and URLs (YouTube, Imgur, etc.) are stored in Firebase using React APIs, then displayed as links or content modules on creator homepages. 
+
 
 Creator Pages:
 
@@ -22,23 +24,35 @@ Homepage layouts are saved to Firebase in JSON format, but can be downloaded cli
 
 Creators select whether their content is available for download. Downloaded content takes priority when loading content pages or modules
 
+
 Content Modules:
 
 Modules should be drag-and-drop, resizable, and themed - either individually or to fit the user’s chosen client window theme.
 
+
 Image (.jpg, .bmp, .gif)
+
 Audio Player (Upload, .mp3, .wav)
+
 Audio Player (Embedded, SoundCloud)
+
 Video (Embedded, YouTube)
+
 Video (Upload, .mp4, .wmv)
+
 Game Window (Viewport, .html)
+
 Text Window (Written in-client)
+
 Document Showcase (.txt, .rtf, .docx, .pdf, comes with scrollbar and sizing code)
+
 Graphic Novel Reader (Embed)
+
 
 Platform:
 
 Platform/UI themes are created to fit a monthly artistic theme. These client window themes are then archived and made downloadable.
+
 
 Open Projects:
 
@@ -51,14 +65,23 @@ All credit where credit is due, and no money changes hands through the platform 
 
 TOOLS
 
+
 Frontend - React
+
 Web Deployment - Netlify/GitHub Pages
+
 Filehosting - Firebase/GDrive
+
 Image Hosting - Imgur (with client API)
+
 Video Hosting - YouTube 
+
 Sound hosting - SoundCloud 
+
 Graphic Novel Reader - Swiper.js (house-made)
+
 Backend/Client - Electron (downloadable)
+
 
 
 PROCESS 
@@ -67,25 +90,30 @@ Suggested timeframe: 3-6 months
 
 (Each phase ideally includes live testing.)
 
+
 Phase 1: Web deployment 
 
 Create initial UI theme and layouts
 Create React UI homepage, media, content pages
+
 
 Phase 2: User base
 
 Add Firebase/Firestore support to store user account and content page data
 Add user-created homepages/profiles
 
+
 Phase 3: Filehosting 
 
 Create APIs for communicating with content hosting sites
 Create modular homepage setup
 
+
 Phase 4: Clientside 
 
 Create downloadable Electron shell
 Add structure for downloading and managing downloadable content, including page layouts and client themes
+
 
 Phase 5: Continuing Support 
 
