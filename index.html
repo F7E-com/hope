@@ -15,7 +15,7 @@
   <div class="background"></div>
 
   <!-- Profile Button -->
-  <div class="circle-button profile-button" onclick="togglePopup('profilePopup')"></div>
+  <div class="circle-button profile-button" onclick="togglePopup('profilePopup', event)"></div>
   <div id="profilePopup" class="popup">
     <a href="#">Profile Pic</a>
     <a href="#">Bio</a>
@@ -23,14 +23,14 @@
   </div>
 
   <!-- Menu Button -->
-  <div class="circle-button menu-button" onclick="togglePopup('menuPopup')"></div>
+  <div class="circle-button menu-button" onclick="togglePopup('menuPopup', event)"></div>
   <div id="menuPopup" class="popup">
-    <a href="#">Search</a>
-    <a href="#">Movies</a>
-    <a href="#">Games</a>
-    <a href="#">Stories</a>
-    <a href="#">Art</a>
+    <a href="#">Watch</a>
+    <a href="#">Read</a>
+    <a href="#">Listen</a>
+    <a href="#">Play</a>
     <a href="#">Events</a>
+    <a href="#">Search</a>
     <a href="#">Home</a>
   </div>
 
@@ -104,10 +104,17 @@
   </div>
 
   <script>
-    function togglePopup(id) {
+    function togglePopup(id, event) {
       const popup = document.getElementById(id);
-      popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
-    }
+      if (popup.style.display === 'block') {
+        popup.style.display = 'none';
+      } else {
+        popup.style.display = 'block';
+        // Position the popup at the mouse cursor
+        popup.style.position = 'absolute';
+        popup.style.left = event.clientX + 'px';
+        popup.style.top = event.clientY + 'px';
+    }    }
   </script>
 </body>
 </html>
