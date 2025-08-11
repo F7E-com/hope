@@ -146,6 +146,21 @@
 
       popup.style.left = left + 'px';
       popup.style.top = top + 'px';
+
+      // Close popups when clicking outside
+      document.addEventListener('mousedown', function(event) {
+      const popups = document.querySelectorAll('.popup');
+      popups.forEach(popup => {
+        // If popup is visible and click is outside the popup and not on the button
+        if (
+          popup.style.display === 'block' &&
+          !popup.contains(event.target) &&
+          !event.target.classList.contains('circle-button')
+        ) {
+          popup.style.display = 'none';
+        }
+      });
+    });
     }   }
   </script>
 </body>
