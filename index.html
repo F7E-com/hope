@@ -110,11 +110,34 @@
         popup.style.display = 'none';
       } else {
         popup.style.display = 'block';
-        // Position the popup at the mouse cursor
-        popup.style.position = 'absolute';
-        popup.style.left = event.clientX + 'px';
-        popup.style.top = event.clientY + 'px';
-    }    }
+        // Default position at cursor
+      let left = event.clientX;
+      let top = event.clientY;
+
+      // Get popup dimensions
+      popup.style.left = '0px'; // Temporarily set for measurement
+      popup.style.top = '0px';
+      const popupRect = popup.getBoundingClientRect();
+
+      // Get viewport dimensions
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      // Flip horizontally if overflowing right
+      if (left + popupRect.width > viewportWidth) {
+        left = left - popupRect.width;
+        if (left < 0) left = 0; // Prevent negative
+      }
+
+      // Flip vertically if overflowing bottom
+      if (top + popupRect.height > viewportHeight) {
+        top = top - popupRect.height;
+        if (top < 0) top = 0; // Prevent negative
+      }
+
+      popup.style.left = left + 'px';
+      popup.style.top = top + 'px';
+    }   }
   </script>
 </body>
 </html>
