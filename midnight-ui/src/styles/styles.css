@@ -33,13 +33,33 @@ body { background: url('bg-nightcity.jpg') no-repeat center center fixed; backgr
 
 .suggested, .news { background: rgba(20, 20, 30, 0.7); padding: 10px; border-radius: 10px; box-shadow: 0 0 15px rgba(100, 255, 200, 0.2); }
 
-.suggested img, .featured img, .showcase-2 img, .showcase-3 img { width: 100%; border-radius: 10px; }
+.suggested img, .featured img, .showcase-2 img, .showcase-3 img { 
+  width: 100%; 
+  border-radius: 10px; 
+}
 
 .featured { width: 55%; text-align: center; background: rgba(0, 0, 0, 0.5); padding: 20px; border-radius: 20px; box-shadow: 0 0 25px rgba(255, 255, 255, 0.1); }
 
-.showcases { width: 100%; display: flex; margin-top: 20px; gap: 20px; }
+.showcases { 
+  width: 100%; 
+  display: flex; 
+  flex-wrap: wrap; 
+  justify-content: center;
+  margin-top: 20px; 
+  gap: 20px; 
+}
 
-.showcase-2, .showcase-3 { flex: 1; background: rgba(10, 10, 20, 0.6); padding: 10px; border-radius: 10px; box-shadow: 0 0 10px rgba(100, 200, 255, 0.2); }
+.showcase-2, .showcase-3 { 
+  flex: 1 1 0;
+  min-width: 250px; /* Prevents boxes from getting too small */
+  background: rgba(10, 10, 20, 0.6);
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(100, 200, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
 .spotlight-list { width: 100%; margin-top: 20px; background: rgba(30, 30, 50, 0.6); padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(255, 100, 255, 0.2); }
 
