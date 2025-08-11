@@ -23,3 +23,11 @@ body {
   border: none;
   display: block;
 }
+
+.responsive-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-width: 800px; /* or any max width you want */
+  margin: 0 auto;
+}
