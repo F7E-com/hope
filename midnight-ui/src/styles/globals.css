@@ -6,3 +6,20 @@
 body {
   @apply bg-gray-900 text-gray-100;
 }
+
+.youtube-embed-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  /* Optional: set a max-width for the container */
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.youtube-embed {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: none;
+  display: block;
+}
