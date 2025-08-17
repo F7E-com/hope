@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/utils/firebase";
+import DOMPurify from "dompurify"; // install with: npm install dompurify
 
 export default function Profile() {
   const { uid } = useParams();
@@ -109,6 +110,37 @@ export default function Profile() {
 
           {editing ? (
             <>
+              {/* Formatting Toolbar */}
+              <div style={{ marginBottom: "0.5rem" }}>
+                <button
+                  type="button"
+                  onClick={() => setBio((b) => b + "<strong>bold</strong>")}
+                  style={{ marginRight: "0.5rem" }}
+                >
+                  B
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBio((b) => b + "<em>italic</em>")}
+                  style={{ marginRight: "0.5rem" }}
+                >
+                  I
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const url = prompt("Enter URL:");
+                    if (url)
+                      setBio((b) =>
+                        b + `<a href="${url}" target="_blank">${url}</a>`
+                      );
+                  }}
+                >
+                  Link
+                </button>
+              </div>
+
+              {/* Bio textarea */}
               <textarea
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
@@ -118,7 +150,7 @@ export default function Profile() {
                   margin: "0.5rem 0",
                   padding: "0.5rem",
                   borderRadius: "6px",
-                  color: "black"
+                  color: "black",
                 }}
               />
               <label>
@@ -149,7 +181,13 @@ export default function Profile() {
             </>
           ) : (
             <>
-              <p style={{ margin: "1rem 0" }}>{user.bio || "No bio yet."}</p>
+              {/* Display bio safely with HTML */}
+              <div
+                style={{ margin: "1rem 0" }}
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(user.bio || "No bio yet."),
+                }}
+              />
               <button
                 onClick={() => setEditing(true)}
                 style={{ padding: "0.5rem 1rem" }}
