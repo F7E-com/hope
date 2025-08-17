@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import NavBar from "../components/NavBar";
 import { Link, Outlet } from "react-router-dom";
-import { useUser } from "../contexts/UserContext"; // make sure context is available
+import { useUser } from "../contexts/UserContext";
 
 export default function MainLayout() {
   const { currentUser } = useUser();
@@ -13,13 +13,12 @@ export default function MainLayout() {
     if (activePopup === id) {
       setActivePopup(null);
     } else {
-      const clickX = e.clientX;
-      const clickY = e.clientY;
-      setPopupPos({ x: clickX, y: clickY });
+      setPopupPos({ x: e.clientX, y: e.clientY });
       setActivePopup(id);
     }
   };
 
+  // Close on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (popupRef.current && !popupRef.current.contains(e.target)) {
@@ -29,6 +28,20 @@ export default function MainLayout() {
     if (activePopup) document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [activePopup]);
+
+  // Flip horizontally if out of viewport
+  useEffect(() => {
+    if (!activePopup || !popupRef.current) return;
+
+    const popup = popupRef.current.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    let newX = popupPos.x;
+
+    if (popup.right > viewportWidth) {
+      newX = Math.max(0, popupPos.x - popup.width);
+    }
+    setPopupPos((prev) => ({ ...prev, x: newX }));
+  }, [activePopup, popupPos.x]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -79,7 +92,7 @@ export default function MainLayout() {
       <div className="slogan">Your one-stop media source</div>
 
       <main className="flex-grow container mx-auto p-4">
-        <Outlet /> {/* <-- This is crucial for nested routes */}
+        <Outlet /> {/* Nested routes render here */}
       </main>
     </div>
   );
