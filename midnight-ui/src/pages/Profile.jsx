@@ -7,14 +7,14 @@ import BioBox from "../components/BioBox";
 import { useUser } from "../contexts/UserContext";
 
 export default function Profile() {
-  const { currentUser } = useUser();
   const { uid } = useParams();
+  const { currentUser } = useUser();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [bio, setBio] = useState("");
   const [themeColor, setThemeColor] = useState("#222222");
+  const [bannerUrl, setBannerUrl] = useState("");
   const [editing, setEditing] = useState(false);
-  const [bannerInput, setBannerInput] = useState("");
 
   useEffect(() => {
     if (!uid) return;
@@ -29,7 +29,7 @@ export default function Profile() {
           setUser(data);
           setBio(data.bio || "");
           setThemeColor(data.themeColor || "#222222");
-          setBannerInput(data.bannerUrl || "");
+          setBannerUrl(data.bannerUrl || "");
         } else {
           setUser(null);
         }
@@ -44,20 +44,7 @@ export default function Profile() {
     fetchUser();
   }, [uid]);
 
-  if (loading) return <p>Loading...</p>;
-  if (!user) return <p>User not found.</p>;
-
-  const handleThemeChange = async (newColor) => {
-    try {
-      const userRef = doc(db, "users", uid);
-      await updateDoc(userRef, { themeColor: newColor });
-      setThemeColor(newColor);
-    } catch (err) {
-      console.error("Error updating theme color:", err);
-    }
-  };
-
-  const handleBioSave = async (newBio) => {
+  const handleSaveBio = async (newBio) => {
     try {
       const userRef = doc(db, "users", uid);
       await updateDoc(userRef, { bio: newBio });
@@ -67,17 +54,30 @@ export default function Profile() {
     }
   };
 
-  const handleBannerSave = async () => {
+  const handleSaveTheme = async (newColor) => {
     try {
       const userRef = doc(db, "users", uid);
-      await updateDoc(userRef, { bannerUrl: bannerInput });
-      setUser((prev) => ({ ...prev, bannerUrl: bannerInput }));
+      await updateDoc(userRef, { themeColor: newColor });
+      setThemeColor(newColor);
     } catch (err) {
-      console.error("Error saving banner:", err);
+      console.error("Error updating theme color:", err);
     }
   };
 
-  const isOwner = currentUser && currentUser.id === uid;
+  const handleSaveBanner = async (newBanner) => {
+    try {
+      const userRef = doc(db, "users", uid);
+      await updateDoc(userRef, { bannerUrl: newBanner });
+      setBannerUrl(newBanner);
+    } catch (err) {
+      console.error("Error updating banner:", err);
+    }
+  };
+
+  if (loading) return <p>Loading...</p>;
+  if (!user) return <p>User not found.</p>;
+
+  const isOwner = currentUser?.id === uid;
 
   return (
     <div
@@ -97,38 +97,30 @@ export default function Profile() {
           height: "200px",
           borderRadius: "12px",
           marginBottom: "1rem",
-          background: user.bannerUrl
-            ? `url(${user.bannerUrl}) center/cover`
-            : themeColor,
-          position: "relative",
+          backgroundColor: bannerUrl ? undefined : themeColor,
+          backgroundImage: bannerUrl ? `url(${bannerUrl})` : undefined,
+          backgroundPosition: "center",
+          backgroundSize: "cover",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
-        {editing && isOwner && (
-          <div
+        {editing && (
+          <input
+            type="text"
+            placeholder="Enter banner image URL"
+            value={bannerUrl}
+            onChange={(e) => setBannerUrl(e.target.value)}
             style={{
-              position: "absolute",
-              bottom: "0",
-              left: "0",
-              right: "0",
               padding: "0.5rem",
-              background: "rgba(0,0,0,0.6)",
-              display: "flex",
-              gap: "0.5rem",
-              alignItems: "center",
+              borderRadius: "6px",
+              border: "1px solid #ccc",
+              width: "70%",
+              color: "black",
             }}
-          >
-            <input
-              color="black"
-              type="text"
-              placeholder="Banner image URL"
-              value={bannerInput}
-              onChange={(e) => setBannerInput(e.target.value)}
-              style={{ flex: 1, padding: "0.25rem" }}
-            />
-            <button onClick={handleBannerSave} style={{ padding: "0.25rem 0.5rem" }}>
-              Save
-            </button>
-          </div>
+            onBlur={() => handleSaveBanner(bannerUrl)}
+          />
         )}
       </div>
 
@@ -161,40 +153,26 @@ export default function Profile() {
             <strong>Faction:</strong> {user.faction}
           </p>
 
+          {/* Bio */}
           <BioBox
             initialBio={bio}
-            editable={editing && isOwner}
+            editable={isOwner}
             themeColor={themeColor}
-            onSave={handleBioSave}
+            onThemeChange={handleSaveTheme}
+            onSave={handleSaveBio}
           />
 
-          {editing && isOwner && (
-            <div style={{ marginTop: "0.5rem" }}>
+          {isOwner && (
+            <div style={{ marginTop: "1rem" }}>
               <label>
                 Theme Color:{" "}
                 <input
                   type="color"
                   value={themeColor}
-                  onChange={(e) => handleThemeChange(e.target.value)}
+                  onChange={(e) => setThemeColor(e.target.value)}
                 />
               </label>
-              <br />
-              <button
-                style={{ marginTop: "0.5rem", padding: "0.5rem 1rem" }}
-                onClick={() => setEditing(false)}
-              >
-                Done Editing
-              </button>
             </div>
-          )}
-
-          {!editing && isOwner && (
-            <button
-              style={{ marginTop: "0.5rem", padding: "0.5rem 1rem" }}
-              onClick={() => setEditing(true)}
-            >
-              Edit Profile
-            </button>
           )}
         </div>
       </div>
