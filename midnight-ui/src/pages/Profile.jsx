@@ -11,10 +11,13 @@ export default function Profile() {
   const { currentUser } = useUser();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
   const [bio, setBio] = useState("");
   const [themeColor, setThemeColor] = useState("#222222");
   const [bannerUrl, setBannerUrl] = useState("");
   const [editing, setEditing] = useState(false);
+
+  const isOwner = currentUser?.id === uid;
 
   useEffect(() => {
     if (!uid) return;
@@ -44,40 +47,32 @@ export default function Profile() {
     fetchUser();
   }, [uid]);
 
+  const handleSaveProfile = async () => {
+    if (!uid) return;
+    try {
+      const userRef = doc(db, "users", uid);
+      await updateDoc(userRef, { themeColor, bannerUrl });
+      setUser((prev) => ({ ...prev, themeColor, bannerUrl }));
+      setEditing(false);
+    } catch (err) {
+      console.error("Error saving profile:", err);
+    }
+  };
+
   const handleSaveBio = async (newBio) => {
+    if (!uid) return;
     try {
       const userRef = doc(db, "users", uid);
       await updateDoc(userRef, { bio: newBio });
       setBio(newBio);
+      setUser((prev) => ({ ...prev, bio: newBio }));
     } catch (err) {
       console.error("Error saving bio:", err);
     }
   };
 
-  const handleSaveTheme = async (newColor) => {
-    try {
-      const userRef = doc(db, "users", uid);
-      await updateDoc(userRef, { themeColor: newColor });
-      setThemeColor(newColor);
-    } catch (err) {
-      console.error("Error updating theme color:", err);
-    }
-  };
-
-  const handleSaveBanner = async (newBanner) => {
-    try {
-      const userRef = doc(db, "users", uid);
-      await updateDoc(userRef, { bannerUrl: newBanner });
-      setBannerUrl(newBanner);
-    } catch (err) {
-      console.error("Error updating banner:", err);
-    }
-  };
-
   if (loading) return <p>Loading...</p>;
   if (!user) return <p>User not found.</p>;
-
-  const isOwner = currentUser?.id === uid;
 
   return (
     <div
@@ -97,36 +92,34 @@ export default function Profile() {
           height: "200px",
           borderRadius: "12px",
           marginBottom: "1rem",
-          backgroundColor: bannerUrl ? undefined : themeColor,
-          backgroundImage: bannerUrl ? `url(${bannerUrl})` : undefined,
-          backgroundPosition: "center",
-          backgroundSize: "cover",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          background: bannerUrl
+            ? `url(${bannerUrl}) center/cover`
+            : themeColor,
+          position: "relative",
         }}
       >
         {editing && (
           <input
             type="text"
-            placeholder="Enter banner image URL"
+            placeholder="Banner Image URL"
             value={bannerUrl}
             onChange={(e) => setBannerUrl(e.target.value)}
             style={{
-              padding: "0.5rem",
-              borderRadius: "6px",
-              border: "1px solid #ccc",
+              position: "absolute",
+              bottom: "10px",
+              left: "10px",
               width: "70%",
-              color: "black",
+              padding: "0.3rem",
+              borderRadius: "6px",
+              border: "none",
             }}
-            onBlur={() => handleSaveBanner(bannerUrl)}
           />
         )}
       </div>
 
       {/* Two-column layout */}
       <div style={{ display: "flex", gap: "2rem" }}>
-        {/* Kudos box */}
+        {/* Kudos box (left column) */}
         <div
           style={{
             flex: "1",
@@ -146,22 +139,21 @@ export default function Profile() {
           </ul>
         </div>
 
-        {/* Profile info */}
+        {/* Profile info (right column) */}
         <div style={{ flex: "2" }}>
           <h1 style={{ marginBottom: "0.5rem" }}>{user.name}</h1>
           <p>
             <strong>Faction:</strong> {user.faction}
           </p>
 
-          {/* Bio */}
+          {/* Bio using reusable BioBox */}
           <BioBox
             initialBio={bio}
             editable={isOwner}
-            themeColor={themeColor}
-            onThemeChange={handleSaveTheme}
             onSave={handleSaveBio}
           />
 
+          {/* Theme color picker + save profile button */}
           {isOwner && (
             <div style={{ marginTop: "1rem" }}>
               <label>
@@ -172,10 +164,30 @@ export default function Profile() {
                   onChange={(e) => setThemeColor(e.target.value)}
                 />
               </label>
+              <br />
+              <button
+                onClick={handleSaveProfile}
+                style={{ marginTop: "0.5rem", padding: "0.5rem 1rem" }}
+              >
+                Save Profile
+              </button>
+              <button
+                onClick={() => setEditing(false)}
+                style={{
+                  marginLeft: "0.5rem",
+                  padding: "0.5rem 1rem",
+                  background: "gray",
+                }}
+              >
+                Cancel
+              </button>
             </div>
           )}
+
+          {!isOwner && <p style={{ marginTop: "1rem" }}>View-only profile</p>}
         </div>
       </div>
     </div>
   );
 }
+
