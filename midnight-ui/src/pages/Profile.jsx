@@ -2,18 +2,18 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/utils/firebase";
-import { useUser } from "../contexts/UserContext"; // adjust path if needed
+import { useUser } from "../contexts/UserContext";
 
 export default function Profile() {
   const { uid } = useParams();
   const { currentUser } = useUser();
 
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(currentUser || null);
+  const [loading, setLoading] = useState(!currentUser);
 
   useEffect(() => {
-    // If no :uid param and we already have currentUser → just use it
-    if (!uid && currentUser) {
+    // If we already have the user in context, and it matches the route param, use it
+    if (currentUser && (!uid || uid === currentUser.id)) {
       setUser(currentUser);
       setLoading(false);
       return;
