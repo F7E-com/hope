@@ -49,7 +49,7 @@ export default function MainLayout({ children }) {
       )}
 
       {/* Banner */}
-      <div className="title2">Midnight UI</div>
+      <div className="title2">Faction Seven</div>
 
       {/* Slogan */}
       <div className="slogan">Your one-stop media source</div>
