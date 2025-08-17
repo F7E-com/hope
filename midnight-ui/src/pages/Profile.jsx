@@ -11,6 +11,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [bio, setBio] = useState("");
   const [themeColor, setThemeColor] = useState("#222222");
+  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
     if (!uid) return;
@@ -42,6 +43,26 @@ export default function Profile() {
   if (loading) return <p>Loading...</p>;
   if (!user) return <p>User not found.</p>;
 
+  const handleThemeChange = async (newColor) => {
+    try {
+      const userRef = doc(db, "users", uid);
+      await updateDoc(userRef, { themeColor: newColor });
+      setThemeColor(newColor);
+    } catch (err) {
+      console.error("Error updating theme color:", err);
+    }
+  };
+
+  const handleBioSave = async (newBio) => {
+    try {
+      const userRef = doc(db, "users", uid);
+      await updateDoc(userRef, { bio: newBio });
+      setBio(newBio);
+    } catch (err) {
+      console.error("Error saving bio:", err);
+    }
+  };
+
   return (
     <div
       style={{
@@ -68,7 +89,7 @@ export default function Profile() {
 
       {/* Two-column layout */}
       <div style={{ display: "flex", gap: "2rem" }}>
-        {/* Kudos box (left column) */}
+        {/* Kudos box */}
         <div
           style={{
             flex: "1",
@@ -88,48 +109,48 @@ export default function Profile() {
           </ul>
         </div>
 
-        {/* Profile info (right column) */}
+        {/* Profile info */}
         <div style={{ flex: "2" }}>
           <h1 style={{ marginBottom: "0.5rem" }}>{user.name}</h1>
           <p>
             <strong>Faction:</strong> {user.faction}
           </p>
 
-          {/* Bio using reusable BioBox with theme color picker */}
           <BioBox
             initialBio={bio}
-            editable={true}
+            editable={editing}
             themeColor={themeColor}
-            onThemeChange={async (newColor) => {
-              try {
-                const userRef = doc(db, "users", uid);
-                await updateDoc(userRef, { themeColor: newColor });
-                setThemeColor(newColor);
-              } catch (err) {
-                console.error("Error updating theme color:", err);
-              }
-            }}
-            onSave={async (newBio) => {
-              try {
-                const userRef = doc(db, "users", uid);
-                await updateDoc(userRef, { bio: newBio });
-                setBio(newBio);
-              } catch (err) {
-                console.error("Error saving bio:", err);
-              }
-            }} />
-            {editing && (
-              <div>
-                <label>
-                  Theme Color:{" "}
-                  <input
-                    type="color"
-                    value={themeColor}
-                    onChange={(e) => setThemeColor(e.target.value)}
-                  />
-                </label>
-              </div>
-            )}
+            onSave={handleBioSave}
+          />
+
+          {editing && (
+            <div style={{ marginTop: "0.5rem" }}>
+              <label>
+                Theme Color:{" "}
+                <input
+                  type="color"
+                  value={themeColor}
+                  onChange={(e) => handleThemeChange(e.target.value)}
+                />
+              </label>
+              <br />
+              <button
+                style={{ marginTop: "0.5rem", padding: "0.5rem 1rem" }}
+                onClick={() => setEditing(false)}
+              >
+                Done Editing
+              </button>
+            </div>
+          )}
+
+          {!editing && (
+            <button
+              style={{ marginTop: "0.5rem", padding: "0.5rem 1rem" }}
+              onClick={() => setEditing(true)}
+            >
+              Edit Profile
+            </button>
+          )}
         </div>
       </div>
     </div>
