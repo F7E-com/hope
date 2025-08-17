@@ -156,7 +156,24 @@ export default function Profile() {
             themeColor={themeColor}
           />
 
-          {isOwner && (
+          {isOwner && !editing && (
+            <button
+              onClick={() => setEditing(true)}
+              style={{
+                marginTop: "0.5rem",
+                padding: "0.5rem 1rem",
+                background: "#444",
+                color: "#fff",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              Edit Profile
+            </button>
+          )}
+
+          {isOwner && editing && (
             <div style={{ marginTop: "1rem" }}>
               <label>
                 Theme Color:{" "}
