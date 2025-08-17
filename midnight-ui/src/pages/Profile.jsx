@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/utils/firebase";
-import DOMPurify from "dompurify"; // make sure installed
+import DOMPurify from "dompurify";
 
 export default function Profile() {
   const { uid } = useParams();
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
@@ -52,46 +53,33 @@ export default function Profile() {
     }
   };
 
-  // Convert bio HTML to safe React nodes
-  const renderBioAsReactLinks = (bioText) => {
-    if (!bioText) return <span>No bio yet.</span>;
-
-    const cleanBio = DOMPurify.sanitize(bioText, { ADD_ATTR: ["target"] });
-    const parts = cleanBio.split(/(<a[^>]+>.*?<\/a>)/gi);
-
-    return parts.map((part, i) => {
-      if (!part) return null;
-      const match = part.match(/<a\s+href="([^"]+)".*?>(.*?)<\/a>/i);
-      if (match) {
-        const href = match[1];
-        const text = match[2];
-
-        if (href.startsWith("/")) {
-          return (
-            <Link key={i} to={href} style={{ color: "red" }}>
-              {text}
-            </Link>
-          );
-        } else {
-          return (
-            <a
-              key={i}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: "blue" }}
-            >
-              {text}
-            </a>
-          );
-        }
-      }
-      return <span key={i} dangerouslySetInnerHTML={{ __html: part }} />;
-    });
-  };
-
   if (loading) return <p>Loading...</p>;
   if (!user) return <p>User not found.</p>;
+
+  // Render bio with internal links handled via React Router
+  const renderBio = () => {
+    if (!bio) return "No bio yet.";
+
+    const sanitized = DOMPurify.sanitize(
+      bio.replace(
+        /href="(\/[^"]*)"/g,
+        'data-internal="$1" href="$1"'
+      )
+    );
+
+    return (
+      <span
+        dangerouslySetInnerHTML={{ __html: sanitized }}
+        onClick={(e) => {
+          const internal = e.target.getAttribute("data-internal");
+          if (internal) {
+            e.preventDefault();
+            navigate(internal);
+          }
+        }}
+      />
+    );
+  };
 
   return (
     <div
@@ -188,9 +176,7 @@ export default function Profile() {
             </>
           ) : (
             <>
-              <div style={{ margin: "1rem 0" }}>
-                {renderBioAsReactLinks(user.bio)}
-              </div>
+              <div style={{ margin: "1rem 0" }}>{renderBio()}</div>
               <button
                 onClick={() => setEditing(true)}
                 style={{ padding: "0.5rem 1rem" }}
