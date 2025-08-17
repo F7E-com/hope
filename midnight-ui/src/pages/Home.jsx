@@ -73,7 +73,6 @@ export default function Home() {
         </div>
 
         <div className="showcase-3">
-          <img src="showcase3.jpg" alt="Showcase 3" />
           <h4>
             Nevereign: Shadow Rising by{" "}
             <a
