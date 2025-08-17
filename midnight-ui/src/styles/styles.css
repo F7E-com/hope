@@ -13,7 +13,7 @@ body { background: url('bg-nightcity.jpg') no-repeat center center fixed; backgr
 
 .menu-button { right: 20px; }
 
-.popup { display: none; position: fixed; top: 80px; background: rgba(0, 0, 0, 0.7); border: 1px solid #444; padding: 10px; border-radius: 10px; backdrop-filter: blur(4px); z-index: 15; }
+.popup { position: fixed; top: 80px; background: rgba(0, 0, 0, 0.7); border: 1px solid #444; padding: 10px; border-radius: 10px; backdrop-filter: blur(4px); z-index: 15; }
 
 .popup a { display: block; color: #ccc; padding: 5px 10px; text-decoration: none; }
 
