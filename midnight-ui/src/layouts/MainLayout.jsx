@@ -1,8 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import NavBar from "../components/NavBar";
 import { Link } from "react-router-dom";
+import { useUser } from "../contexts/UserContext";
+
 
 export default function MainLayout({ children }) {
+  const { currentUser } = useUser(); // 👈 now defined
   const [activePopup, setActivePopup] = useState(null);
   const [popupPos, setPopupPos] = useState({ x: 0, y: 0 });
   const popupRef = useRef(null);
