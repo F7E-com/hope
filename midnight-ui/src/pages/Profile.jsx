@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/utils/firebase";
-import DOMPurify from "dompurify"; // install with: npm install dompurify
+import DOMPurify from "dompurify"; // npm install dompurify
 
 export default function Profile() {
   const { uid } = useParams();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
-
   const [bio, setBio] = useState("");
   const [themeColor, setThemeColor] = useState("#222222");
 
@@ -50,6 +49,43 @@ export default function Profile() {
     } catch (err) {
       console.error("Error saving profile:", err);
     }
+  };
+
+  // Helper function: convert internal links to React Router Links
+  const renderBioAsReactLinks = (bioText) => {
+    const cleanBio = DOMPurify.sanitize(bioText);
+    const parts = cleanBio.split(/(<a[^>]+>.*?<\/a>)/gi);
+
+    return parts.map((part, i) => {
+      const match = part.match(/<a\s+href="([^"]+)".*?>(.*?)<\/a>/i);
+      if (match) {
+        const href = match[1];
+        const text = match[2];
+
+        if (href.startsWith("/")) {
+          // Internal link → React Router
+          return (
+            <Link key={i} to={href} style={{ color: "red" }}>
+              {text}
+            </Link>
+          );
+        } else {
+          // External link → normal anchor
+          return (
+            <a
+              key={i}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "blue" }}
+            >
+              {text}
+            </a>
+          );
+        }
+      }
+      return <span key={i} dangerouslySetInnerHTML={{ __html: part }} />;
+    });
   };
 
   if (loading) return <p>Loading...</p>;
@@ -110,37 +146,6 @@ export default function Profile() {
 
           {editing ? (
             <>
-              {/* Formatting Toolbar */}
-              <div style={{ marginBottom: "0.5rem" }}>
-                <button
-                  type="button"
-                  onClick={() => setBio((b) => b + "<strong>bold</strong>")}
-                  style={{ marginRight: "0.5rem" }}
-                >
-                  B
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setBio((b) => b + "<em>italic</em>")}
-                  style={{ marginRight: "0.5rem" }}
-                >
-                  I
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const url = prompt("Enter URL:");
-                    if (url)
-                      setBio((b) =>
-                        b + `<a href="${url}" target="_blank">${url}</a>`
-                      );
-                  }}
-                >
-                  Link
-                </button>
-              </div>
-
-              {/* Bio textarea */}
               <textarea
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
@@ -181,13 +186,9 @@ export default function Profile() {
             </>
           ) : (
             <>
-              {/* Display bio safely with HTML */}
-              <div
-                style={{ margin: "1rem 0" }}
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(user.bio || "No bio yet."),
-                }}
-              />
+              <div style={{ margin: "1rem 0" }}>
+                {renderBioAsReactLinks(bio || "No bio yet.")}
+              </div>
               <button
                 onClick={() => setEditing(true)}
                 style={{ padding: "0.5rem 1rem" }}
