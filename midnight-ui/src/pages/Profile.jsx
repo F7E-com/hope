@@ -117,8 +117,19 @@ export default function Profile() {
               } catch (err) {
                 console.error("Error saving bio:", err);
               }
-            }}
-          />
+            }} />
+            {editing && (
+              <div>
+                <label>
+                  Theme Color:{" "}
+                  <input
+                    type="color"
+                    value={themeColor}
+                    onChange={(e) => setThemeColor(e.target.value)}
+                  />
+                </label>
+              </div>
+            )}
         </div>
       </div>
     </div>
