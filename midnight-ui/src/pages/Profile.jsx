@@ -4,14 +4,17 @@ import { useParams } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/utils/firebase";
 import BioBox from "../components/BioBox";
+import { useUser } from "../contexts/UserContext";
 
 export default function Profile() {
+  const { currentUser } = useUser();
   const { uid } = useParams();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [bio, setBio] = useState("");
   const [themeColor, setThemeColor] = useState("#222222");
   const [editing, setEditing] = useState(false);
+  const [bannerInput, setBannerInput] = useState("");
 
   useEffect(() => {
     if (!uid) return;
@@ -26,6 +29,7 @@ export default function Profile() {
           setUser(data);
           setBio(data.bio || "");
           setThemeColor(data.themeColor || "#222222");
+          setBannerInput(data.bannerUrl || "");
         } else {
           setUser(null);
         }
@@ -63,6 +67,18 @@ export default function Profile() {
     }
   };
 
+  const handleBannerSave = async () => {
+    try {
+      const userRef = doc(db, "users", uid);
+      await updateDoc(userRef, { bannerUrl: bannerInput });
+      setUser((prev) => ({ ...prev, bannerUrl: bannerInput }));
+    } catch (err) {
+      console.error("Error saving banner:", err);
+    }
+  };
+
+  const isOwner = currentUser && currentUser.id === uid;
+
   return (
     <div
       style={{
@@ -84,8 +100,36 @@ export default function Profile() {
           background: user.bannerUrl
             ? `url(${user.bannerUrl}) center/cover`
             : themeColor,
+          position: "relative",
         }}
-      />
+      >
+        {editing && isOwner && (
+          <div
+            style={{
+              position: "absolute",
+              bottom: "0",
+              left: "0",
+              right: "0",
+              padding: "0.5rem",
+              background: "rgba(0,0,0,0.6)",
+              display: "flex",
+              gap: "0.5rem",
+              alignItems: "center",
+            }}
+          >
+            <input
+              type="text"
+              placeholder="Banner image URL"
+              value={bannerInput}
+              onChange={(e) => setBannerInput(e.target.value)}
+              style={{ flex: 1, padding: "0.25rem" }}
+            />
+            <button onClick={handleBannerSave} style={{ padding: "0.25rem 0.5rem" }}>
+              Save
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* Two-column layout */}
       <div style={{ display: "flex", gap: "2rem" }}>
@@ -118,12 +162,12 @@ export default function Profile() {
 
           <BioBox
             initialBio={bio}
-            editable={editing}
+            editable={editing && isOwner}
             themeColor={themeColor}
             onSave={handleBioSave}
           />
 
-          {editing && (
+          {editing && isOwner && (
             <div style={{ marginTop: "0.5rem" }}>
               <label>
                 Theme Color:{" "}
@@ -143,7 +187,7 @@ export default function Profile() {
             </div>
           )}
 
-          {!editing && (
+          {!editing && isOwner && (
             <button
               style={{ marginTop: "0.5rem", padding: "0.5rem 1rem" }}
               onClick={() => setEditing(true)}
