@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/utils/firebase";
-import DOMPurify from "dompurify"; // npm install dompurify
+import DOMPurify from "dompurify"; // make sure installed
 
 export default function Profile() {
   const { uid } = useParams();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
+
   const [bio, setBio] = useState("");
   const [themeColor, setThemeColor] = useState("#222222");
 
@@ -51,26 +52,27 @@ export default function Profile() {
     }
   };
 
-  // Helper function: convert internal links to React Router Links
+  // Convert bio HTML to safe React nodes
   const renderBioAsReactLinks = (bioText) => {
-    const cleanBio = DOMPurify.sanitize(bioText);
+    if (!bioText) return <span>No bio yet.</span>;
+
+    const cleanBio = DOMPurify.sanitize(bioText, { ADD_ATTR: ["target"] });
     const parts = cleanBio.split(/(<a[^>]+>.*?<\/a>)/gi);
 
     return parts.map((part, i) => {
+      if (!part) return null;
       const match = part.match(/<a\s+href="([^"]+)".*?>(.*?)<\/a>/i);
       if (match) {
         const href = match[1];
         const text = match[2];
 
         if (href.startsWith("/")) {
-          // Internal link → React Router
           return (
             <Link key={i} to={href} style={{ color: "red" }}>
               {text}
             </Link>
           );
         } else {
-          // External link → normal anchor
           return (
             <a
               key={i}
@@ -187,7 +189,7 @@ export default function Profile() {
           ) : (
             <>
               <div style={{ margin: "1rem 0" }}>
-                {renderBioAsReactLinks(bio || "No bio yet.")}
+                {renderBioAsReactLinks(user.bio)}
               </div>
               <button
                 onClick={() => setEditing(true)}
