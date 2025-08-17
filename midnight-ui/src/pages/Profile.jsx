@@ -118,6 +118,7 @@ export default function Profile() {
                   margin: "0.5rem 0",
                   padding: "0.5rem",
                   borderRadius: "6px",
+                  color: "black"
                 }}
               />
               <label>
