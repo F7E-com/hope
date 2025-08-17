@@ -1,16 +1,14 @@
+// Profile.jsx
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/utils/firebase";
-import DOMPurify from "dompurify";
+import BioBox from "../components/BioBox"; // reusable bio module
 
 export default function Profile() {
   const { uid } = useParams();
-  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState(false);
-
   const [bio, setBio] = useState("");
   const [themeColor, setThemeColor] = useState("#222222");
 
@@ -41,45 +39,8 @@ export default function Profile() {
     fetchUser();
   }, [uid]);
 
-  const handleSave = async () => {
-    if (!uid) return;
-    try {
-      const userRef = doc(db, "users", uid);
-      await updateDoc(userRef, { bio, themeColor });
-      setUser((prev) => ({ ...prev, bio, themeColor }));
-      setEditing(false);
-    } catch (err) {
-      console.error("Error saving profile:", err);
-    }
-  };
-
   if (loading) return <p>Loading...</p>;
   if (!user) return <p>User not found.</p>;
-
-  // Render bio with internal links handled via React Router
-  const renderBio = () => {
-    if (!bio) return "No bio yet.";
-
-    const sanitized = DOMPurify.sanitize(
-      bio.replace(
-        /href="(\/[^"]*)"/g,
-        'data-internal="$1" href="$1"'
-      )
-    );
-
-    return (
-      <span
-        dangerouslySetInnerHTML={{ __html: sanitized }}
-        onClick={(e) => {
-          const internal = e.target.getAttribute("data-internal");
-          if (internal) {
-            e.preventDefault();
-            navigate(internal);
-          }
-        }}
-      />
-    );
-  };
 
   return (
     <div
@@ -134,57 +95,21 @@ export default function Profile() {
             <strong>Faction:</strong> {user.faction}
           </p>
 
-          {editing ? (
-            <>
-              <textarea
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                style={{
-                  width: "100%",
-                  minHeight: "80px",
-                  margin: "0.5rem 0",
-                  padding: "0.5rem",
-                  borderRadius: "6px",
-                  color: "black",
-                }}
-              />
-              <label>
-                Theme Color:{" "}
-                <input
-                  type="color"
-                  value={themeColor}
-                  onChange={(e) => setThemeColor(e.target.value)}
-                />
-              </label>
-              <br />
-              <button
-                onClick={handleSave}
-                style={{ marginTop: "0.5rem", padding: "0.5rem 1rem" }}
-              >
-                Save
-              </button>
-              <button
-                onClick={() => setEditing(false)}
-                style={{
-                  marginLeft: "0.5rem",
-                  padding: "0.5rem 1rem",
-                  background: "gray",
-                }}
-              >
-                Cancel
-              </button>
-            </>
-          ) : (
-            <>
-              <div style={{ margin: "1rem 0" }}>{renderBio()}</div>
-              <button
-                onClick={() => setEditing(true)}
-                style={{ padding: "0.5rem 1rem" }}
-              >
-                Edit Profile
-              </button>
-            </>
-          )}
+          {/* Bio using reusable BioBox */}
+          <BioBox
+            initialBio={bio}
+            editable={true}
+            themeColor={themeColor}
+            onSave={async (newBio) => {
+              try {
+                const userRef = doc(db, "users", uid);
+                await updateDoc(userRef, { bio: newBio });
+                setBio(newBio);
+              } catch (err) {
+                console.error("Error saving bio:", err);
+              }
+            }}
+          />
         </div>
       </div>
     </div>
