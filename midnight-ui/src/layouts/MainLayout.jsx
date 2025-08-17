@@ -46,7 +46,6 @@ export default function MainLayout() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <NavBar />
       <div className="background"></div>
 
       {/* Profile Button */}
