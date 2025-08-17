@@ -62,7 +62,7 @@ function NewUser() {
                                 onChange={(e) => setName(e.target.value)}
                                 placeholder="Enter your name"
                         />
-
+                        <br />
                         <label>Faction:</label>
                         <select value={faction} onChange={(e) => setFaction(e.target.value)}>
                                 <option value="Government">Government</option>
@@ -73,6 +73,7 @@ function NewUser() {
                                 <option value="Research">Research</option>
                                 <option value="Background">Background</option>
                         </select>
+                         <br />
 
                         <label>Custom ID (optional):</label>
                         <input
@@ -81,6 +82,7 @@ function NewUser() {
                                 onChange={(e) => setUserId(e.target.value)}
                                 placeholder="Optional custom ID"
                         />
+                         <br />
 
                         <div style={{ marginTop: "1rem" }}>
                                 <button onClick={handleAutoID}>Create User (Auto-ID)</button>
