@@ -93,7 +93,7 @@ function NewUser() {
       <br />
 
       <label>Faction:</label>
-      <select value={faction} onChange={(e) => setFaction(e.target.value)}>
+      <select style={{ color: "black" }}value={faction} onChange={(e) => setFaction(e.target.value)}>
         <option value="Government">Government</option>
         <option value="Infrastructure">Infrastructure</option>
         <option value="Security">Security</option>
@@ -106,6 +106,7 @@ function NewUser() {
 
       <label>Custom ID (optional):</label>
       <input
+        style={{ color: "black" }}
         type="text"
         value={userId}
         onChange={(e) => setUserId(e.target.value)}
