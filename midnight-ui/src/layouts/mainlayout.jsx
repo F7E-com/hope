@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import NavBar from "../components/NavBar";
 import { Link } from "react-router-dom";
 
@@ -67,7 +68,7 @@ export default function MainLayout({ children }) {
       ></div>
       {activePopup === "profile" && (
         <div id="profilePopup" className="popup">
-          <link to="/new-user">New User/Login</link>
+          <Link to="/new-user">New User/Login</Link>
           <a href="#">Bio</a>
           <a href="#">Creator Page</a>
         </div>
