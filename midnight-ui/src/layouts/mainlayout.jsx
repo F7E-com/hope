@@ -1,5 +1,7 @@
 import { useState } from "react";
 import NavBar from "../components/NavBar";
+import { Link } from "react-router-dom";
+
 
 export default function MainLayout({ children }) {
   // State to control which popup is open
@@ -23,11 +25,10 @@ export default function MainLayout({ children }) {
       ></div>
       {activePopup === "profile" && (
         <div id="profilePopup" className="popup">
-          <a href="#">Profile Pic</a>
+          <link to="/new-user"></a>
           <a href="#">Bio</a>
           <a href="#">Creator Page</a>
         </div>
-      )}
 
       {/* Menu Button */}
       <div
