@@ -13,7 +13,8 @@ export default function MainLayout() {
     if (activePopup === id) {
       setActivePopup(null);
     } else {
-      setPopupPos({ x: e.clientX, y: e.clientY });
+      // Use pageX/pageY so the popup accounts for scroll
+      setPopupPos({ x: e.pageX, y: e.pageY });
       setActivePopup(id);
     }
   };
@@ -82,7 +83,7 @@ export default function MainLayout() {
               <a href="#">Play</a>
               <a href="#">Events</a>
               <a href="#">Search</a>
-              <a href="#">Home</a>
+              <Link to="/">Home</Link>
             </>
           )}
         </div>
