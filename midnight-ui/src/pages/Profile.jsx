@@ -9,6 +9,7 @@ import { useUser } from "../contexts/UserContext";
 export default function Profile() {
   const { uid } = useParams();
   const { currentUser } = useUser();
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -93,12 +94,12 @@ export default function Profile() {
           borderRadius: "12px",
           marginBottom: "1rem",
           background: bannerUrl
-            ? `url(${bannerUrl}) center/cover`
+            ? `url(${bannerUrl}) center/cover no-repeat`
             : themeColor,
           position: "relative",
         }}
       >
-        {editing && (
+        {editing && isOwner && (
           <input
             type="text"
             placeholder="Banner Image URL"
@@ -111,7 +112,9 @@ export default function Profile() {
               width: "70%",
               padding: "0.3rem",
               borderRadius: "6px",
-              border: "none",
+              border: "1px solid #555",
+              background: "#222",
+              color: "#fff",
             }}
           />
         )}
@@ -146,14 +149,15 @@ export default function Profile() {
             <strong>Faction:</strong> {user.faction}
           </p>
 
-          {/* Bio using reusable BioBox */}
+          {/* Bio */}
           <BioBox
             initialBio={bio}
             editable={isOwner}
             onSave={handleSaveBio}
+            themeColor={themeColor} // so BioBox can render its background in color
           />
 
-          {/* Theme color picker + save profile button */}
+          {/* Theme color picker and Save Profile button */}
           {isOwner && (
             <div style={{ marginTop: "1rem" }}>
               <label>
@@ -167,7 +171,15 @@ export default function Profile() {
               <br />
               <button
                 onClick={handleSaveProfile}
-                style={{ marginTop: "0.5rem", padding: "0.5rem 1rem" }}
+                style={{
+                  marginTop: "0.5rem",
+                  padding: "0.5rem 1rem",
+                  background: "#444",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                }}
               >
                 Save Profile
               </button>
@@ -177,6 +189,10 @@ export default function Profile() {
                   marginLeft: "0.5rem",
                   padding: "0.5rem 1rem",
                   background: "gray",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
                 }}
               >
                 Cancel
@@ -190,4 +206,3 @@ export default function Profile() {
     </div>
   );
 }
-
