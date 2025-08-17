@@ -74,7 +74,7 @@ export default function MainLayout({ children }) {
           {activePopup === "profile" && (
             <>
               <Link to="/new-user">New User/Login</Link>
-              <Link to="/profile">Profile</Link>
+              <Link to={`/profile/${currentUser.id}`}>Profile</Link>
               <Link to="/creator-page">Creator Page</Link>
             </>
           )}
