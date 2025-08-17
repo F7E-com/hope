@@ -118,7 +118,7 @@ export default function Profile() {
             }}
           >
             <input
-              color="black"
+              color={{ black }}
               type="text"
               placeholder="Banner image URL"
               value={bannerInput}
