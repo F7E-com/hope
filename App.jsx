@@ -14,6 +14,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/new-user" element={<NewUser />} />
             <Route path="/profile/:uid" element={<Profile />} />
+            <Route path="/active-projects" element={<ActiveProjects />} />
           </Routes>
         </MainLayout>
       </Router>
