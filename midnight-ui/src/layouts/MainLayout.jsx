@@ -1,11 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import NavBar from "../components/NavBar";
-import { Link } from "react-router-dom";
-import { useUser } from "../contexts/UserContext";
+import { Link, Outlet } from "react-router-dom";
+import { useUser } from "../contexts/UserContext"; // make sure context is available
 
-
-export default function MainLayout({ children }) {
-  const { currentUser } = useUser(); // 👈 now defined
+export default function MainLayout() {
+  const { currentUser } = useUser();
   const [activePopup, setActivePopup] = useState(null);
   const [popupPos, setPopupPos] = useState({ x: 0, y: 0 });
   const popupRef = useRef(null);
@@ -21,29 +20,14 @@ export default function MainLayout({ children }) {
     }
   };
 
-  // Close on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (popupRef.current && !popupRef.current.contains(e.target)) {
         setActivePopup(null);
       }
     };
-    if (activePopup) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
+    if (activePopup) document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [activePopup]);
-
-  // Adjust if out of bounds (flip horizontally)
-  useEffect(() => {
-    if (activePopup && popupRef.current) {
-      const popup = popupRef.current.getBoundingClientRect();
-      const viewportWidth = window.innerWidth;
-
-      if (popup.right > viewportWidth) {
-        setPopupPos((pos) => ({ ...pos, x: pos.x - popup.width }));
-      }
-    }
   }, [activePopup]);
 
   return (
@@ -52,37 +36,29 @@ export default function MainLayout({ children }) {
       <div className="background"></div>
 
       {/* Profile Button */}
-      <div
-        className="circle-button profile-button"
-        onClick={(e) => togglePopup("profile", e)}
-      ></div>
+      <div className="circle-button profile-button" onClick={(e) => togglePopup("profile", e)} />
 
       {/* Menu Button */}
-      <div
-        className="circle-button menu-button"
-        onClick={(e) => togglePopup("menu", e)}
-      ></div>
+      <div className="circle-button menu-button" onClick={(e) => togglePopup("menu", e)} />
 
       {/* Popup */}
       {activePopup && (
         <div
           ref={popupRef}
           className="popup"
-          style={{
-            top: `${popupPos.y}px`,
-            left: `${popupPos.x}px`,
-            position: "absolute",
-          }}
+          style={{ top: `${popupPos.y}px`, left: `${popupPos.x}px`, position: "absolute" }}
         >
           {activePopup === "profile" && (
             <>
-               <Link to="/new-user">New User/Login</Link>
-               {currentUser ? (
-               <Link to={`/profile/${currentUser.id}`}>Profile</Link>
+              <Link to="/new-user">New User/Login</Link>
+              {currentUser ? (
+                <Link to={`/profile/${currentUser.id}`}>Profile</Link>
               ) : (
-              <span style={{ color: "gray" }}>Profile (login first)</span>
-                )}
-             <a href="#">Creator Page</a>
+                <span style={{ color: "gray" }}>Profile (login first)</span>
+              )}
+              <Link to="/active-projects" style={{ color: "red" }}>
+                Active Projects
+              </Link>
             </>
           )}
           {activePopup === "menu" && (
@@ -101,7 +77,10 @@ export default function MainLayout({ children }) {
 
       <div className="title2">Faction Seven</div>
       <div className="slogan">Your one-stop media source</div>
-      <main className="flex-grow container mx-auto p-4">{children}</main>
+
+      <main className="flex-grow container mx-auto p-4">
+        <Outlet /> {/* <-- This is crucial for nested routes */}
+      </main>
     </div>
   );
 }
