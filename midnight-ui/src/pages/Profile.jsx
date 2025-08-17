@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/utils/firebase";
-import BioBox from "../components/BioBox"; // reusable bio module
+import BioBox from "../components/BioBox";
 
 export default function Profile() {
   const { uid } = useParams();
@@ -95,11 +95,20 @@ export default function Profile() {
             <strong>Faction:</strong> {user.faction}
           </p>
 
-          {/* Bio using reusable BioBox */}
+          {/* Bio using reusable BioBox with theme color picker */}
           <BioBox
             initialBio={bio}
             editable={true}
             themeColor={themeColor}
+            onThemeChange={async (newColor) => {
+              try {
+                const userRef = doc(db, "users", uid);
+                await updateDoc(userRef, { themeColor: newColor });
+                setThemeColor(newColor);
+              } catch (err) {
+                console.error("Error updating theme color:", err);
+              }
+            }}
             onSave={async (newBio) => {
               try {
                 const userRef = doc(db, "users", uid);
