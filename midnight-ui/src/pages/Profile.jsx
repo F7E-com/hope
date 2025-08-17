@@ -1,4 +1,3 @@
-// Profile.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -93,9 +92,10 @@ export default function Profile() {
           height: "200px",
           borderRadius: "12px",
           marginBottom: "1rem",
-          background: bannerUrl
-            ? `url(${bannerUrl}) center/cover no-repeat`
-            : themeColor,
+          backgroundColor: !bannerUrl ? themeColor : undefined,
+          backgroundImage: bannerUrl ? `url(${bannerUrl})` : undefined,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
           position: "relative",
         }}
       >
@@ -122,7 +122,7 @@ export default function Profile() {
 
       {/* Two-column layout */}
       <div style={{ display: "flex", gap: "2rem" }}>
-        {/* Kudos box (left column) */}
+        {/* Kudos box (left) */}
         <div
           style={{
             flex: "1",
@@ -142,22 +142,20 @@ export default function Profile() {
           </ul>
         </div>
 
-        {/* Profile info (right column) */}
+        {/* Profile info (right) */}
         <div style={{ flex: "2" }}>
           <h1 style={{ marginBottom: "0.5rem" }}>{user.name}</h1>
           <p>
             <strong>Faction:</strong> {user.faction}
           </p>
 
-          {/* Bio */}
           <BioBox
             initialBio={bio}
             editable={isOwner}
             onSave={handleSaveBio}
-            themeColor={themeColor} // so BioBox can render its background in color
+            themeColor={themeColor}
           />
 
-          {/* Theme color picker and Save Profile button */}
           {isOwner && (
             <div style={{ marginTop: "1rem" }}>
               <label>
