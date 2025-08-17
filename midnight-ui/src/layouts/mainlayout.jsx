@@ -25,10 +25,11 @@ export default function MainLayout({ children }) {
       ></div>
       {activePopup === "profile" && (
         <div id="profilePopup" className="popup">
-          <link to="/new-user"></a>
+          <link to="/new-user"></link>
           <a href="#">Bio</a>
           <a href="#">Creator Page</a>
         </div>
+      )}
 
       {/* Menu Button */}
       <div
