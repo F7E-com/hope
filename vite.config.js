@@ -8,7 +8,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@styles': path.resolve(__dirname, 'midnight-ui/src/styles'),
-      '@': path.resolve(__dirname, './src'),
+      '@': path.resolve(__dirname, './midnight-ui/src'),
     },
   },
   build: {
