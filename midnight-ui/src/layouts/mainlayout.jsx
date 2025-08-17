@@ -6,10 +6,52 @@ import { Link } from "react-router-dom";
 export default function MainLayout({ children }) {
   // State to control which popup is open
   const [activePopup, setActivePopup] = useState(null);
+  const [popupPos, setPopupPos] = useState({ x: 0, y: 0 });
+  const popupRef = useRef(null);
 
-  const togglePopup = (id) => {
-    setActivePopup(activePopup === id ? null : id);
+  const togglePopup = (id, e) => {
+    if (activePopup === id) {
+      setActivePopup(null);
+    } else {
+      // where the click happened
+      const clickX = e.clientX;
+      const clickY = e.clientY;
+
+      // temp coords
+      let x = clickX;
+      let y = clickY;
+
+      // check bounds after render in useEffect
+      setPopupPos({ x, y });
+      setActivePopup(id);
+    }
   };
+
+  // Close on outside click
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (popupRef.current && !popupRef.current.contains(e.target)) {
+        setActivePopup(null);
+      }
+    };
+    if (activePopup) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [activePopup]);
+
+  // Adjust if out of bounds (flip horizontally)
+  useEffect(() => {
+    if (activePopup && popupRef.current) {
+      const popup = popupRef.current.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+
+      // if popup goes past right edge, flip left
+      if (popup.right > viewportWidth) {
+        setPopupPos((pos) => ({ ...pos, x: pos.x - popup.width }));
+      }
+    }
+  }, [activePopup]);
 
   return (
     <div className="min-h-screen flex flex-col">
