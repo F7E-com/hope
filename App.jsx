@@ -10,7 +10,7 @@ export default function App() {
              <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/new-user" element={<NewUser />} />
-              {/* Add more pages here later */}
+              <Route path="/profile/:uid" element={<Profile />} />
              </Routes>
         </MainLayout>
       </Router>
