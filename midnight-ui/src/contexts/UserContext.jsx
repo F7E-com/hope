@@ -14,8 +14,10 @@ export const UserProvider = ({ children }) => {
       return null;
     }
   });
+
   const [loading, setLoading] = useState(!currentUser);
 
+  // Keep user in localStorage
   useEffect(() => {
     if (currentUser && currentUser.id) {
       localStorage.setItem("currentUser", JSON.stringify(currentUser));
@@ -26,7 +28,7 @@ export const UserProvider = ({ children }) => {
     }
   }, [currentUser]);
 
-  // Fetch fresh user info for the logged-in user
+  // Fetch fresh data for logged-in user
   useEffect(() => {
     const uid = localStorage.getItem("currentUserId");
     if (!uid) {
@@ -42,7 +44,7 @@ export const UserProvider = ({ children }) => {
         const snapshot = await getDoc(docRef);
         if (snapshot.exists()) {
           const data = snapshot.data();
-          data.id = uid; // ensure id exists
+          data.id = uid;
           setCurrentUser(data);
         } else {
           setCurrentUser(null);

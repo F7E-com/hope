@@ -1,4 +1,3 @@
-// Profile.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -9,9 +8,8 @@ import { useUser } from "../contexts/UserContext";
 export default function Profile() {
   const { uid } = useParams();
   const { currentUser } = useUser();
-  const [profileUser, setProfileUser] = useState(null); // the user whose profile page you are viewing
 
-  const [user, setUser] = useState(null);
+  const [profileUser, setProfileUser] = useState(null); // the user whose profile page you are viewing
   const [loading, setLoading] = useState(true);
 
   const [bio, setBio] = useState("");
@@ -28,31 +26,32 @@ export default function Profile() {
   useEffect(() => {
     if (!uid) return;
 
-    const fetchUser = async () => {
+    const fetchProfile = async () => {
       try {
         const userRef = doc(db, "users", uid);
         const snapshot = await getDoc(userRef);
 
         if (snapshot.exists()) {
           const data = snapshot.data();
-          setUser(data);
+          data.id = uid;
+          setProfileUser(data);
           setBio(data.bio || "");
           setThemeColor(data.themeColor || "#222222");
           setBannerUrl(data.bannerUrl || "");
           setBannerUrlInput(data.bannerUrl || "");
           setBannerPreview(data.bannerUrl || data.themeColor || "#222222");
         } else {
-          setUser(null);
+          setProfileUser(null);
         }
       } catch (error) {
-        console.error("Error fetching user:", error);
-        setUser(null);
+        console.error("Error fetching profile:", error);
+        setProfileUser(null);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUser();
+    fetchProfile();
   }, [uid]);
 
   const handleSaveProfile = async () => {
@@ -63,7 +62,7 @@ export default function Profile() {
         themeColor,
         bannerUrl: bannerUrlInput,
       });
-      setUser((prev) => ({
+      setProfileUser((prev) => ({
         ...prev,
         themeColor,
         bannerUrl: bannerUrlInput,
@@ -81,14 +80,14 @@ export default function Profile() {
       const userRef = doc(db, "users", uid);
       await updateDoc(userRef, { bio: newBio });
       setBio(newBio);
-      setUser((prev) => ({ ...prev, bio: newBio }));
+      setProfileUser((prev) => ({ ...prev, bio: newBio }));
     } catch (err) {
       console.error("Error saving bio:", err);
     }
   };
 
   if (loading) return <p>Loading...</p>;
-  if (!user) return <p>User not found.</p>;
+  if (!profileUser) return <p>User not found.</p>;
 
   return (
     <div
@@ -152,8 +151,8 @@ export default function Profile() {
         >
           <h2>Kudos</h2>
           <ul>
-            {user.kudos &&
-              Object.entries(user.kudos).map(([factionName, points]) => (
+            {profileUser.kudos &&
+              Object.entries(profileUser.kudos).map(([factionName, points]) => (
                 <li key={factionName}>
                   <strong>{factionName}:</strong> {points}
                 </li>
@@ -163,9 +162,9 @@ export default function Profile() {
 
         {/* Profile info */}
         <div style={{ flex: "2" }}>
-          <h1 style={{ marginBottom: "0.5rem" }}>{user.name}</h1>
+          <h1 style={{ marginBottom: "0.5rem" }}>{profileUser.name}</h1>
           <p>
-            <strong>Faction:</strong> {user.faction}
+            <strong>Faction:</strong> {profileUser.faction}
           </p>
 
           {/* BioBox */}
