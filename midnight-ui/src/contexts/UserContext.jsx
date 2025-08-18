@@ -16,7 +16,6 @@ export const UserProvider = ({ children }) => {
   });
   const [loading, setLoading] = useState(!currentUser);
 
-  // Persist user in localStorage whenever it changes
   useEffect(() => {
     if (currentUser && currentUser.id) {
       localStorage.setItem("currentUser", JSON.stringify(currentUser));
@@ -27,7 +26,7 @@ export const UserProvider = ({ children }) => {
     }
   }, [currentUser]);
 
-  // Always fetch fresh data from Firebase if we have a UID
+  // Fetch fresh user info for the logged-in user
   useEffect(() => {
     const uid = localStorage.getItem("currentUserId");
     if (!uid) {
@@ -43,7 +42,7 @@ export const UserProvider = ({ children }) => {
         const snapshot = await getDoc(docRef);
         if (snapshot.exists()) {
           const data = snapshot.data();
-          data.id = uid; // ensure we always have an id field
+          data.id = uid; // ensure id exists
           setCurrentUser(data);
         } else {
           setCurrentUser(null);

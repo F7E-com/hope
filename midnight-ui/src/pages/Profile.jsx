@@ -9,6 +9,7 @@ import { useUser } from "../contexts/UserContext";
 export default function Profile() {
   const { uid } = useParams();
   const { currentUser } = useUser();
+  const [profileUser, setProfileUser] = useState(null); // the user whose profile page you are viewing
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
