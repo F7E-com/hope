@@ -1,3 +1,4 @@
+// Profile.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -15,6 +16,10 @@ export default function Profile() {
   const [bio, setBio] = useState("");
   const [themeColor, setThemeColor] = useState("#222222");
   const [bannerUrl, setBannerUrl] = useState("");
+
+  const [bannerUrlInput, setBannerUrlInput] = useState(""); // live edit
+  const [bannerPreview, setBannerPreview] = useState(themeColor); // show preview while editing
+
   const [editing, setEditing] = useState(false);
 
   const isOwner = currentUser?.id === uid;
@@ -33,6 +38,8 @@ export default function Profile() {
           setBio(data.bio || "");
           setThemeColor(data.themeColor || "#222222");
           setBannerUrl(data.bannerUrl || "");
+          setBannerUrlInput(data.bannerUrl || "");
+          setBannerPreview(data.bannerUrl || data.themeColor || "#222222");
         } else {
           setUser(null);
         }
@@ -51,8 +58,16 @@ export default function Profile() {
     if (!uid) return;
     try {
       const userRef = doc(db, "users", uid);
-      await updateDoc(userRef, { themeColor, bannerUrl });
-      setUser((prev) => ({ ...prev, themeColor, bannerUrl }));
+      await updateDoc(userRef, {
+        themeColor,
+        bannerUrl: bannerUrlInput,
+      });
+      setUser((prev) => ({
+        ...prev,
+        themeColor,
+        bannerUrl: bannerUrlInput,
+      }));
+      setBannerPreview(bannerUrlInput);
       setEditing(false);
     } catch (err) {
       console.error("Error saving profile:", err);
@@ -92,8 +107,8 @@ export default function Profile() {
           height: "200px",
           borderRadius: "12px",
           marginBottom: "1rem",
-          backgroundColor: !bannerUrl ? themeColor : undefined,
-          backgroundImage: bannerUrl ? `url(${bannerUrl})` : undefined,
+          backgroundColor: !bannerPreview ? themeColor : undefined,
+          backgroundImage: bannerPreview ? `url(${bannerPreview})` : undefined,
           backgroundSize: "cover",
           backgroundPosition: "center",
           position: "relative",
@@ -103,8 +118,11 @@ export default function Profile() {
           <input
             type="text"
             placeholder="Banner Image URL"
-            value={bannerUrl}
-            onChange={(e) => setBannerUrl(e.target.value)}
+            value={bannerUrlInput}
+            onChange={(e) => {
+              setBannerUrlInput(e.target.value);
+              setBannerPreview(e.target.value); // live preview
+            }}
             style={{
               position: "absolute",
               bottom: "10px",
@@ -122,7 +140,7 @@ export default function Profile() {
 
       {/* Two-column layout */}
       <div style={{ display: "flex", gap: "2rem" }}>
-        {/* Kudos box (left) */}
+        {/* Kudos box */}
         <div
           style={{
             flex: "1",
@@ -142,13 +160,14 @@ export default function Profile() {
           </ul>
         </div>
 
-        {/* Profile info (right) */}
+        {/* Profile info */}
         <div style={{ flex: "2" }}>
           <h1 style={{ marginBottom: "0.5rem" }}>{user.name}</h1>
           <p>
             <strong>Faction:</strong> {user.faction}
           </p>
 
+          {/* BioBox */}
           <BioBox
             initialBio={bio}
             editable={isOwner}
@@ -156,6 +175,7 @@ export default function Profile() {
             themeColor={themeColor}
           />
 
+          {/* Owner-only buttons */}
           {isOwner && !editing && (
             <button
               onClick={() => setEditing(true)}
