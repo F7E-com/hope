@@ -238,6 +238,7 @@ export default function CreatorPage() {
             <option value="image">Image</option>
             <option value="youtube">YouTube</option>
             <option value="video">Video</option>
+            <option value="gdrive">GDrive</option>
           </select>
           <textarea
             placeholder="Description"

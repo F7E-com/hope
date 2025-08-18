@@ -9,7 +9,7 @@ export default function MediaViewer({ type, src, title = "" }) {
         <div className="media-container youtube">
           <iframe
             className="youtube-embed"
-            src={`https://www.youtube.com/embed/${src}`}
+            src={src}
             title={title}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
@@ -17,12 +17,12 @@ export default function MediaViewer({ type, src, title = "" }) {
         </div>
       );
 
-    case "drive":
+    case "gdrive":
       return (
         <div className="media-container drive">
           <iframe
             className="drive-embed"
-            src={`https://drive.google.com/file/d/${src}/preview`}
+            src={src}
             title={title}
             allow="autoplay"
             allowFullScreen
