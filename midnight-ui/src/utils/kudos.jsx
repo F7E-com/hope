@@ -1,5 +1,5 @@
 import { doc, getDoc, updateDoc, increment, collection, getDocs } from "firebase/firestore";
-import { db } from "firebase";
+import { db } from "./firebase";
 
 /**
  * Adds kudos to a specific user, credited to a specific faction.
