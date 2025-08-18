@@ -6,26 +6,28 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(() => {
-    // Try to read cached user from localStorage
-    const saved = localStorage.getItem("currentUser");
-    return saved ? JSON.parse(saved) : null;
+    try {
+      const saved = localStorage.getItem("currentUser");
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      localStorage.removeItem("currentUser");
+      return null;
+    }
   });
-  const [loading, setLoading] = useState(!currentUser); // if we have cached user, no need to load immediately
+  const [loading, setLoading] = useState(!currentUser);
 
-  // Whenever currentUser changes, cache or remove it
+  // Persist user in localStorage whenever it changes
   useEffect(() => {
-    if (currentUser) {
+    if (currentUser && currentUser.id) {
       localStorage.setItem("currentUser", JSON.stringify(currentUser));
-      if (currentUser.id) {
-        localStorage.setItem("currentUserId", currentUser.id);
-      }
+      localStorage.setItem("currentUserId", currentUser.id);
     } else {
       localStorage.removeItem("currentUser");
       localStorage.removeItem("currentUserId");
     }
   }, [currentUser]);
 
-  // Pull user from Firebase if we have a UID in localStorage
+  // Always fetch fresh data from Firebase if we have a UID
   useEffect(() => {
     const uid = localStorage.getItem("currentUserId");
     if (!uid) {
@@ -40,7 +42,9 @@ export const UserProvider = ({ children }) => {
         const docRef = doc(db, "users", uid);
         const snapshot = await getDoc(docRef);
         if (snapshot.exists()) {
-          setCurrentUser(snapshot.data());
+          const data = snapshot.data();
+          data.id = uid; // ensure we always have an id field
+          setCurrentUser(data);
         } else {
           setCurrentUser(null);
         }
@@ -62,5 +66,4 @@ export const UserProvider = ({ children }) => {
   );
 };
 
-// Custom hook for easier access
 export const useUser = () => useContext(UserContext);
