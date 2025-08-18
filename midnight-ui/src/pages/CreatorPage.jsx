@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { doc, getDoc, collection, getDocs, addDoc } from "firebase/firestore";
 import { db } from "@/utils/firebase";
 import { useUser } from "../contexts/UserContext";
-import ContentModule from "../components/ContentModule";
+import ContentModule from "../components/modules/ContentModule";
 import { THEMES } from "../themes/ThemeIndex";
 
 export default function CreatorPage() {
