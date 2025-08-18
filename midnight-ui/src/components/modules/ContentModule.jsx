@@ -1,40 +1,44 @@
 // ContentModule.jsx
-import React, { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../utils/firebase";
+import React from "react";
 import MediaViewer from "../MediaViewer";
 import LikeButton from "../LikeButton";
+import { THEMES } from "../../themes/ThemeIndex";
 
-export default function ContentModule({ postId }) {
-  const [content, setContent] = useState(null);
+export default function ContentModule({ post, currentUser }) {
+  if (!post) return <p>Loading...</p>;
 
-  useEffect(() => {
-    async function fetchContent() {
-      const ref = doc(db, "posts", postId);
-      const snap = await getDoc(ref);
-      if (snap.exists()) setContent(snap.data());
-    }
-    fetchContent();
-  }, [postId]);
-
-  if (!content) return <p>Loading...</p>;
+  const theme = THEMES[post.themeId] || { preview: { background: "#222", color: "#fff" } };
 
   return (
-    <div className="content-module">
-      <h4>
-        {content.title} by{" "}
-        <a href={`/profile/${content.creatorId}`}>{content.creatorName}</a>
+    <div
+      className="content-module"
+      style={{
+        backgroundColor: theme.preview.background,
+        color: theme.preview.color,
+        fontFamily: theme.fontFamily || "inherit",
+        borderRadius: "8px",
+        padding: "1rem",
+        transition: "all 0.3s ease",
+      }}
+    >
+      <h4 style={{ marginBottom: "0.5rem" }}>
+        {post.title} by{" "}
+        <a
+          href={`/profile/${post.creatorId}`}
+          style={{ color: theme.preview.color, textDecoration: "underline" }}
+        >
+          {post.creatorName}
+        </a>
       </h4>
 
-      <MediaViewer type={content.mediaType} src={content.mediaSrc} />
+      <MediaViewer type={post.mediaType} src={post.mediaSrc} />
 
-      {content.description && (
-        <p className="content-description">{content.description}</p>
-      )}
+      {post.description && <p className="content-description">{post.description}</p>}
 
       <LikeButton
-        contentCreatorId={content.creatorId}
-        contentCreatorFaction={content.creatorFaction}
+        contentCreatorId={post.creatorId}
+        contentCreatorFaction={post.creatorFaction}
+        currentUser={currentUser}
       />
     </div>
   );

@@ -4,6 +4,7 @@ import Home from "./midnight-ui/src/pages/Home";
 import NewUser from "./midnight-ui/src/pages/NewUser";
 import ActiveProjects from "./midnight-ui/src/pages/ActiveProjects";
 import Profile from "./midnight-ui/src/pages/Profile";
+import CreatorPage from "./midnight-ui/src/pages/CreatorPage";
 import { UserProvider } from "./midnight-ui/src/contexts/UserContext";
 
 export default function App() {
@@ -18,6 +19,7 @@ export default function App() {
             <Route path="new-user" element={<NewUser />} />
             <Route path="profile/:uid" element={<Profile />} />
             <Route path="active-projects" element={<ActiveProjects />} />
+            <Route path="creator-page" element={<CreatorPage />} />
           </Route>
         </Routes>
       </Router>

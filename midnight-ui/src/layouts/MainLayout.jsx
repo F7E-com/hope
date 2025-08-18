@@ -69,9 +69,8 @@ export default function MainLayout() {
               ) : (
                 <span style={{ color: "gray" }}>Profile (login first)</span>
               )}
-              <Link to="/active-projects" style={{ color: "red" }}>
-                Active Projects
-              </Link>
+              <Link to="/creator-page"> Creator Page </Link>
+              <Link to="/active-projects" style={{ color: "red" }}></Link>
             </>
           )}
           {activePopup === "menu" && (
