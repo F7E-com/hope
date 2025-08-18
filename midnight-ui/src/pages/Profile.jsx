@@ -21,42 +21,45 @@ export default function Profile() {
 
   const isOwner = currentUser?.id === uid;
 
-  const unlocked = data.unlockedThemes || Object.keys(FACTION_THEMES);
-  setProfileUser({ ...data, unlockedThemes: unlocked });
-
 
   useEffect(() => {
-    if (!uid) return;
+  if (!uid) return;
 
-    setProfileUser(null);
-    setLoading(true);
+  setProfileUser(null);
+  setLoading(true);
 
-    const fetchProfile = async () => {
-      try {
-        const userRef = doc(db, "users", uid);
-        const snapshot = await getDoc(userRef);
+  const fetchProfile = async () => {
+    try {
+      const userRef = doc(db, "users", uid);
+      const snapshot = await getDoc(userRef);
 
-        if (snapshot.exists()) {
-          const data = snapshot.data();
-          data.id = uid;
-          setProfileUser(data);
-          setThemeColor(data.themeColor || "#222222");
-          setBannerUrlInput(data.bannerUrl || "");
-          setBannerPreview(data.bannerUrl || data.themeColor || "#222222");
-          setSelectedTheme(data.themeId || "none");
-        } else {
-          setProfileUser(null);
-        }
-      } catch (error) {
-        console.error("Error fetching profile:", error);
+      if (snapshot.exists()) {
+        const data = snapshot.data();
+        data.id = uid;
+
+        // Ensure unlockedThemes exists
+        const unlocked = data.unlockedThemes || Object.keys(FACTION_THEMES);
+        data.unlockedThemes = unlocked;
+
+        setProfileUser(data);
+        setThemeColor(data.themeColor || "#222222");
+        setBannerUrlInput(data.bannerUrl || "");
+        setBannerPreview(data.bannerUrl || data.themeColor || "#222222");
+        setSelectedTheme(data.themeId || "none");
+      } else {
         setProfileUser(null);
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      setProfileUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchProfile();
-  }, [uid]);
+  fetchProfile();
+}, [uid]);
+
 
   const handleSaveProfile = async () => {
     if (!uid) return;
