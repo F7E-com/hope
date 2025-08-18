@@ -5,8 +5,8 @@ import { db } from "@/utils/firebase";
 import BioBox from "../components/BioBox";
 import { useUser } from "../contexts/UserContext";
 import ThemePicker from "../components/modules/ThemePicker";
-import { THEMES } from "../themes/ThemeIndex"; // updated
 import "../themes/Vale.css"; // import all theme CSS files here
+import { THEMES } from "../themes/ThemeIndex"; // your new theme index
 
 export default function Profile() {
   const { uid } = useParams();
@@ -94,10 +94,9 @@ export default function Profile() {
   if (loading) return <p>Loading...</p>;
   if (!profileUser) return <p>User not found.</p>;
 
-  const activeTheme =
-    selectedTheme !== "none" && THEMES[selectedTheme]
-      ? THEMES[selectedTheme]
-      : { preview: {}, name: "Default" };
+  const activeTheme = THEMES[selectedTheme] || {
+    preview: { background: themeColor, color: "#fff" },
+  };
 
   const backgroundStyle = {
     backgroundColor: activeTheme.preview?.background || themeColor,
@@ -212,7 +211,7 @@ export default function Profile() {
                 />
               </label>
 
-              {/* ThemePicker from ThemeIndex */}
+              {/* ThemePicker pulling from THEMES */}
               <ThemePicker
                 unlockedThemes={Object.entries(THEMES).map(([id, theme]) => ({
                   id,
@@ -220,8 +219,8 @@ export default function Profile() {
                   className: theme.className,
                   preview: theme.preview,
                 }))}
-                selectedTheme={selectedTheme}
-                onChange={setSelectedTheme}
+                selectedTheme={selectedTheme || "none"}
+                onChange={(themeId) => setSelectedTheme(themeId)}
               />
 
               <button
