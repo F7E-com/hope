@@ -5,6 +5,7 @@ import { db } from "@/utils/firebase";
 import BioBox from "../components/BioBox";
 import { useUser } from "../contexts/UserContext";
 import ThemePicker from "../components/modules/ThemePicker";
+import ThemePickerDropdown from "../components/modules/ThemePickerDropdown";
 import "../themes/Vale.css"; // import all theme CSS files here
 import { THEMES } from "../themes/ThemeIndex"; // your new theme index
 
@@ -212,10 +213,12 @@ export default function Profile() {
               </label>
 
               {/* ThemePicker pulling from THEMES */}
-              <ThemePicker
+              <ThemePickerDropdown
                 unlockedThemes={profileUser.unlockedThemes || Object.keys(FACTION_THEMES)}
                 selectedTheme={selectedTheme}
                 onChange={setSelectedTheme}
+                customColor={themeColor}
+                onCustomColorChange={setThemeColor}
               />
 
 
