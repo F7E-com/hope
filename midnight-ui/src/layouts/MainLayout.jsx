@@ -69,7 +69,13 @@ export default function MainLayout() {
               ) : (
                 <span style={{ color: "gray" }}>Profile (login first)</span>
               )}
-              <Link to={`/creator-page/${user.id}`}>View Profile</Link>
+              
+              {currentUser ? (
+                <Link to={`/creator-page/${currentUser.id}`}>View Creator Page</Link>
+              ) : (
+                <span style={{ color: "gray" }}>View Creator Page (login first)</span>
+              )}
+              
               <Link to="/active-projects" style={{ color: "red" }}></Link>
             </>
           )}
