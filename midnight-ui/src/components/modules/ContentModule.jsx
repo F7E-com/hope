@@ -1,20 +1,41 @@
-import React from "react";
-import LikeButton from "./LikeButton";
-import { factionIcons } from "../constants/factionIcons";
+// ContentModule.jsx
+import React, { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../utils/firebase";
+import MediaViewer from "../MediaViewer";
+import LikeButton from "../LikeButton";
 
-function ContentModule({ content }) {
+export default function ContentModule({ postId }) {
+  const [content, setContent] = useState(null);
+
+  useEffect(() => {
+    async function fetchContent() {
+      const ref = doc(db, "posts", postId);
+      const snap = await getDoc(ref);
+      if (snap.exists()) setContent(snap.data());
+    }
+    fetchContent();
+  }, [postId]);
+
+  if (!content) return <p>Loading...</p>;
+
   return (
-    <div className="content-module p-4 border rounded-md shadow-sm bg-white">
-      <h2 className="text-xl font-bold mb-2">{content.title}</h2>
-      <p className="mb-4">{content.body}</p>
+    <div className="content-module">
+      <h4>
+        {content.title} by{" "}
+        <a href={`/profile/${content.creatorId}`}>{content.creatorName}</a>
+      </h4>
+
+      <MediaViewer type={content.mediaType} src={content.mediaSrc} />
+
+      {content.description && (
+        <p className="content-description">{content.description}</p>
+      )}
 
       <LikeButton
         contentCreatorId={content.creatorId}
         contentCreatorFaction={content.creatorFaction}
-        icon={factionIcons[content.creatorFaction]}
       />
     </div>
   );
 }
-
-export default ContentModule;
