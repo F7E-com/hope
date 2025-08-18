@@ -162,6 +162,7 @@ export default function CreatorPage() {
           {creatorData.name}
         </h1>
         <br />
+        <br />
 
         {/* Theme picker dropdown */}
           <ThemePickerDropdown
@@ -171,6 +172,7 @@ export default function CreatorPage() {
             customColor={customColor}
             onCustomColorChange={(color) => setCustomColor(color)}
           />
+          <br />
           <br />
 
           {/* Banner URL input */}
