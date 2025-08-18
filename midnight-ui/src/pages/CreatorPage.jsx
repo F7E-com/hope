@@ -208,8 +208,8 @@ export default function CreatorPage() {
 
       {/* Edit creator profile theme/banner */}
       {isOwner && (
-        <div style={{ marginBottom: "2rem", padding: "1rem", border: "1px solid #555", borderRadius: "8px", background: "#111" }}>
-          <h3>Edit Creator Theme & Banner</h3>
+        <div style={{ marginBottom: "2rem", padding: "1rem", border: "1px solid #3e3d3dff", borderRadius: "8px", background: "#111" }}>
+          <h3 style={{ color: pageThemeId === "custom" ? pageCustomColor : "#fff" }}>Edit Creator Theme & Banner</h3>
           <ThemePickerDropdown
             unlockedThemes={Object.keys(THEMES)}
             selectedTheme={pageThemeId}
@@ -234,7 +234,7 @@ export default function CreatorPage() {
             style={{ color: "#000", width: "100%", marginTop: "0.5rem" }}
           />
           <br />
-          <button onClick={savePageTheme} style={{ marginTop: "0.5rem" }}>
+          <button onClick={savePageTheme} style={{ marginTop: "0.5rem", color: pageThemeId === "custom" ? pageCustomColor : "#fff"}}>
             Save Theme & Banner
           </button>
         </div>
