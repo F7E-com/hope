@@ -4,12 +4,13 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/utils/firebase";
 import BioBox from "../components/BioBox";
 import { useUser } from "../contexts/UserContext";
+import { FACTION_THEMES } from "../themes"; // your faction definitions
 
 export default function Profile() {
   const { uid } = useParams();
   const { currentUser } = useUser();
 
-  const [profileUser, setProfileUser] = useState(null); // user being viewed
+  const [profileUser, setProfileUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const [themeColor, setThemeColor] = useState("#222222");
@@ -17,6 +18,7 @@ export default function Profile() {
   const [bannerUrlInput, setBannerUrlInput] = useState("");
   const [bannerPreview, setBannerPreview] = useState("#222222");
 
+  const [selectedTheme, setSelectedTheme] = useState("none"); // New: faction theme
   const [editing, setEditing] = useState(false);
 
   const isOwner = currentUser?.id === uid;
@@ -24,7 +26,6 @@ export default function Profile() {
   useEffect(() => {
     if (!uid) return;
 
-    // Reset state whenever uid changes
     setProfileUser(null);
     setLoading(true);
 
@@ -41,6 +42,7 @@ export default function Profile() {
           setBannerUrl(data.bannerUrl || "");
           setBannerUrlInput(data.bannerUrl || "");
           setBannerPreview(data.bannerUrl || data.themeColor || "#222222");
+          setSelectedTheme(data.themeId || "none");
         } else {
           setProfileUser(null);
         }
@@ -62,11 +64,13 @@ export default function Profile() {
       await updateDoc(userRef, {
         themeColor,
         bannerUrl: bannerUrlInput,
+        themeId: selectedTheme,
       });
       setProfileUser((prev) => ({
         ...prev,
         themeColor,
         bannerUrl: bannerUrlInput,
+        themeId: selectedTheme,
       }));
       setBannerPreview(bannerUrlInput);
       setEditing(false);
@@ -80,7 +84,7 @@ export default function Profile() {
     try {
       const userRef = doc(db, "users", uid);
       await updateDoc(userRef, { bio: newBio });
-      setProfileUser((prev) => ({ ...prev, bio: newBio })); // update viewed profile
+      setProfileUser((prev) => ({ ...prev, bio: newBio }));
     } catch (err) {
       console.error("Error saving bio:", err);
     }
@@ -89,17 +93,15 @@ export default function Profile() {
   if (loading) return <p>Loading...</p>;
   if (!profileUser) return <p>User not found.</p>;
 
+  // Compute background style based on theme or fallback to color
+  const activeTheme = selectedTheme !== "none" ? FACTION_THEMES[selectedTheme] : null;
+  const backgroundStyle = {
+    backgroundColor: activeTheme ? activeTheme.colors.background : themeColor,
+    color: activeTheme ? activeTheme.colors.text : "#fff",
+  };
+
   return (
-    <div
-      style={{
-        maxWidth: "900px",
-        margin: "2rem auto",
-        padding: "1rem",
-        background: "#111",
-        color: "#fff",
-        borderRadius: "12px",
-      }}
-    >
+    <div style={{ maxWidth: "900px", margin: "2rem auto", padding: "1rem", borderRadius: "12px", ...backgroundStyle }}>
       {/* Banner */}
       <div
         style={{
@@ -121,7 +123,7 @@ export default function Profile() {
             value={bannerUrlInput}
             onChange={(e) => {
               setBannerUrlInput(e.target.value);
-              setBannerPreview(e.target.value); // live preview
+              setBannerPreview(e.target.value);
             }}
             style={{
               position: "absolute",
@@ -140,34 +142,21 @@ export default function Profile() {
 
       {/* Two-column layout */}
       <div style={{ display: "flex", gap: "2rem" }}>
-        {/* Kudos box */}
-        <div
-          style={{
-            flex: "1",
-            background: "#222",
-            padding: "1rem",
-            borderRadius: "8px",
-          }}
-        >
+        <div style={{ flex: "1", background: "#222", padding: "1rem", borderRadius: "8px" }}>
           <h2>Kudos</h2>
           <ul>
-            {profileUser.kudos &&
-              Object.entries(profileUser.kudos).map(([factionName, points]) => (
-                <li key={factionName}>
-                  <strong>{factionName}:</strong> {points}
-                </li>
-              ))}
+            {profileUser.kudos && Object.entries(profileUser.kudos).map(([factionName, points]) => (
+              <li key={factionName}>
+                <strong>{factionName}:</strong> {points}
+              </li>
+            ))}
           </ul>
         </div>
 
-        {/* Profile info */}
         <div style={{ flex: "2" }}>
           <h1 style={{ marginBottom: "0.5rem" }}>{profileUser.name}</h1>
-          <p>
-            <strong>Faction:</strong> {profileUser.faction}
-          </p>
+          <p><strong>Faction:</strong> {profileUser.faction}</p>
 
-          {/* BioBox */}
           <BioBox
             initialBio={profileUser.bio || ""}
             isOwner={isOwner}
@@ -176,20 +165,8 @@ export default function Profile() {
             themeColor={themeColor}
           />
 
-          {/* Owner-only buttons */}
           {isOwner && !editing && (
-            <button
-              onClick={() => setEditing(true)}
-              style={{
-                marginTop: "0.5rem",
-                padding: "0.5rem 1rem",
-                background: "#444",
-                color: "#fff",
-                border: "none",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
-            >
+            <button onClick={() => setEditing(true)} style={{ marginTop: "0.5rem", padding: "0.5rem 1rem", background: "#444", color: "#fff", border: "none", borderRadius: "4px", cursor: "pointer" }}>
               Edit Profile
             </button>
           )}
@@ -198,39 +175,23 @@ export default function Profile() {
             <div style={{ marginTop: "1rem" }}>
               <label>
                 Theme Color:{" "}
-                <input
-                  type="color"
-                  value={themeColor}
-                  onChange={(e) => setThemeColor(e.target.value)}
-                />
+                <input type="color" value={themeColor} onChange={(e) => setThemeColor(e.target.value)} />
               </label>
               <br />
-              <button
-                onClick={handleSaveProfile}
-                style={{
-                  marginTop: "0.5rem",
-                  padding: "0.5rem 1rem",
-                  background: "#444",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                }}
-              >
+              <label>
+                Theme:{" "}
+                <select value={selectedTheme} onChange={(e) => setSelectedTheme(e.target.value)}>
+                  <option value="none">None (use color)</option>
+                  {Object.values(FACTION_THEMES).map((theme) => (
+                    <option key={theme.id} value={theme.id}>{theme.name}</option>
+                  ))}
+                </select>
+              </label>
+              <br />
+              <button onClick={handleSaveProfile} style={{ marginTop: "0.5rem", padding: "0.5rem 1rem", background: "#444", color: "#fff", border: "none", borderRadius: "4px", cursor: "pointer" }}>
                 Save Profile
               </button>
-              <button
-                onClick={() => setEditing(false)}
-                style={{
-                  marginLeft: "0.5rem",
-                  padding: "0.5rem 1rem",
-                  background: "gray",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                }}
-              >
+              <button onClick={() => setEditing(false)} style={{ marginLeft: "0.5rem", padding: "0.5rem 1rem", background: "gray", color: "#fff", border: "none", borderRadius: "4px", cursor: "pointer" }}>
                 Cancel
               </button>
             </div>
