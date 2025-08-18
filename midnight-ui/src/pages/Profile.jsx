@@ -4,7 +4,9 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/utils/firebase";
 import BioBox from "../components/BioBox";
 import { useUser } from "../contexts/UserContext";
-import { FACTION_THEMES } from "../themes"; // your new format
+import { FACTION_THEMES } from "../themes"; // master theme file
+import ThemePicker from "../components/ThemePicker/ThemePicker";
+import "../Themes/ValeTheme.css"; // import all theme CSS files here
 
 export default function Profile() {
   const { uid } = useParams();
@@ -222,24 +224,14 @@ export default function Profile() {
                   onChange={(e) => setThemeColor(e.target.value)}
                 />
               </label>
-              <br />
-              <label>
-                Theme:{" "}
-                <select
-                  value={selectedTheme}
-                  onChange={(e) => setSelectedTheme(e.target.value)}
-                >
-                  {profileUser.unlockedThemes?.map((themeId) => {
-                    const theme = FACTION_THEMES[themeId];
-                    return theme ? (
-                      <option key={themeId} value={themeId}>
-                        {theme.name}
-                      </option>
-                    ) : null;
-                  })}
-                </select>
-              </label>
-              <br />
+
+              {/* ThemePicker replaces the old <select> */}
+              <ThemePicker
+                unlockedThemes={Object.keys(FACTION_THEMES)} // unlock all for now
+                selectedTheme={selectedTheme}
+                onChange={setSelectedTheme}
+              />
+
               <button
                 onClick={handleSaveProfile}
                 style={{
