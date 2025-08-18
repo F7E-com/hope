@@ -24,6 +24,37 @@ export default function Profile() {
 
   const isOwner = currentUser?.id === uid;
 
+  // inside your component, after `profileUser` etc.
+  const getActiveThemeStyles = () => {
+    const theme = THEMES[selectedTheme] || { preview: {}, className: "" };
+    return {
+      primaryColor: theme.preview.background || themeColor,
+      secondaryColor: theme.preview.color || "#fff",
+      fontFamily: theme.fontFamily || "inherit",
+      borderStyle: theme.borderStyle || "none",
+      bannerOverlay: theme.bannerOverlay || null,
+      buttonStyle: {
+        background: theme.preview.background || "#444",
+        color: theme.preview.color || "#fff",
+        border: theme.borderStyle || "1px solid #666",
+        borderRadius: "6px",
+        padding: "0.5rem 1rem",
+        cursor: "pointer",
+        fontFamily: theme.fontFamily || "inherit",
+      },
+      inputStyle: {
+        background: theme.preview.background || "#222",
+        color: theme.preview.color || "#fff",
+        border: theme.borderStyle || "1px solid #555",
+        borderRadius: "6px",
+        padding: "0.3rem",
+        fontFamily: theme.fontFamily || "inherit",
+      },
+    };
+  };
+
+  const activeTheme = getActiveThemeStyles();
+
   useEffect(() => {
     if (!uid) return;
 
