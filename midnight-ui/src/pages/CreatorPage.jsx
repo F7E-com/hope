@@ -1,71 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { doc, getDoc, collection, getDocs, addDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs, addDoc } from "firebase/firestore";
 import { db } from "@/utils/firebase";
 import { useUser } from "../contexts/UserContext";
 import ContentModule from "../components/modules/ContentModule";
 import ThemePickerDropdown from "../components/modules/ThemePickerDropdown";
 import { THEMES } from "../themes/ThemeIndex";
-
-function CreatorBanner({ creatorData, selectedTheme, setSelectedTheme, isOwner, customColor, setCustomColor }) {
-  const [bannerUrl, setBannerUrl] = useState(creatorData?.banner || "");
-
-  const handleBannerChange = async () => {
-    if (!isOwner) return;
-    try {
-      await updateDoc(doc(db, "users", creatorData.id), { banner: bannerUrl });
-    } catch (err) {
-      console.error("Error updating banner:", err);
-    }
-  };
-
-  const bannerStyle = {
-    width: "100%",
-    height: "200px",
-    borderRadius: "12px",
-    display: "flex",
-    alignItems: "flex-end",
-    justifyContent: "center",
-    backgroundImage: bannerUrl ? `url(${bannerUrl})` : "none",
-    backgroundColor: "#333",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    color: selectedTheme?.preview?.color || "#fff",
-    fontFamily: selectedTheme?.fontFamily || "inherit",
-    position: "relative",
-    padding: "1rem",
-  };
-
-  return (
-    <div style={{ marginBottom: "1rem" }}>
-      <div style={bannerStyle}>
-        <h1 style={{ margin: 0, textShadow: "1px 1px 3px rgba(0,0,0,0.7)" }}>
-          {creatorData?.name || "Unknown Creator"}
-        </h1>
-      </div>
-      {isOwner && (
-        <div style={{ marginTop: "0.5rem", display: "flex", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
-          <input
-            type="text"
-            placeholder="Banner Image URL"
-            value={bannerUrl}
-            onChange={(e) => setBannerUrl(e.target.value)}
-            style={{ flex: "1 1 250px" }}
-          />
-          <button onClick={handleBannerChange}>Save Banner</button>
-
-          <ThemePickerDropdown
-            unlockedThemes={Object.keys(THEMES)}
-            selectedTheme={selectedTheme?.id || "none"}
-            onChange={(themeId) => setSelectedTheme(themeId === "none" ? null : THEMES[themeId])}
-            customColor={customColor}
-            onCustomColorChange={setCustomColor}
-          />
-        </div>
-      )}
-    </div>
-  );
-}
 
 export default function CreatorPage() {
   const { uid } = useParams();
@@ -79,11 +19,12 @@ export default function CreatorPage() {
     mediaType: "image",
     src: "",
     themeId: "none",
-    description: ""
+    description: "",
+    banner: "",
   });
 
-  const [pageTheme, setPageTheme] = useState(null);
-  const [customColor, setCustomColor] = useState(null);
+  const [pageTheme, setPageTheme] = useState("none");
+  const [customColor, setCustomColor] = useState("#ffffff");
 
   const isOwner = currentUser?.id === uid;
 
@@ -96,21 +37,27 @@ export default function CreatorPage() {
         const userSnap = await getDoc(doc(db, "users", uid));
         const safeCreatorData = userSnap.exists()
           ? {
-              id: uid,
               name: userSnap.data()?.name || "Unknown Creator",
               themeId: userSnap.data()?.themeId || "none",
               faction: userSnap.data()?.faction || "Unknown",
               bio: userSnap.data()?.bio || "",
               avatar: userSnap.data()?.avatar || "",
               banner: userSnap.data()?.banner || "",
-              ...userSnap.data()
+              ...userSnap.data(),
             }
-          : { id: uid, name: "Unknown Creator", themeId: "none", faction: "Unknown", bio: "", avatar: "", banner: "" };
+          : {
+              name: "Unknown Creator",
+              themeId: "none",
+              faction: "Unknown",
+              bio: "",
+              avatar: "",
+              banner: "",
+            };
 
         setCreatorData(safeCreatorData);
 
         const postsSnap = await getDocs(collection(db, "users", uid, "posts"));
-        const postList = postsSnap.docs.map(docSnap => {
+        const postList = postsSnap.docs.map((docSnap) => {
           const data = docSnap.data() || {};
           return {
             id: docSnap.id,
@@ -122,7 +69,7 @@ export default function CreatorPage() {
             mediaSrc: data.src || "",
             themeId: data.themeId || "none",
             description: data.description || "",
-            date: data.date || null
+            date: data.date || null,
           };
         });
         setPosts(postList);
@@ -135,10 +82,6 @@ export default function CreatorPage() {
 
     fetchCreator();
   }, [uid]);
-
-  const effectiveTheme = customColor
-    ? { preview: { background: customColor, color: "#fff" }, fontFamily: creatorData?.fontFamily || "inherit" }
-    : pageTheme || THEMES[creatorData?.themeId] || { preview: { background: "#222", color: "#fff" } };
 
   const handleNewPostSubmit = async () => {
     if (!isOwner) return;
@@ -154,12 +97,20 @@ export default function CreatorPage() {
           title: newPost.title || "Untitled",
           mediaType: newPost.mediaType || "image",
           mediaSrc: newPost.src || "",
-          themeId: effectiveTheme?.id || "none",
+          themeId: newPost.themeId || "none",
           description: newPost.description || "",
-          date: newPost.date || null
-        }
+          banner: newPost.banner || "",
+          date: newPost.date || null,
+        },
       ]);
-      setNewPost({ title: "", mediaType: "image", src: "", themeId: "none", description: "" });
+      setNewPost({
+        title: "",
+        mediaType: "image",
+        src: "",
+        themeId: "none",
+        description: "",
+        banner: "",
+      });
     } catch (err) {
       console.error("Error creating post:", err);
     }
@@ -168,6 +119,11 @@ export default function CreatorPage() {
   if (loading) return <p>Loading...</p>;
   if (!creatorData) return <p>Creator not found.</p>;
 
+  const theme =
+    pageTheme === "custom"
+      ? { preview: { background: customColor, color: "#000" } }
+      : THEMES[pageTheme] || THEMES[creatorData.themeId] || { preview: { background: "#222", color: "#fff" } };
+
   return (
     <div
       style={{
@@ -175,55 +131,121 @@ export default function CreatorPage() {
         margin: "2rem auto",
         padding: "1rem",
         borderRadius: "12px",
-        backgroundColor: effectiveTheme.preview.background,
-        color: effectiveTheme.preview.color,
-        fontFamily: effectiveTheme.fontFamily || "inherit",
+        backgroundColor: theme.preview.background,
+        color: theme.preview.color,
+        fontFamily: theme.fontFamily || "inherit",
       }}
     >
-      <CreatorBanner
-        creatorData={creatorData}
-        selectedTheme={effectiveTheme}
-        setSelectedTheme={setPageTheme}
-        customColor={customColor}
-        setCustomColor={setCustomColor}
-        isOwner={isOwner}
-      />
+      {/* Banner with creator name */}
+      <div
+        style={{
+          width: "100%",
+          height: "200px",
+          backgroundImage: `url(${creatorData.banner || ""})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          borderRadius: "8px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginBottom: "1rem",
+        }}
+      >
+        <h1
+          style={{
+            color: "#fff",
+            background: "rgba(0,0,0,0.4)",
+            padding: "0.5rem 1rem",
+            borderRadius: "6px",
+          }}
+        >
+          {creatorData.name}
+        </h1>
+      </div>
 
+      {/* Owner-only upload panel */}
       {isOwner && (
-        <div style={{ margin: "1rem 0", padding: "1rem", border: "1px solid #555", borderRadius: "8px" }}>
+        <div
+          style={{
+            margin: "1rem 0",
+            padding: "1rem",
+            border: "1px solid #555",
+            borderRadius: "8px",
+            background: "#111",
+          }}
+        >
           <h3>New Post</h3>
+          <br />
+
           <input
             type="text"
             placeholder="Title"
             value={newPost.title}
             onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
+            style={{ color: "#000" }}
           />
-          <br/><br/>
+          <br />
+          <br />
+
           <input
             type="text"
             placeholder="Media URL"
             value={newPost.src}
             onChange={(e) => setNewPost({ ...newPost, src: e.target.value })}
+            style={{ color: "#000" }}
           />
-          <br/><br/>
-          <select value={newPost.mediaType} onChange={(e) => setNewPost({ ...newPost, mediaType: e.target.value })}>
+          <br />
+          <br />
+
+          <select
+            value={newPost.mediaType}
+            onChange={(e) => setNewPost({ ...newPost, mediaType: e.target.value })}
+            style={{ color: "#000" }}
+          >
             <option value="image">Image</option>
             <option value="youtube">YouTube</option>
             <option value="video">Video</option>
           </select>
-          <br/><br/>
+          <br />
+          <br />
+
+          {/* Theme picker dropdown */}
+          <ThemePickerDropdown
+            unlockedThemes={Object.keys(THEMES)}
+            selectedTheme={newPost.themeId}
+            onChange={(value) => setNewPost({ ...newPost, themeId: value })}
+            customColor={customColor}
+            onCustomColorChange={(color) => setCustomColor(color)}
+          />
+          <br />
+
+          {/* Banner URL input */}
+          <input
+            type="text"
+            placeholder="Banner Image URL"
+            value={newPost.banner}
+            onChange={(e) => setNewPost({ ...newPost, banner: e.target.value })}
+            style={{ color: "#000" }}
+          />
+          <br />
+          <br />
+
           <textarea
             placeholder="Description"
             value={newPost.description}
             onChange={(e) => setNewPost({ ...newPost, description: e.target.value })}
+            style={{ color: "#000" }}
           />
-          <br/><br/>
+          <br />
+          <br />
+
           <button onClick={handleNewPostSubmit}>Upload</button>
         </div>
       )}
 
+      {/* Content list */}
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-        {posts.map(post => (
+        {posts.map((post) => (
           <ContentModule key={post.id} post={post} currentUser={currentUser} />
         ))}
       </div>
