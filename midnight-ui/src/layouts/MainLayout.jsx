@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import NavBar from "../components/NavBar";
+import NavBar from "../components/modules/NavBar";
 import { Link, Outlet } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
 

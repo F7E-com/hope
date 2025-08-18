@@ -1,6 +1,6 @@
 // src/components/ContentModules/ModuleWrapper.jsx
 import React from "react";
-import { useTheme } from "../../contexts/ThemeContext
+import { useTheme } from "../../contexts/ThemeContext";
 import '../../themes/ModuleWrapper'; // Base wrapper styles
 import '../../themes/Vale'; // Import all theme files
 
