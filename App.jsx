@@ -19,7 +19,7 @@ export default function App() {
             <Route path="new-user" element={<NewUser />} />
             <Route path="profile/:uid" element={<Profile />} />
             <Route path="active-projects" element={<ActiveProjects />} />
-            <Route path="creator-page" element={<CreatorPage />} />
+            <Route path="/creator-page/:uid" element={<CreatorPage />} />
           </Route>
         </Routes>
       </Router>
