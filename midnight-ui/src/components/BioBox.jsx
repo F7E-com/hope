@@ -6,7 +6,7 @@ import DOMPurify from "dompurify";
 export default function BioBox({
   initialBio = "",
   editable = false,
-  isOwner = false,   // new prop for profile ownership
+  isOwner = {isOwner},   // new prop for profile ownership
   onSave,
   themeColor = "#222222",
 }) {
@@ -87,7 +87,7 @@ export default function BioBox({
       ) : (
         <>
           {renderBio()}
-          {editable && isOwner && (
+          {editable && isOwner && !editing && (
             <button
               onClick={() => setEditing(true)}
               style={{ marginTop: "0.5rem", padding: "0.5rem 1rem" }}
