@@ -117,34 +117,45 @@ export default function CreatorPage() {
       {isOwner && (
         <div style={{ margin: "1rem 0", padding: "1rem", border: "1px solid #555", borderRadius: "8px" }}>
           <h3>New Post</h3>
+          <br/>
           <input
             type="text"
             placeholder="Title"
             value={newPost.title}
             onChange={e => setNewPost({ ...newPost, title: e.target.value })}
           />
+          <br/>
+          <br/>
           <input
             type="text"
             placeholder="Media URL"
             value={newPost.src}
             onChange={e => setNewPost({ ...newPost, src: e.target.value })}
           />
+          <br/>
+          <br/>
           <select value={newPost.mediaType} onChange={e => setNewPost({ ...newPost, mediaType: e.target.value })}>
             <option value="image">Image</option>
             <option value="youtube">YouTube</option>
             <option value="video">Video</option>
           </select>
+          <br/>
+          <br/>
           <select value={newPost.themeId} onChange={e => setNewPost({ ...newPost, themeId: e.target.value })}>
             <option value="none">Default</option>
             {Object.keys(THEMES).map(key => (
               <option key={key} value={key}>{THEMES[key].name}</option>
             ))}
           </select>
+          <br/>
+          <br/>
           <textarea
             placeholder="Description"
             value={newPost.description}
             onChange={e => setNewPost({ ...newPost, description: e.target.value })}
           />
+          <br/>
+          <br/>
           <button onClick={handleNewPostSubmit}>Upload</button>
         </div>
       )}
