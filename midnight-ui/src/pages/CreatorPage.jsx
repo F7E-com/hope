@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { doc, getDoc, collection, getDocs, addDoc } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs, addDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/utils/firebase";
 import { useUser } from "../contexts/UserContext";
 import ContentModule from "../components/modules/ContentModule";
@@ -14,6 +14,12 @@ export default function CreatorPage() {
   const [creatorData, setCreatorData] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // State for editing creator banner/theme
+  const [banner, setBanner] = useState("");
+  const [creatorTheme, setCreatorTheme] = useState("none");
+  const [customColor, setCustomColor] = useState("#ffffff");
+
   const [newPost, setNewPost] = useState({
     title: "",
     mediaType: "image",
@@ -22,9 +28,6 @@ export default function CreatorPage() {
     description: "",
     banner: "",
   });
-
-  const [pageTheme, setPageTheme] = useState("none");
-  const [customColor, setCustomColor] = useState("#ffffff");
 
   const isOwner = currentUser?.id === uid;
 
@@ -39,22 +42,14 @@ export default function CreatorPage() {
           ? {
               name: userSnap.data()?.name || "Unknown Creator",
               themeId: userSnap.data()?.themeId || "none",
-              faction: userSnap.data()?.faction || "Unknown",
-              bio: userSnap.data()?.bio || "",
-              avatar: userSnap.data()?.avatar || "",
               banner: userSnap.data()?.banner || "",
               ...userSnap.data(),
             }
-          : {
-              name: "Unknown Creator",
-              themeId: "none",
-              faction: "Unknown",
-              bio: "",
-              avatar: "",
-              banner: "",
-            };
+          : { name: "Unknown Creator", themeId: "none", banner: "" };
 
         setCreatorData(safeCreatorData);
+        setBanner(safeCreatorData.banner);
+        setCreatorTheme(safeCreatorData.themeId);
 
         const postsSnap = await getDocs(collection(db, "users", uid, "posts"));
         const postList = postsSnap.docs.map((docSnap) => {
@@ -63,7 +58,7 @@ export default function CreatorPage() {
             id: docSnap.id,
             creatorId: uid,
             creatorName: safeCreatorData.name,
-            creatorFaction: safeCreatorData.faction,
+            creatorFaction: safeCreatorData.faction || "Unknown",
             title: data.title || "Untitled",
             mediaType: data.mediaType || "image",
             mediaSrc: data.src || "",
@@ -116,13 +111,26 @@ export default function CreatorPage() {
     }
   };
 
+  const saveCreatorTheme = async () => {
+    if (!isOwner || !creatorData) return;
+    try {
+      await updateDoc(doc(db, "users", uid), {
+        themeId: creatorTheme,
+        banner: banner,
+      });
+      setCreatorData({ ...creatorData, themeId: creatorTheme, banner });
+    } catch (err) {
+      console.error("Error saving creator theme/banner:", err);
+    }
+  };
+
   if (loading) return <p>Loading...</p>;
   if (!creatorData) return <p>Creator not found.</p>;
 
   const theme =
-    pageTheme === "custom"
+    creatorTheme === "custom"
       ? { preview: { background: customColor, color: "#000" } }
-      : THEMES[pageTheme] || THEMES[creatorData.themeId] || { preview: { background: "#222", color: "#fff" } };
+      : THEMES[creatorTheme] || { preview: { background: "#222", color: "#fff" } };
 
   return (
     <div
@@ -141,7 +149,7 @@ export default function CreatorPage() {
         style={{
           width: "100%",
           height: "200px",
-          backgroundImage: `url(${creatorData.banner || ""})`,
+          backgroundImage: `url(${banner})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           borderRadius: "8px",
@@ -161,31 +169,42 @@ export default function CreatorPage() {
         >
           {creatorData.name}
         </h1>
-        <br />
-        <br />
-
-        {/* Theme picker dropdown */}
-          <ThemePickerDropdown
-            unlockedThemes={Object.keys(THEMES)}
-            selectedTheme={newPost.themeId}
-            onChange={(value) => setNewPost({ ...newPost, themeId: value })}
-            customColor={customColor}
-            onCustomColorChange={(color) => setCustomColor(color)}
-          />
-          <br />
-          <br />
-
-          {/* Banner URL input */}
-          <input
-            type="text"
-            placeholder="Banner Image URL"
-            value={newPost.banner}
-            onChange={(e) => setNewPost({ ...newPost, banner: e.target.value })}
-            style={{ color: "#000" }}
-          />
       </div>
 
-      {/* Owner-only upload panel */}
+      {isOwner && (
+        <div
+          style={{
+            marginBottom: "2rem",
+            padding: "1rem",
+            border: "1px solid #555",
+            borderRadius: "8px",
+            background: "#111",
+          }}
+        >
+          <h3>Edit Creator Theme & Banner</h3>
+          <ThemePickerDropdown
+            unlockedThemes={Object.keys(THEMES)}
+            selectedTheme={creatorTheme}
+            onChange={setCreatorTheme}
+            customColor={customColor}
+            onCustomColorChange={setCustomColor}
+          />
+          <br />
+          <input
+            type="text"
+            placeholder="Banner URL"
+            value={banner}
+            onChange={(e) => setBanner(e.target.value)}
+            style={{ color: "#000", width: "100%", marginTop: "0.5rem" }}
+          />
+          <br />
+          <button onClick={saveCreatorTheme} style={{ marginTop: "0.5rem" }}>
+            Save Theme & Banner
+          </button>
+        </div>
+      )}
+
+      {/* New post panel */}
       {isOwner && (
         <div
           style={{
@@ -197,49 +216,35 @@ export default function CreatorPage() {
           }}
         >
           <h3>New Post</h3>
-          <br />
-
           <input
             type="text"
             placeholder="Title"
             value={newPost.title}
             onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
-            style={{ color: "#000" }}
+            style={{ color: "#000", width: "100%", marginBottom: "0.5rem" }}
           />
-          <br />
-          <br />
-
           <input
             type="text"
             placeholder="Media URL"
             value={newPost.src}
             onChange={(e) => setNewPost({ ...newPost, src: e.target.value })}
-            style={{ color: "#000" }}
+            style={{ color: "#000", width: "100%", marginBottom: "0.5rem" }}
           />
-          <br />
-          <br />
-
           <select
             value={newPost.mediaType}
             onChange={(e) => setNewPost({ ...newPost, mediaType: e.target.value })}
-            style={{ color: "#000" }}
+            style={{ color: "#000", marginBottom: "0.5rem" }}
           >
             <option value="image">Image</option>
             <option value="youtube">YouTube</option>
             <option value="video">Video</option>
           </select>
-          <br />
-          <br />
-
           <textarea
             placeholder="Description"
             value={newPost.description}
             onChange={(e) => setNewPost({ ...newPost, description: e.target.value })}
-            style={{ color: "#000" }}
+            style={{ color: "#000", width: "100%", marginBottom: "0.5rem" }}
           />
-          <br />
-          <br />
-
           <button onClick={handleNewPostSubmit}>Upload</button>
         </div>
       )}
