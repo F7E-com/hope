@@ -1,3 +1,4 @@
+// Profile.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -9,14 +10,15 @@ export default function Profile() {
   const { uid } = useParams();
   const { currentUser } = useUser();
 
-  const [profileUser, setProfileUser] = useState(null); // the user whose profile page you are viewing
+  // the user whose profile page you are viewing
+  const [profileUser, setProfileUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const [themeColor, setThemeColor] = useState("#222222");
-  const [bannerUrl, setBannerUrl] = useState("");
 
-  const [bannerUrlInput, setBannerUrlInput] = useState(""); // live edit
-  const [bannerPreview, setBannerPreview] = useState(themeColor); // show preview while editing
+  // banner editing / preview
+  const [bannerUrlInput, setBannerUrlInput] = useState("");
+  const [bannerPreview, setBannerPreview] = useState("#222222");
 
   const [editing, setEditing] = useState(false);
 
@@ -32,12 +34,13 @@ export default function Profile() {
 
         if (snapshot.exists()) {
           const data = snapshot.data();
-          data.id = uid;
+          data.id = uid; // keep id on the loaded profile
           setProfileUser(data);
-          setThemeColor(data.themeColor || "#222222");
-          setBannerUrl(data.bannerUrl || "");
-          setBannerUrlInput(data.bannerUrl || "");
-          setBannerPreview(data.bannerUrl || data.themeColor || "#222222");
+          const color = data.themeColor || "#222222";
+          setThemeColor(color);
+          const banner = data.bannerUrl || "";
+          setBannerUrlInput(banner);
+          setBannerPreview(banner || color);
         } else {
           setProfileUser(null);
         }
@@ -65,7 +68,7 @@ export default function Profile() {
         themeColor,
         bannerUrl: bannerUrlInput,
       }));
-      setBannerPreview(bannerUrlInput);
+      setBannerPreview(bannerUrlInput || themeColor);
       setEditing(false);
     } catch (err) {
       console.error("Error saving profile:", err);
@@ -73,15 +76,15 @@ export default function Profile() {
   };
 
   const handleSaveBio = async (newBio) => {
-  if (!uid) return;
-  try {
-    const userRef = doc(db, "users", uid);
-    await updateDoc(userRef, { bio: newBio });
-    setUser((prev) => ({ ...prev, bio: newBio })); // update the profile data directly
-  } catch (err) {
-    console.error("Error saving bio:", err);
-  }
-};
+    if (!uid) return;
+    try {
+      const userRef = doc(db, "users", uid);
+      await updateDoc(userRef, { bio: newBio });
+      setProfileUser((prev) => ({ ...prev, bio: newBio })); // <-- update the displayed profile
+    } catch (err) {
+      console.error("Error saving bio:", err);
+    }
+  };
 
   if (loading) return <p>Loading...</p>;
   if (!profileUser) return <p>User not found.</p>;
@@ -117,8 +120,9 @@ export default function Profile() {
             placeholder="Banner Image URL"
             value={bannerUrlInput}
             onChange={(e) => {
-              setBannerUrlInput(e.target.value);
-              setBannerPreview(e.target.value); // live preview
+              const val = e.target.value;
+              setBannerUrlInput(val);
+              setBannerPreview(val || themeColor); // live preview / fallback
             }}
             style={{
               position: "absolute",
@@ -166,7 +170,7 @@ export default function Profile() {
 
           {/* BioBox */}
           <BioBox
-            initialBio={user.bio || ""}
+            initialBio={profileUser.bio || ""}        // <-- use profileUser here
             isOwner={isOwner}
             editable={isOwner}
             onSave={handleSaveBio}
@@ -217,7 +221,13 @@ export default function Profile() {
                 Save Profile
               </button>
               <button
-                onClick={() => setEditing(false)}
+                onClick={() => {
+                  // revert preview to saved values if cancel
+                  setBannerUrlInput(profileUser.bannerUrl || "");
+                  setBannerPreview(profileUser.bannerUrl || profileUser.themeColor || "#222222");
+                  setThemeColor(profileUser.themeColor || "#222222");
+                  setEditing(false);
+                }}
                 style={{
                   marginLeft: "0.5rem",
                   padding: "0.5rem 1rem",
