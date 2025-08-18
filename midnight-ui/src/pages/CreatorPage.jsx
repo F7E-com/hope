@@ -218,7 +218,7 @@ export default function CreatorPage() {
             onCustomColorChange={setPageCustomColor}
           />
           <label>
-                Theme Color:{" "}
+                   Custom Theme Color:{" "}
                 <input
                   type="color"
                   value={pageCustomColor}
@@ -297,6 +297,8 @@ export default function CreatorPage() {
             </div>
           )}
 
+          <br />
+          Post theme:  ->
           {/* Theme picker for posts */}
           <ThemePickerDropdown
             unlockedThemes={Object.keys(THEMES)}
