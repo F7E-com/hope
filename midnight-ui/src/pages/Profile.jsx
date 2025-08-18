@@ -1,4 +1,3 @@
-// Profile.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -10,13 +9,11 @@ export default function Profile() {
   const { uid } = useParams();
   const { currentUser } = useUser();
 
-  // the user whose profile page you are viewing
-  const [profileUser, setProfileUser] = useState(null);
+  const [profileUser, setProfileUser] = useState(null); // user being viewed
   const [loading, setLoading] = useState(true);
 
   const [themeColor, setThemeColor] = useState("#222222");
-
-  // banner editing / preview
+  const [bannerUrl, setBannerUrl] = useState("");
   const [bannerUrlInput, setBannerUrlInput] = useState("");
   const [bannerPreview, setBannerPreview] = useState("#222222");
 
@@ -27,6 +24,10 @@ export default function Profile() {
   useEffect(() => {
     if (!uid) return;
 
+    // Reset state whenever uid changes
+    setProfileUser(null);
+    setLoading(true);
+
     const fetchProfile = async () => {
       try {
         const userRef = doc(db, "users", uid);
@@ -34,13 +35,12 @@ export default function Profile() {
 
         if (snapshot.exists()) {
           const data = snapshot.data();
-          data.id = uid; // keep id on the loaded profile
+          data.id = uid;
           setProfileUser(data);
-          const color = data.themeColor || "#222222";
-          setThemeColor(color);
-          const banner = data.bannerUrl || "";
-          setBannerUrlInput(banner);
-          setBannerPreview(banner || color);
+          setThemeColor(data.themeColor || "#222222");
+          setBannerUrl(data.bannerUrl || "");
+          setBannerUrlInput(data.bannerUrl || "");
+          setBannerPreview(data.bannerUrl || data.themeColor || "#222222");
         } else {
           setProfileUser(null);
         }
@@ -68,7 +68,7 @@ export default function Profile() {
         themeColor,
         bannerUrl: bannerUrlInput,
       }));
-      setBannerPreview(bannerUrlInput || themeColor);
+      setBannerPreview(bannerUrlInput);
       setEditing(false);
     } catch (err) {
       console.error("Error saving profile:", err);
@@ -80,7 +80,7 @@ export default function Profile() {
     try {
       const userRef = doc(db, "users", uid);
       await updateDoc(userRef, { bio: newBio });
-      setProfileUser((prev) => ({ ...prev, bio: newBio })); // <-- update the displayed profile
+      setProfileUser((prev) => ({ ...prev, bio: newBio })); // update viewed profile
     } catch (err) {
       console.error("Error saving bio:", err);
     }
@@ -120,9 +120,8 @@ export default function Profile() {
             placeholder="Banner Image URL"
             value={bannerUrlInput}
             onChange={(e) => {
-              const val = e.target.value;
-              setBannerUrlInput(val);
-              setBannerPreview(val || themeColor); // live preview / fallback
+              setBannerUrlInput(e.target.value);
+              setBannerPreview(e.target.value); // live preview
             }}
             style={{
               position: "absolute",
@@ -170,7 +169,7 @@ export default function Profile() {
 
           {/* BioBox */}
           <BioBox
-            initialBio={profileUser.bio || ""}        // <-- use profileUser here
+            initialBio={profileUser.bio || ""}
             isOwner={isOwner}
             editable={isOwner}
             onSave={handleSaveBio}
@@ -221,13 +220,7 @@ export default function Profile() {
                 Save Profile
               </button>
               <button
-                onClick={() => {
-                  // revert preview to saved values if cancel
-                  setBannerUrlInput(profileUser.bannerUrl || "");
-                  setBannerPreview(profileUser.bannerUrl || profileUser.themeColor || "#222222");
-                  setThemeColor(profileUser.themeColor || "#222222");
-                  setEditing(false);
-                }}
+                onClick={() => setEditing(false)}
                 style={{
                   marginLeft: "0.5rem",
                   padding: "0.5rem 1rem",
