@@ -161,6 +161,26 @@ export default function CreatorPage() {
         >
           {creatorData.name}
         </h1>
+        <br />
+
+        {/* Theme picker dropdown */}
+          <ThemePickerDropdown
+            unlockedThemes={Object.keys(THEMES)}
+            selectedTheme={newPost.themeId}
+            onChange={(value) => setNewPost({ ...newPost, themeId: value })}
+            customColor={customColor}
+            onCustomColorChange={(color) => setCustomColor(color)}
+          />
+          <br />
+
+          {/* Banner URL input */}
+          <input
+            type="text"
+            placeholder="Banner Image URL"
+            value={newPost.banner}
+            onChange={(e) => setNewPost({ ...newPost, banner: e.target.value })}
+            style={{ color: "#000" }}
+          />
       </div>
 
       {/* Owner-only upload panel */}
@@ -206,27 +226,6 @@ export default function CreatorPage() {
             <option value="youtube">YouTube</option>
             <option value="video">Video</option>
           </select>
-          <br />
-          <br />
-
-          {/* Theme picker dropdown */}
-          <ThemePickerDropdown
-            unlockedThemes={Object.keys(THEMES)}
-            selectedTheme={newPost.themeId}
-            onChange={(value) => setNewPost({ ...newPost, themeId: value })}
-            customColor={customColor}
-            onCustomColorChange={(color) => setCustomColor(color)}
-          />
-          <br />
-
-          {/* Banner URL input */}
-          <input
-            type="text"
-            placeholder="Banner Image URL"
-            value={newPost.banner}
-            onChange={(e) => setNewPost({ ...newPost, banner: e.target.value })}
-            style={{ color: "#000" }}
-          />
           <br />
           <br />
 
