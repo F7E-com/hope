@@ -13,7 +13,13 @@ export default function CreatorPage() {
   const [creatorData, setCreatorData] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [newPost, setNewPost] = useState({ title: "", mediaType: "image", src: "", themeId: "none" });
+  const [newPost, setNewPost] = useState({
+    title: "",
+    mediaType: "image",
+    src: "",
+    themeId: "none",
+    description: ""
+  });
 
   const isOwner = currentUser?.id === uid;
 
@@ -24,37 +30,36 @@ export default function CreatorPage() {
       setLoading(true);
       try {
         const userSnap = await getDoc(doc(db, "users", uid));
-        if (userSnap.exists()) {
-          const userData = userSnap.data();
-          // Apply defaults for missing fields
-          const safeCreatorData = {
-            name: userData.name || "Unknown",
-            themeId: userData.themeId || "none",
-            faction: userData.faction || "Unknown",
-            ...userData
-          };
-          setCreatorData(safeCreatorData);
+        const safeCreatorData = userSnap.exists()
+          ? {
+              name: userSnap.data()?.name || "Unknown Creator",
+              themeId: userSnap.data()?.themeId || "none",
+              faction: userSnap.data()?.faction || "Unknown",
+              bio: userSnap.data()?.bio || "",
+              avatar: userSnap.data()?.avatar || "",
+              ...userSnap.data()
+            }
+          : { name: "Unknown Creator", themeId: "none", faction: "Unknown", bio: "", avatar: "" };
 
-          const postsSnap = await getDocs(collection(db, "users", uid, "posts"));
-          const postList = postsSnap.docs.map(docSnap => {
-            const data = docSnap.data();
-            return {
-              id: docSnap.id,
-              creatorId: uid,
-              creatorName: safeCreatorData.name,
-              creatorFaction: safeCreatorData.faction,
-              title: data.title || "Untitled",
-              mediaType: data.mediaType || "image",
-              mediaSrc: data.src || "",
-              themeId: data.themeId || "none",
-              description: data.description || ""
-            };
-          });
-          setPosts(postList);
-        } else {
-          setCreatorData({ name: "Unknown", themeId: "none", faction: "Unknown" });
-          setPosts([]);
-        }
+        setCreatorData(safeCreatorData);
+
+        const postsSnap = await getDocs(collection(db, "users", uid, "posts"));
+        const postList = postsSnap.docs.map(docSnap => {
+          const data = docSnap.data() || {};
+          return {
+            id: docSnap.id,
+            creatorId: uid,
+            creatorName: safeCreatorData.name,
+            creatorFaction: safeCreatorData.faction,
+            title: data.title || "Untitled",
+            mediaType: data.mediaType || "image",
+            mediaSrc: data.src || "",
+            themeId: data.themeId || "none",
+            description: data.description || "",
+            date: data.date || null
+          };
+        });
+        setPosts(postList);
       } catch (err) {
         console.error("Error fetching creator:", err);
       } finally {
@@ -74,16 +79,17 @@ export default function CreatorPage() {
         {
           id: postRef.id,
           creatorId: uid,
-          creatorName: creatorData?.name || "Unknown",
+          creatorName: creatorData?.name || "Unknown Creator",
           creatorFaction: creatorData?.faction || "Unknown",
           title: newPost.title || "Untitled",
-          mediaType: newPost.mediaType,
-          mediaSrc: newPost.src,
-          themeId: newPost.themeId,
-          description: newPost.description || ""
+          mediaType: newPost.mediaType || "image",
+          mediaSrc: newPost.src || "",
+          themeId: newPost.themeId || "none",
+          description: newPost.description || "",
+          date: newPost.date || null
         }
       ]);
-      setNewPost({ title: "", mediaType: "image", src: "", themeId: "none" });
+      setNewPost({ title: "", mediaType: "image", src: "", themeId: "none", description: "" });
     } catch (err) {
       console.error("Error creating post:", err);
     }
@@ -108,7 +114,6 @@ export default function CreatorPage() {
     >
       <h1>{creatorData.name}'s Content</h1>
 
-      {/* Owner-only upload panel */}
       {isOwner && (
         <div style={{ margin: "1rem 0", padding: "1rem", border: "1px solid #555", borderRadius: "8px" }}>
           <h3>New Post</h3>
@@ -135,11 +140,15 @@ export default function CreatorPage() {
               <option key={key} value={key}>{THEMES[key].name}</option>
             ))}
           </select>
+          <textarea
+            placeholder="Description"
+            value={newPost.description}
+            onChange={e => setNewPost({ ...newPost, description: e.target.value })}
+          />
           <button onClick={handleNewPostSubmit}>Upload</button>
         </div>
       )}
 
-      {/* Content list */}
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
         {posts.map(post => (
           <ContentModule key={post.id} post={post} currentUser={currentUser} />
