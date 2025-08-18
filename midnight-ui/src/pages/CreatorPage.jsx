@@ -40,11 +40,11 @@ export default function CreatorPage() {
         const userSnap = await getDoc(doc(db, "users", uid));
         const safeCreatorData = userSnap.exists()
           ? {
-              name: userSnap.data()?.name || "Unknown Creator",
-              themeId: userSnap.data()?.themeId || "none",
-              banner: userSnap.data()?.banner || "",
-              ...userSnap.data(),
-            }
+            name: userSnap.data()?.name || "Unknown Creator",
+            themeId: userSnap.data()?.themeId || "none",
+            banner: userSnap.data()?.banner || "",
+            ...userSnap.data(),
+          }
           : { name: "Unknown Creator", themeId: "none", banner: "" };
 
         setCreatorData(safeCreatorData);
@@ -240,6 +240,37 @@ export default function CreatorPage() {
             <option value="video">Video</option>
             <option value="gdrive">GDrive</option>
           </select>
+
+
+
+          {/* Conditional Instructions */}
+          {(newPost.mediaType === "youtube" || newPost.mediaType === "gdrive") && (
+            <div
+              style={{
+                marginTop: "0.5rem",
+                padding: "0.5rem 1rem",
+                backgroundColor: "#333",
+                color: "#fff",
+                borderRadius: "6px",
+                fontSize: "0.9rem",
+              }}
+            >
+              {newPost.mediaType === "youtube" && (
+                <p>
+                  To get the embed link for a YouTube video, click "Share" on the video, then "embed",
+                  then copy *just the link.* 
+                  It should look like this: "https://www.youtube.com/embed/lqZWO5K1xtA?si=iimdDkw2Jx-Gf9wP"
+                </p>
+              )}
+              {newPost.mediaType === "gdrive" && (
+                <p>
+                  Paste the "Share link" of your Google Drive file and make sure link sharing is enabled. <br />
+                  (Options -> Sharing -> Anyone with the link can view)
+                  Important! If you want to view in-page, find "view" in the link and change to "preview".
+                </p>
+              )}
+            </div>
+          )}
           <textarea
             placeholder="Description"
             value={newPost.description}
