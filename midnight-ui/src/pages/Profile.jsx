@@ -21,6 +21,10 @@ export default function Profile() {
 
   const isOwner = currentUser?.id === uid;
 
+  const unlocked = data.unlockedThemes || Object.keys(FACTION_THEMES);
+  setProfileUser({ ...data, unlockedThemes: unlocked });
+
+
   useEffect(() => {
     if (!uid) return;
 
