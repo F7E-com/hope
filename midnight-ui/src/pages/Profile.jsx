@@ -6,7 +6,7 @@ import BioBox from "../components/BioBox";
 import { useUser } from "../contexts/UserContext";
 import { FACTION_THEMES } from "../themes"; // master theme file
 import ThemePicker from "../components/modules/ThemePicker";
-import "../themes/Vale"; // import all theme CSS files here
+import "../themes/Vale.css"; // import all theme CSS files here
 
 export default function Profile() {
   const { uid } = useParams();
