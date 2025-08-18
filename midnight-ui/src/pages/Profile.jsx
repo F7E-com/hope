@@ -170,6 +170,7 @@ export default function Profile() {
           {/* BioBox */}
           <BioBox
             initialBio={bio}
+            isOwner={isOwner}
             editable={isOwner}
             onSave={handleSaveBio}
             themeColor={themeColor}

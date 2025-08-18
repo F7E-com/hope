@@ -6,7 +6,7 @@ import DOMPurify from "dompurify";
 export default function BioBox({
   initialBio = "",
   editable = false,
-  isOwner = {isOwner},   // new prop for profile ownership
+  isOwner = false,   // new prop for profile ownership
   onSave,
   themeColor = "#222222",
 }) {
