@@ -1,0 +1,10 @@
+/* src/themesModuleWrapper.css */
+
+/* Base wrapper styles applied to all modules */
+.module-wrapper {
+  padding: 1rem;
+  border-radius: 8px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  /* You can add default layout or shadow here if you want */
+}

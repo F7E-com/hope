@@ -1,0 +1,15 @@
+// src/components/ContentModules/ModuleWrapper.jsx
+import React from "react";
+import { useTheme } from "../../contexts/ThemeContext
+import '../../themes/ModuleWrapper'; // Base wrapper styles
+import '../../themes/Vale'; // Import all theme files
+
+export default function ModuleWrapper({ children }) {
+  const { selectedTheme } = useTheme(); // fetch user's theme
+
+  return (
+    <div className={`module-wrapper ${selectedTheme}`}>
+      {children}
+    </div>
+  );
+}

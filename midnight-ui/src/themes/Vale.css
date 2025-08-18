@@ -1,0 +1,33 @@
+/* src/themes/ValeTheme.css */
+
+/* Target modules using the 'vale' theme */
+.module-wrapper.vale {
+  background: linear-gradient(to bottom right, #1b2a2f, #2e3e3f);
+  color: #e6e2d3;
+  border: 2px solid rgba(182, 217, 182, 0.5);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5), 0 0 8px rgba(100, 255, 150, 0.15);
+  font-family: "Merriweather", serif;
+}
+
+/* Hover effect */
+.module-wrapper.vale:hover {
+  background: linear-gradient(to top right, #2a3b3f, #1f292b);
+  color: #f0ffe8;
+  transform: translateY(-2px);
+}
+
+/* Title inside the module */
+.module-wrapper.vale h2,
+.module-wrapper.vale .module-title {
+  font-family: "Cinzel Decorative", serif;
+  color: #c0ffd4;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.5), 0 0 6px rgba(144,238,144,0.5);
+  margin-bottom: 0.5rem;
+}
+
+/* Decorative flourish for titles */
+.module-wrapper.vale .module-title::after {
+  content: " ✦";
+  font-size: 1.2rem;
+  color: #a8ffc3;
+}
