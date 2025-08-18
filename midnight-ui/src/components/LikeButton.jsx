@@ -2,7 +2,7 @@
 import React from "react";
 import { addKudos, checkMilestones } from "../utils/Kudos";
 import { useUser } from "../contexts/UserContext";
-import { factionIcons } from "../constants/factionIcons";
+import { factionIcons } from "../assets/factionIcons";
 
 function LikeButton({ contentCreatorId, contentCreatorFaction }) {
   const { currentUser } = useUser();
