@@ -1,3 +1,4 @@
+// CreatorPage.jsx
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { doc, getDoc, collection, getDocs, addDoc, updateDoc, setDoc } from "firebase/firestore";
@@ -21,7 +22,7 @@ export default function CreatorPage() {
   const [creatorTheme, setCreatorTheme] = useState("none");
   const [customColor, setCustomColor] = useState("#ffffff");
 
-  // Page-specific theme
+  // CreatorPage-specific theme
   const [pageThemeId, setPageThemeId] = useState("none");
   const [pageCustomColor, setPageCustomColor] = useState("#ffffff");
 
@@ -41,6 +42,7 @@ export default function CreatorPage() {
     const fetchCreator = async () => {
       setLoading(true);
       try {
+        // User profile
         const userSnap = await getDoc(doc(db, "users", uid));
         const safeCreatorData = userSnap.exists()
           ? {
@@ -55,6 +57,7 @@ export default function CreatorPage() {
         setBanner(safeCreatorData.banner);
         setCreatorTheme(safeCreatorData.themeId);
 
+        // Creator posts
         const postsSnap = await getDocs(collection(db, "users", uid, "posts"));
         const postList = postsSnap.docs.map((docSnap) => {
           const data = docSnap.data() || {};
@@ -73,11 +76,11 @@ export default function CreatorPage() {
         });
         setPosts(postList);
 
-        // Load page-specific theme
+        // CreatorPage-specific theme
         const pageSnap = await getDoc(doc(db, "creatorPages", uid));
         if (pageSnap.exists()) {
           const pageData = pageSnap.data();
-          setPageThemeId(pageData.themeId || "none");
+          setPageThemeId(pageData.creatorPageThemeId || "none");
           setPageCustomColor(pageData.customColor || "#ffffff");
         }
       } catch (err) {
@@ -108,16 +111,21 @@ export default function CreatorPage() {
   const savePageTheme = async () => {
     if (!isOwner) return;
     try {
-      await setDoc(doc(db, "creatorPages", uid), {
-        themeId: pageThemeId,
-        customColor: pageCustomColor,
-      }, { merge: true });
+      await setDoc(
+        doc(db, "creatorPages", uid),
+        {
+          creatorPageThemeId: pageThemeId,
+          customColor: pageCustomColor,
+        },
+        { merge: true }
+      );
       alert("Page theme saved!");
     } catch (err) {
       console.error("Error saving page theme:", err);
     }
   };
 
+  // Create new post
   const handleNewPostSubmit = async () => {
     if (!isOwner) return;
     try {
@@ -200,15 +208,7 @@ export default function CreatorPage() {
 
       {/* Edit creator profile theme/banner */}
       {isOwner && (
-        <div
-          style={{
-            marginBottom: "2rem",
-            padding: "1rem",
-            border: "1px solid #555",
-            borderRadius: "8px",
-            background: "#111",
-          }}
-        >
+        <div style={{ marginBottom: "2rem", padding: "1rem", border: "1px solid #555", borderRadius: "8px", background: "#111" }}>
           <h3>Edit Creator Theme & Banner</h3>
           <ThemePickerDropdown
             unlockedThemes={Object.keys(THEMES)}
@@ -217,7 +217,6 @@ export default function CreatorPage() {
             customColor={customColor}
             onCustomColorChange={setCustomColor}
           />
-          <br />
           <input
             type="text"
             placeholder="Banner URL"
@@ -225,7 +224,6 @@ export default function CreatorPage() {
             onChange={(e) => setBanner(e.target.value)}
             style={{ color: "#000", width: "100%", marginTop: "0.5rem" }}
           />
-          <br />
           <button onClick={saveCreatorTheme} style={{ marginTop: "0.5rem" }}>
             Save Theme & Banner
           </button>
@@ -234,15 +232,7 @@ export default function CreatorPage() {
 
       {/* Page theme picker */}
       {isOwner && (
-        <div
-          style={{
-            marginBottom: "2rem",
-            padding: "1rem",
-            border: "1px solid #555",
-            borderRadius: "8px",
-            background: "#111",
-          }}
-        >
+        <div style={{ marginBottom: "2rem", padding: "1rem", border: "1px solid #555", borderRadius: "8px", background: "#111" }}>
           <h3>Edit Page Theme</h3>
           <ThemePickerDropdown
             unlockedThemes={Object.keys(THEMES)}
@@ -251,7 +241,6 @@ export default function CreatorPage() {
             customColor={pageCustomColor}
             onCustomColorChange={setPageCustomColor}
           />
-          <br />
           <button onClick={savePageTheme} style={{ marginTop: "0.5rem" }}>
             Save Page Theme
           </button>
@@ -260,15 +249,7 @@ export default function CreatorPage() {
 
       {/* New post panel */}
       {isOwner && (
-        <div
-          style={{
-            margin: "1rem 0",
-            padding: "1rem",
-            border: "1px solid #555",
-            borderRadius: "8px",
-            background: "#111",
-          }}
-        >
+        <div style={{ margin: "1rem 0", padding: "1rem", border: "1px solid #555", borderRadius: "8px", background: "#111" }}>
           <h3>New Post</h3>
           <input
             type="text"
@@ -309,20 +290,28 @@ export default function CreatorPage() {
             >
               {newPost.mediaType === "youtube" && (
                 <p>
-                  To get the embed link for a YouTube video, click "Share" on the video, then "embed", <br />
-                  then copy *just the link.* It should look like: <br />
-                  "https://www.youtube.com/embed/lqZWO5K1xtA?si=iimdDkw2Jx-Gf9wP"
+                  To embed a YouTube video, click "Share" → "Embed", then copy just the `src` link.
+                  Example: <br />
+                  https://www.youtube.com/embed/lqZWO5K1xtA
                 </p>
               )}
               {newPost.mediaType === "gdrive" && (
                 <p>
-                  Paste the "Share link" of your Google Drive file and make sure link sharing is enabled. <br />
-                  (Options -> Sharing -> Anyone with the link can view). <br />
-                  Change "view" to "preview" for in-page display.
+                  Paste the Google Drive file share link, make sure "Anyone with the link can view" is
+                  enabled, and replace <code>view</code> with <code>preview</code> for in-page display.
                 </p>
               )}
             </div>
           )}
+
+          {/* Theme picker for posts */}
+          <ThemePickerDropdown
+            unlockedThemes={Object.keys(THEMES)}
+            selectedTheme={newPost.themeId}
+            onChange={(t) => setNewPost({ ...newPost, themeId: t })}
+            customColor={pageCustomColor}
+            onCustomColorChange={setPageCustomColor}
+          />
 
           <textarea
             placeholder="Description"
