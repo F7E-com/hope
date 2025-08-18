@@ -213,15 +213,11 @@ export default function Profile() {
 
               {/* ThemePicker pulling from THEMES */}
               <ThemePicker
-                unlockedThemes={Object.entries(THEMES).map(([id, theme]) => ({
-                  id,
-                  name: theme.name,
-                  className: theme.className,
-                  preview: theme.preview,
-                }))}
-                selectedTheme={selectedTheme || "none"}
-                onChange={(themeId) => setSelectedTheme(themeId)}
+                unlockedThemes={profileUser.unlockedThemes || Object.keys(FACTION_THEMES)}
+                selectedTheme={selectedTheme}
+                onChange={setSelectedTheme}
               />
+
 
               <button
                 onClick={handleSaveProfile}
