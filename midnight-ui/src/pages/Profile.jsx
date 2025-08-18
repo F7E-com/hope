@@ -12,7 +12,6 @@ export default function Profile() {
   const [profileUser, setProfileUser] = useState(null); // the user whose profile page you are viewing
   const [loading, setLoading] = useState(true);
 
-  const [bio, setBio] = useState("");
   const [themeColor, setThemeColor] = useState("#222222");
   const [bannerUrl, setBannerUrl] = useState("");
 
@@ -35,7 +34,6 @@ export default function Profile() {
           const data = snapshot.data();
           data.id = uid;
           setProfileUser(data);
-          setBio(data.bio || "");
           setThemeColor(data.themeColor || "#222222");
           setBannerUrl(data.bannerUrl || "");
           setBannerUrlInput(data.bannerUrl || "");
@@ -75,16 +73,15 @@ export default function Profile() {
   };
 
   const handleSaveBio = async (newBio) => {
-    if (!uid) return;
-    try {
-      const userRef = doc(db, "users", uid);
-      await updateDoc(userRef, { bio: newBio });
-      setBio(newBio);
-      setProfileUser((prev) => ({ ...prev, bio: newBio }));
-    } catch (err) {
-      console.error("Error saving bio:", err);
-    }
-  };
+  if (!uid) return;
+  try {
+    const userRef = doc(db, "users", uid);
+    await updateDoc(userRef, { bio: newBio });
+    setUser((prev) => ({ ...prev, bio: newBio })); // update the profile data directly
+  } catch (err) {
+    console.error("Error saving bio:", err);
+  }
+};
 
   if (loading) return <p>Loading...</p>;
   if (!profileUser) return <p>User not found.</p>;
@@ -169,7 +166,7 @@ export default function Profile() {
 
           {/* BioBox */}
           <BioBox
-            initialBio={bio}
+            initialBio={user.bio || ""}
             isOwner={isOwner}
             editable={isOwner}
             onSave={handleSaveBio}
