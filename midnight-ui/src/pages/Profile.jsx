@@ -6,7 +6,6 @@ import BioBox from "../components/BioBox";
 import { useUser } from "../contexts/UserContext";
 import ThemePickerDropdown from "../components/modules/ThemePickerDropdown";
 import { THEMES } from "../themes/ThemeIndex";
-import "../themes/Vale.css"; // import all theme CSS files here
 
 export default function Profile() {
   const { uid } = useParams();
@@ -14,6 +13,7 @@ export default function Profile() {
 
   const [profileUser, setProfileUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
   const [themeColor, setThemeColor] = useState("#222222");
   const [bannerUrlInput, setBannerUrlInput] = useState("");
   const [bannerPreview, setBannerPreview] = useState("#222222");
@@ -22,9 +22,22 @@ export default function Profile() {
 
   const isOwner = currentUser?.id === uid;
 
-  // fetch profile
+  const getActiveThemeStyles = () => {
+    const theme = THEMES[selectedTheme] || { preview: {}, className: "" };
+    return {
+      primaryColor: theme.preview.background || themeColor,
+      secondaryColor: theme.preview.color || "#fff",
+      fontFamily: theme.fontFamily || "inherit",
+      borderStyle: theme.borderStyle || "none",
+      bannerOverlay: theme.bannerOverlay || null,
+    };
+  };
+
+  const activeTheme = getActiveThemeStyles();
+
   useEffect(() => {
     if (!uid) return;
+
     setProfileUser(null);
     setLoading(true);
 
@@ -32,10 +45,12 @@ export default function Profile() {
       try {
         const userRef = doc(db, "users", uid);
         const snapshot = await getDoc(userRef);
+
         if (snapshot.exists()) {
           const data = snapshot.data();
           data.id = uid;
           data.unlockedThemes = data.unlockedThemes || Object.keys(THEMES);
+
           setProfileUser(data);
           setThemeColor(data.themeColor || "#222222");
           setBannerUrlInput(data.bannerUrl || "");
@@ -44,8 +59,8 @@ export default function Profile() {
         } else {
           setProfileUser(null);
         }
-      } catch (err) {
-        console.error("Error fetching profile:", err);
+      } catch (error) {
+        console.error("Error fetching profile:", error);
         setProfileUser(null);
       } finally {
         setLoading(false);
@@ -91,17 +106,33 @@ export default function Profile() {
   if (loading) return <p>Loading...</p>;
   if (!profileUser) return <p>User not found.</p>;
 
-  // pull active theme
-  const themeClass = selectedTheme !== "custom" ? THEMES[selectedTheme]?.className || "" : "";
-
   return (
-    <div className={`profile-container ${themeClass}`}>
+    <div
+      style={{
+        maxWidth: "900px",
+        margin: "2rem auto",
+        padding: "1rem",
+        borderRadius: "12px",
+        backgroundColor: activeTheme.primaryColor,
+        color: activeTheme.secondaryColor,
+        fontFamily: activeTheme.fontFamily,
+        border: activeTheme.borderStyle,
+        transition: "all 0.3s ease",
+      }}
+    >
       {/* Banner */}
       <div
-        className={`profile-banner ${themeClass}`}
         style={{
-          backgroundColor: selectedTheme === "custom" ? themeColor : undefined,
+          width: "100%",
+          height: "200px",
+          borderRadius: "12px",
+          marginBottom: "1rem",
+          backgroundColor: !bannerPreview ? themeColor : undefined,
           backgroundImage: bannerPreview ? `url(${bannerPreview})` : undefined,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          position: "relative",
+          overflow: "hidden",
         }}
       >
         {editing && isOwner && (
@@ -113,14 +144,24 @@ export default function Profile() {
               setBannerUrlInput(e.target.value);
               setBannerPreview(e.target.value);
             }}
-            className="banner-input"
+            style={{
+              position: "absolute",
+              bottom: "10px",
+              left: "10px",
+              width: "70%",
+              padding: "0.3rem",
+              borderRadius: "6px",
+              border: "1px solid #555",
+              background: "#222",
+              color: "#fff",
+            }}
           />
         )}
       </div>
 
       {/* Two-column layout */}
-      <div className="profile-columns">
-        <div className="profile-kudos">
+      <div style={{ display: "flex", gap: "2rem" }}>
+        <div style={{ flex: "1", background: "#222", padding: "1rem", borderRadius: "8px" }}>
           <h2>Kudos</h2>
           <ul>
             {profileUser.kudos &&
@@ -132,8 +173,8 @@ export default function Profile() {
           </ul>
         </div>
 
-        <div className="profile-main">
-          <h1>{profileUser.name}</h1>
+        <div style={{ flex: "2" }}>
+          <h1 style={{ marginBottom: "0.5rem" }}>{profileUser.name}</h1>
           <p><strong>Faction:</strong> {profileUser.faction}</p>
 
           <BioBox
@@ -141,20 +182,32 @@ export default function Profile() {
             isOwner={isOwner}
             editable={isOwner}
             onSave={handleSaveBio}
-            themeColor={themeColor}
-            backgroundColor={selectedTheme === "custom" ? themeColor : undefined}
+            themeColor={activeTheme.secondaryColor}
+            textColor={activeTheme.secondaryColor}
+            backgroundColor={activeTheme.primaryColor}
           />
 
           {isOwner && !editing && (
-            <button className="edit-profile-btn" onClick={() => setEditing(true)}>
+            <button
+              onClick={() => setEditing(true)}
+              style={{
+                marginTop: "0.5rem",
+                padding: "0.5rem 1rem",
+                background: "#444",
+                color: "#fff",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
               Edit Profile
             </button>
           )}
 
           {isOwner && editing && (
-            <div className="edit-profile-panel">
+            <div style={{ marginTop: "1rem" }}>
               <label>
-                Custom Theme Color:
+                Theme Color:{" "}
                 <input
                   type="color"
                   value={themeColor}
@@ -170,12 +223,38 @@ export default function Profile() {
                 onCustomColorChange={setThemeColor}
               />
 
-              <button className="save-btn" onClick={handleSaveProfile}>Save Profile</button>
-              <button className="cancel-btn" onClick={() => setEditing(false)}>Cancel</button>
+              <button
+                onClick={handleSaveProfile}
+                style={{
+                  marginTop: "0.5rem",
+                  padding: "0.5rem 1rem",
+                  background: "#444",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                }}
+              >
+                Save Profile
+              </button>
+              <button
+                onClick={() => setEditing(false)}
+                style={{
+                  marginLeft: "0.5rem",
+                  padding: "0.5rem 1rem",
+                  background: "gray",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                }}
+              >
+                Cancel
+              </button>
             </div>
           )}
 
-          {!isOwner && <p className="view-only-text">View-only profile</p>}
+          {!isOwner && <p style={{ marginTop: "1rem" }}>View-only profile</p>}
         </div>
       </div>
     </div>
