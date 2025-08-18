@@ -212,11 +212,20 @@ export default function CreatorPage() {
           <h3>Edit Creator Theme & Banner</h3>
           <ThemePickerDropdown
             unlockedThemes={Object.keys(THEMES)}
-            selectedTheme={creatorTheme}
-            onChange={setCreatorTheme}
-            customColor={customColor}
-            onCustomColorChange={setCustomColor}
+            selectedTheme={pageThemeId}
+            onChange={setPageThemeId}
+            customColor={pageCustomColor}
+            onCustomColorChange={setPageCustomColor}
           />
+          <label>
+                Theme Color:{" "}
+                <input
+                  type="color"
+                  value={pageCustomColor}
+                  onChange={(e) => setPageCustomColor(e.target.value)}
+                />
+          </label>
+          <br />
           <input
             type="text"
             placeholder="Banner URL"
@@ -224,25 +233,9 @@ export default function CreatorPage() {
             onChange={(e) => setBanner(e.target.value)}
             style={{ color: "#000", width: "100%", marginTop: "0.5rem" }}
           />
-          <button onClick={saveCreatorTheme} style={{ marginTop: "0.5rem" }}>
-            Save Theme & Banner
-          </button>
-        </div>
-      )}
-
-      {/* Page theme picker */}
-      {isOwner && (
-        <div style={{ marginBottom: "2rem", padding: "1rem", border: "1px solid #555", borderRadius: "8px", background: "#111" }}>
-          <h3>Edit Page Theme</h3>
-          <ThemePickerDropdown
-            unlockedThemes={Object.keys(THEMES)}
-            selectedTheme={pageThemeId}
-            onChange={setPageThemeId}
-            customColor={pageCustomColor}
-            onCustomColorChange={setPageCustomColor}
-          />
+          <br />
           <button onClick={savePageTheme} style={{ marginTop: "0.5rem" }}>
-            Save Page Theme
+            Save Theme & Banner
           </button>
         </div>
       )}
