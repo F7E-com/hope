@@ -6,6 +6,7 @@ import DOMPurify from "dompurify";
 export default function BioBox({
   initialBio = "",
   editable = false,
+  isOwner = false, // <-- new prop to check ownership
   onSave, // async function to save new bio
   themeColor = "#222222",
 }) {
@@ -42,7 +43,13 @@ export default function BioBox({
 
   if (editing) {
     return (
-      <div style={{ background: "#222", padding: "1rem", borderRadius: "6px" }}>
+      <div
+        style={{
+          background: "#222",
+          padding: "1rem",
+          borderRadius: "6px",
+        }}
+      >
         <textarea
           value={bio}
           onChange={(e) => setBio(e.target.value)}
@@ -55,7 +62,7 @@ export default function BioBox({
             color: "black",
           }}
         />
-        {editable && (
+        {editable && isOwner && (
           <>
             <button
               onClick={handleSave}
@@ -89,7 +96,7 @@ export default function BioBox({
       }}
     >
       {renderBio()}
-      {editable && !editing && (
+      {editable && isOwner && !editing && (
         <button
           onClick={() => setEditing(true)}
           style={{ marginTop: "0.5rem", padding: "0.5rem 1rem" }}
