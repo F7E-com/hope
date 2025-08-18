@@ -4,8 +4,8 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/utils/firebase";
 import BioBox from "../components/BioBox";
 import { useUser } from "../contexts/UserContext";
-import { FACTION_THEMES } from "../themes"; // master theme file
 import ThemePicker from "../components/modules/ThemePicker";
+import { THEMES } from "../themes/ThemeIndex"; // updated
 import "../themes/Vale.css"; // import all theme CSS files here
 
 export default function Profile() {
@@ -37,7 +37,7 @@ export default function Profile() {
         if (snapshot.exists()) {
           const data = snapshot.data();
           data.id = uid;
-          data.unlockedThemes = data.unlockedThemes || Object.keys(FACTION_THEMES);
+          data.unlockedThemes = data.unlockedThemes || Object.keys(THEMES);
 
           setProfileUser(data);
           setThemeColor(data.themeColor || "#222222");
@@ -95,13 +95,13 @@ export default function Profile() {
   if (!profileUser) return <p>User not found.</p>;
 
   const activeTheme =
-    selectedTheme !== "none" && FACTION_THEMES[selectedTheme]
-      ? FACTION_THEMES[selectedTheme]
-      : FACTION_THEMES.none;
+    selectedTheme !== "none" && THEMES[selectedTheme]
+      ? THEMES[selectedTheme]
+      : { preview: {}, name: "Default" };
 
   const backgroundStyle = {
-    backgroundColor: activeTheme.primaryColor || themeColor,
-    color: activeTheme.secondaryColor || "#fff",
+    backgroundColor: activeTheme.preview?.background || themeColor,
+    color: activeTheme.preview?.color || "#fff",
     fontFamily: activeTheme.fontFamily || "inherit",
     border: activeTheme.borderStyle || "none",
     transition: "all 0.3s ease",
@@ -132,19 +132,6 @@ export default function Profile() {
           overflow: "hidden",
         }}
       >
-        {activeTheme.bannerOverlay && (
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              backgroundColor: activeTheme.bannerOverlay,
-            }}
-          />
-        )}
-
         {editing && isOwner && (
           <input
             type="text"
@@ -192,9 +179,9 @@ export default function Profile() {
             isOwner={isOwner}
             editable={isOwner}
             onSave={handleSaveBio}
-            themeColor={activeTheme.secondaryColor || themeColor}
-            textColor={activeTheme.secondaryColor}
-            backgroundColor={activeTheme.primaryColor}
+            themeColor={activeTheme.preview?.color || themeColor}
+            textColor={activeTheme.preview?.color}
+            backgroundColor={activeTheme.preview?.background}
           />
 
           {isOwner && !editing && (
@@ -225,9 +212,14 @@ export default function Profile() {
                 />
               </label>
 
-              {/* ThemePicker replaces the old <select> */}
+              {/* ThemePicker from ThemeIndex */}
               <ThemePicker
-                unlockedThemes={Object.keys(FACTION_THEMES)} // unlock all for now
+                unlockedThemes={Object.entries(THEMES).map(([id, theme]) => ({
+                  id,
+                  name: theme.name,
+                  className: theme.className,
+                  preview: theme.preview,
+                }))}
                 selectedTheme={selectedTheme}
                 onChange={setSelectedTheme}
               />
