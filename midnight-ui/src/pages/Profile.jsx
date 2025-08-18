@@ -4,7 +4,7 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/utils/firebase";
 import BioBox from "../components/BioBox";
 import { useUser } from "../contexts/UserContext";
-import { FACTION_THEMES } from "../themes";
+import { FACTION_THEMES } from "../themes"; // your new format
 
 export default function Profile() {
   const { uid } = useParams();
@@ -21,45 +21,40 @@ export default function Profile() {
 
   const isOwner = currentUser?.id === uid;
 
-
   useEffect(() => {
-  if (!uid) return;
+    if (!uid) return;
 
-  setProfileUser(null);
-  setLoading(true);
+    setProfileUser(null);
+    setLoading(true);
 
-  const fetchProfile = async () => {
-    try {
-      const userRef = doc(db, "users", uid);
-      const snapshot = await getDoc(userRef);
+    const fetchProfile = async () => {
+      try {
+        const userRef = doc(db, "users", uid);
+        const snapshot = await getDoc(userRef);
 
-      if (snapshot.exists()) {
-        const data = snapshot.data();
-        data.id = uid;
+        if (snapshot.exists()) {
+          const data = snapshot.data();
+          data.id = uid;
+          data.unlockedThemes = data.unlockedThemes || Object.keys(FACTION_THEMES);
 
-        // Ensure unlockedThemes exists
-        const unlocked = data.unlockedThemes || Object.keys(FACTION_THEMES);
-        data.unlockedThemes = unlocked;
-
-        setProfileUser(data);
-        setThemeColor(data.themeColor || "#222222");
-        setBannerUrlInput(data.bannerUrl || "");
-        setBannerPreview(data.bannerUrl || data.themeColor || "#222222");
-        setSelectedTheme(data.themeId || "none");
-      } else {
+          setProfileUser(data);
+          setThemeColor(data.themeColor || "#222222");
+          setBannerUrlInput(data.bannerUrl || "");
+          setBannerPreview(data.bannerUrl || data.themeColor || "#222222");
+          setSelectedTheme(data.themeId || "none");
+        } else {
+          setProfileUser(null);
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
         setProfileUser(null);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-      setProfileUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  fetchProfile();
-}, [uid]);
-
+    fetchProfile();
+  }, [uid]);
 
   const handleSaveProfile = async () => {
     if (!uid) return;
@@ -97,17 +92,17 @@ export default function Profile() {
   if (loading) return <p>Loading...</p>;
   if (!profileUser) return <p>User not found.</p>;
 
-  // Determine active theme safely
   const activeTheme =
     selectedTheme !== "none" && FACTION_THEMES[selectedTheme]
       ? FACTION_THEMES[selectedTheme]
-      : null;
+      : FACTION_THEMES.none;
 
   const backgroundStyle = {
-    backgroundColor: activeTheme?.colors?.background || themeColor,
-    color: activeTheme?.colors?.text || "#fff",
-    fontFamily: activeTheme?.fontFamily || "inherit",
-    border: activeTheme?.borderStyle || "none",
+    backgroundColor: activeTheme.primaryColor || themeColor,
+    color: activeTheme.secondaryColor || "#fff",
+    fontFamily: activeTheme.fontFamily || "inherit",
+    border: activeTheme.borderStyle || "none",
+    transition: "all 0.3s ease",
   };
 
   return (
@@ -132,8 +127,22 @@ export default function Profile() {
           backgroundSize: "cover",
           backgroundPosition: "center",
           position: "relative",
+          overflow: "hidden",
         }}
       >
+        {activeTheme.bannerOverlay && (
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundColor: activeTheme.bannerOverlay,
+            }}
+          />
+        )}
+
         {editing && isOwner && (
           <input
             type="text"
@@ -174,16 +183,14 @@ export default function Profile() {
 
         <div style={{ flex: "2" }}>
           <h1 style={{ marginBottom: "0.5rem" }}>{profileUser.name}</h1>
-          <p>
-            <strong>Faction:</strong> {profileUser.faction}
-          </p>
+          <p><strong>Faction:</strong> {profileUser.faction}</p>
 
           <BioBox
             initialBio={profileUser.bio || ""}
             isOwner={isOwner}
             editable={isOwner}
             onSave={handleSaveBio}
-            themeColor={themeColor}
+            themeColor={activeTheme.secondaryColor || themeColor}
           />
 
           {isOwner && !editing && (
@@ -207,24 +214,27 @@ export default function Profile() {
             <div style={{ marginTop: "1rem" }}>
               <label>
                 Theme Color:{" "}
-                <input type="color" value={themeColor} onChange={(e) => setThemeColor(e.target.value)} />
+                <input
+                  type="color"
+                  value={themeColor}
+                  onChange={(e) => setThemeColor(e.target.value)}
+                />
               </label>
               <br />
               <label>
                 Theme:{" "}
-                <select value={selectedTheme} onChange={(e) => setSelectedTheme(e.target.value)}>
-                  <option value="none">None (use color)</option>
-                  {profileUser.unlockedThemes &&
-                    profileUser.unlockedThemes.map((themeId) => {
-                      const theme = FACTION_THEMES[themeId];
-                      return (
-                        theme && (
-                          <option key={theme.id} value={theme.id}>
-                            {theme.name}
-                          </option>
-                        )
-                      );
-                    })}
+                <select
+                  value={selectedTheme}
+                  onChange={(e) => setSelectedTheme(e.target.value)}
+                >
+                  {profileUser.unlockedThemes?.map((themeId) => {
+                    const theme = FACTION_THEMES[themeId];
+                    return theme ? (
+                      <option key={themeId} value={themeId}>
+                        {theme.name}
+                      </option>
+                    ) : null;
+                  })}
                 </select>
               </label>
               <br />
