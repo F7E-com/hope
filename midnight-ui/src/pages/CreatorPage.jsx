@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { doc, getDoc, collection, getDocs, addDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs, addDoc, updateDoc, setDoc } from "firebase/firestore";
 import { db } from "@/utils/firebase";
 import { useUser } from "../contexts/UserContext";
 import ContentModule from "../components/modules/ContentModule";
@@ -10,15 +10,20 @@ import { THEMES } from "../themes/ThemeIndex";
 export default function CreatorPage() {
   const { uid } = useParams();
   const { currentUser } = useUser();
+  const isOwner = currentUser?.id === uid;
 
   const [creatorData, setCreatorData] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // State for editing creator banner/theme
+  // Creator profile theme/banner
   const [banner, setBanner] = useState("");
   const [creatorTheme, setCreatorTheme] = useState("none");
   const [customColor, setCustomColor] = useState("#ffffff");
+
+  // Page-specific theme
+  const [pageThemeId, setPageThemeId] = useState("none");
+  const [pageCustomColor, setPageCustomColor] = useState("#ffffff");
 
   const [newPost, setNewPost] = useState({
     title: "",
@@ -29,8 +34,7 @@ export default function CreatorPage() {
     banner: "",
   });
 
-  const isOwner = currentUser?.id === uid;
-
+  // Load creator profile + posts
   useEffect(() => {
     if (!uid) return;
 
@@ -40,11 +44,11 @@ export default function CreatorPage() {
         const userSnap = await getDoc(doc(db, "users", uid));
         const safeCreatorData = userSnap.exists()
           ? {
-            name: userSnap.data()?.name || "Unknown Creator",
-            themeId: userSnap.data()?.themeId || "none",
-            banner: userSnap.data()?.banner || "",
-            ...userSnap.data(),
-          }
+              name: userSnap.data()?.name || "Unknown Creator",
+              themeId: userSnap.data()?.themeId || "none",
+              banner: userSnap.data()?.banner || "",
+              ...userSnap.data(),
+            }
           : { name: "Unknown Creator", themeId: "none", banner: "" };
 
         setCreatorData(safeCreatorData);
@@ -68,6 +72,14 @@ export default function CreatorPage() {
           };
         });
         setPosts(postList);
+
+        // Load page-specific theme
+        const pageSnap = await getDoc(doc(db, "creatorPages", uid));
+        if (pageSnap.exists()) {
+          const pageData = pageSnap.data();
+          setPageThemeId(pageData.themeId || "none");
+          setPageCustomColor(pageData.customColor || "#ffffff");
+        }
       } catch (err) {
         console.error("Error fetching creator:", err);
       } finally {
@@ -77,6 +89,34 @@ export default function CreatorPage() {
 
     fetchCreator();
   }, [uid]);
+
+  // Save creator profile theme/banner
+  const saveCreatorTheme = async () => {
+    if (!isOwner || !creatorData) return;
+    try {
+      await updateDoc(doc(db, "users", uid), {
+        themeId: creatorTheme,
+        banner: banner,
+      });
+      setCreatorData({ ...creatorData, themeId: creatorTheme, banner });
+    } catch (err) {
+      console.error("Error saving creator theme/banner:", err);
+    }
+  };
+
+  // Save page-specific theme
+  const savePageTheme = async () => {
+    if (!isOwner) return;
+    try {
+      await setDoc(doc(db, "creatorPages", uid), {
+        themeId: pageThemeId,
+        customColor: pageCustomColor,
+      }, { merge: true });
+      alert("Page theme saved!");
+    } catch (err) {
+      console.error("Error saving page theme:", err);
+    }
+  };
 
   const handleNewPostSubmit = async () => {
     if (!isOwner) return;
@@ -111,26 +151,13 @@ export default function CreatorPage() {
     }
   };
 
-  const saveCreatorTheme = async () => {
-    if (!isOwner || !creatorData) return;
-    try {
-      await updateDoc(doc(db, "users", uid), {
-        themeId: creatorTheme,
-        banner: banner,
-      });
-      setCreatorData({ ...creatorData, themeId: creatorTheme, banner });
-    } catch (err) {
-      console.error("Error saving creator theme/banner:", err);
-    }
-  };
-
   if (loading) return <p>Loading...</p>;
   if (!creatorData) return <p>Creator not found.</p>;
 
-  const theme =
-    creatorTheme === "custom"
-      ? { preview: { background: customColor, color: "#000" } }
-      : THEMES[creatorTheme] || { preview: { background: "#222", color: "#fff" } };
+  const pageTheme =
+    pageThemeId === "custom"
+      ? { preview: { background: pageCustomColor, color: "#000" } }
+      : THEMES[pageThemeId] || { preview: { background: "#222", color: "#fff" } };
 
   return (
     <div
@@ -139,9 +166,9 @@ export default function CreatorPage() {
         margin: "2rem auto",
         padding: "1rem",
         borderRadius: "12px",
-        backgroundColor: theme.preview.background,
-        color: theme.preview.color,
-        fontFamily: theme.fontFamily || "inherit",
+        backgroundColor: pageTheme.preview.background,
+        color: pageTheme.preview.color,
+        fontFamily: pageTheme.fontFamily || "inherit",
       }}
     >
       {/* Banner with creator name */}
@@ -171,6 +198,7 @@ export default function CreatorPage() {
         </h1>
       </div>
 
+      {/* Edit creator profile theme/banner */}
       {isOwner && (
         <div
           style={{
@@ -200,6 +228,32 @@ export default function CreatorPage() {
           <br />
           <button onClick={saveCreatorTheme} style={{ marginTop: "0.5rem" }}>
             Save Theme & Banner
+          </button>
+        </div>
+      )}
+
+      {/* Page theme picker */}
+      {isOwner && (
+        <div
+          style={{
+            marginBottom: "2rem",
+            padding: "1rem",
+            border: "1px solid #555",
+            borderRadius: "8px",
+            background: "#111",
+          }}
+        >
+          <h3>Edit Page Theme</h3>
+          <ThemePickerDropdown
+            unlockedThemes={Object.keys(THEMES)}
+            selectedTheme={pageThemeId}
+            onChange={setPageThemeId}
+            customColor={pageCustomColor}
+            onCustomColorChange={setPageCustomColor}
+          />
+          <br />
+          <button onClick={savePageTheme} style={{ marginTop: "0.5rem" }}>
+            Save Page Theme
           </button>
         </div>
       )}
@@ -241,8 +295,6 @@ export default function CreatorPage() {
             <option value="gdrive">GDrive</option>
           </select>
 
-
-
           {/* Conditional Instructions */}
           {(newPost.mediaType === "youtube" || newPost.mediaType === "gdrive") && (
             <div
@@ -257,20 +309,21 @@ export default function CreatorPage() {
             >
               {newPost.mediaType === "youtube" && (
                 <p>
-                  To get the embed link for a YouTube video, click "Share" on the video, then "embed",
-                  then copy *just the link.* 
-                  It should look like this: "https://www.youtube.com/embed/lqZWO5K1xtA?si=iimdDkw2Jx-Gf9wP"
+                  To get the embed link for a YouTube video, click "Share" on the video, then "embed", <br />
+                  then copy *just the link.* It should look like: <br />
+                  "https://www.youtube.com/embed/lqZWO5K1xtA?si=iimdDkw2Jx-Gf9wP"
                 </p>
               )}
               {newPost.mediaType === "gdrive" && (
                 <p>
                   Paste the "Share link" of your Google Drive file and make sure link sharing is enabled. <br />
-                  (Options -> Sharing -> Anyone with the link can view)
-                  Important! If you want to view in-page, find "view" in the link and change to "preview".
+                  (Options -> Sharing -> Anyone with the link can view). <br />
+                  Change "view" to "preview" for in-page display.
                 </p>
               )}
             </div>
           )}
+
           <textarea
             placeholder="Description"
             value={newPost.description}
