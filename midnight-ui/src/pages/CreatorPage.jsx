@@ -25,11 +25,35 @@ export default function CreatorPage() {
       try {
         const userSnap = await getDoc(doc(db, "users", uid));
         if (userSnap.exists()) {
-          setCreatorData(userSnap.data());
+          const userData = userSnap.data();
+          // Apply defaults for missing fields
+          const safeCreatorData = {
+            name: userData.name || "Unknown",
+            themeId: userData.themeId || "none",
+            faction: userData.faction || "Unknown",
+            ...userData
+          };
+          setCreatorData(safeCreatorData);
 
           const postsSnap = await getDocs(collection(db, "users", uid, "posts"));
-          const postList = postsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          const postList = postsSnap.docs.map(docSnap => {
+            const data = docSnap.data();
+            return {
+              id: docSnap.id,
+              creatorId: uid,
+              creatorName: safeCreatorData.name,
+              creatorFaction: safeCreatorData.faction,
+              title: data.title || "Untitled",
+              mediaType: data.mediaType || "image",
+              mediaSrc: data.src || "",
+              themeId: data.themeId || "none",
+              description: data.description || ""
+            };
+          });
           setPosts(postList);
+        } else {
+          setCreatorData({ name: "Unknown", themeId: "none", faction: "Unknown" });
+          setPosts([]);
         }
       } catch (err) {
         console.error("Error fetching creator:", err);
@@ -45,7 +69,20 @@ export default function CreatorPage() {
     if (!isOwner) return;
     try {
       const postRef = await addDoc(collection(db, "users", uid, "posts"), newPost);
-      setPosts([...posts, { id: postRef.id, ...newPost }]);
+      setPosts([
+        ...posts,
+        {
+          id: postRef.id,
+          creatorId: uid,
+          creatorName: creatorData?.name || "Unknown",
+          creatorFaction: creatorData?.faction || "Unknown",
+          title: newPost.title || "Untitled",
+          mediaType: newPost.mediaType,
+          mediaSrc: newPost.src,
+          themeId: newPost.themeId,
+          description: newPost.description || ""
+        }
+      ]);
       setNewPost({ title: "", mediaType: "image", src: "", themeId: "none" });
     } catch (err) {
       console.error("Error creating post:", err);
