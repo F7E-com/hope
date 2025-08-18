@@ -5,20 +5,37 @@ import { db } from "@/utils/firebase";
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState(() => {
+    // Try to read cached user from localStorage
+    const saved = localStorage.getItem("currentUser");
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [loading, setLoading] = useState(!currentUser); // if we have cached user, no need to load immediately
 
-  // Example: pull user ID from localStorage after login
-  const uid = localStorage.getItem("currentUserId");
-
+  // Whenever currentUser changes, cache or remove it
   useEffect(() => {
-    const fetchUser = async () => {
-      if (!uid) {
-        setCurrentUser(null);
-        setLoading(false);
-        return;
+    if (currentUser) {
+      localStorage.setItem("currentUser", JSON.stringify(currentUser));
+      if (currentUser.id) {
+        localStorage.setItem("currentUserId", currentUser.id);
       }
+    } else {
+      localStorage.removeItem("currentUser");
+      localStorage.removeItem("currentUserId");
+    }
+  }, [currentUser]);
 
+  // Pull user from Firebase if we have a UID in localStorage
+  useEffect(() => {
+    const uid = localStorage.getItem("currentUserId");
+    if (!uid) {
+      setCurrentUser(null);
+      setLoading(false);
+      return;
+    }
+
+    const fetchUser = async () => {
+      setLoading(true);
       try {
         const docRef = doc(db, "users", uid);
         const snapshot = await getDoc(docRef);
@@ -27,8 +44,8 @@ export const UserProvider = ({ children }) => {
         } else {
           setCurrentUser(null);
         }
-      } catch (error) {
-        console.error("Error fetching user:", error);
+      } catch (err) {
+        console.error("Error fetching user:", err);
         setCurrentUser(null);
       } finally {
         setLoading(false);
@@ -36,7 +53,7 @@ export const UserProvider = ({ children }) => {
     };
 
     fetchUser();
-  }, [uid]);
+  }, []);
 
   return (
     <UserContext.Provider value={{ currentUser, setCurrentUser, loading }}>
