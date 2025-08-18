@@ -191,6 +191,8 @@ export default function Profile() {
             editable={isOwner}
             onSave={handleSaveBio}
             themeColor={activeTheme.secondaryColor || themeColor}
+            textColor={activeTheme.secondaryColor}
+            backgroundColor={activeTheme.primaryColor}
           />
 
           {isOwner && !editing && (
