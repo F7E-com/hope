@@ -197,7 +197,6 @@ export default function CreatorPage() {
             value={newPost.title}
             onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
           />
-          <br />
           <input
             type="text"
             placeholder="Media URL"
@@ -232,6 +231,7 @@ export default function CreatorPage() {
             value={newPost.description}
             onChange={(e) => setNewPost({ ...newPost, description: e.target.value })}
           />
+          <br />
           <button onClick={handleNewPostSubmit}>Upload</button>
         </div>
       )}
