@@ -16,6 +16,30 @@ export default function MainLayout() {
   const [siteThemeID, setSiteThemeID] = useState("vale"); // default theme
   const [customColor, setCustomColor] = useState("#222222");
 
+  <style>
+        {`
+
+    .search-bar input {
+      color: #000;       /* black text */
+      width: 100%;       /* long and narrow */
+      padding: 0.4rem;
+      font-size: 0.9rem;
+    }
+
+    .search-bar select {
+      color: #000;       /* black text */
+      padding: 0.4rem;
+      font-size: 0.9rem;
+    }
+
+    .search-bar button {
+      color: #000;       /* black text */
+      padding: 0.4rem 0.8rem;
+      font-size: 0.9rem;
+      }
+    `}
+      </style>
+
   // ---- Popup logic ----
   const togglePopup = (id, e) => {
     if (activePopup === id) {
@@ -73,6 +97,19 @@ export default function MainLayout() {
 
   return (
     <div className="min-h-screen flex flex-col site-wrapper">
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          marginTop: "0.5rem",   // move it closer to the top
+        }}
+      >
+        <div style={{ width: "450px", maxWidth: "90%" }}>
+          <SearchBar />
+        </div>
+      </div>
+      
       <div className="background"></div>
 
       {/* Theme Picker Dropdown */}
@@ -88,42 +125,6 @@ export default function MainLayout() {
 
       {/* Profile Button */}
       <div className="circle-button profile-button" onClick={(e) => togglePopup("profile", e)} />
-
-        <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          marginTop: "0.5rem",   // move it closer to the top
-        }}
-      >
-        <div style={{ width: "450px", maxWidth: "90%" }}>
-          <SearchBar />
-        </div>
-      </div>
-
-      <style>
-        {`
-
-    .search-bar input {
-      color: #000;       /* black text */
-      width: 100%;       /* long and narrow */
-      padding: 0.4rem;
-      font-size: 0.9rem;
-    }
-
-    .search-bar select {
-      color: #000;       /* black text */
-      padding: 0.4rem;
-      font-size: 0.9rem;
-    }
-
-    .search-bar button {
-      color: #000;       /* black text */
-      padding: 0.4rem 0.8rem;
-      font-size: 0.9rem;
-      }
-    `}
-      </style>
 
       {/* Menu Button */}
       <div className="circle-button menu-button" onClick={(e) => togglePopup("menu", e)} />
