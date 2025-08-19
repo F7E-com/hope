@@ -109,8 +109,6 @@ export default function MainLayout() {
           <SearchBar />
         </div>
       </div>
-      
-      <div className="background"></div>
 
       {/* Theme Picker Dropdown */}
       <div style={{ margin: "1rem" }}>
