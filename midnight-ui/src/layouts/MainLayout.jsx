@@ -139,6 +139,16 @@ export default function MainLayout() {
         </div>
       )}
 
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center", // centers horizontally
+          margin: "2rem 0",
+        }}
+      >
+        <SearchBar />
+      </div>
+
       <div className="title2" style={{ color: "var(--secondary-color)" }}>Faction Seven</div>
       <div className="slogan" style={{ color: "var(--secondary-color)" }}>Your one-stop media source</div>
 
