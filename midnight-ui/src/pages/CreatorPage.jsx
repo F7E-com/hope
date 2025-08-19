@@ -46,11 +46,11 @@ export default function CreatorPage() {
         const userSnap = await getDoc(doc(db, "users", uid));
         const safeCreatorData = userSnap.exists()
           ? {
-              name: userSnap.data()?.name || "Unknown Creator",
-              themeId: userSnap.data()?.themeId || "none",
-              banner: userSnap.data()?.banner || "",
-              ...userSnap.data(),
-            }
+            name: userSnap.data()?.name || "Unknown Creator",
+            themeId: userSnap.data()?.themeId || "none",
+            banner: userSnap.data()?.banner || "",
+            ...userSnap.data(),
+          }
           : { name: "Unknown Creator", themeId: "none", banner: "" };
 
         setCreatorData(safeCreatorData);
@@ -218,12 +218,12 @@ export default function CreatorPage() {
             onCustomColorChange={setPageCustomColor}
           />
           <label>
-                <div style={{ color: pageCustomColor }}> Custom Theme Color:{" "} </div>
-                <input
-                  type="color"
-                  value={pageCustomColor}
-                  onChange={(e) => setPageCustomColor(e.target.value)}
-                />
+            <div style={{ color: pageCustomColor }}> Custom Theme Color:{" "} </div>
+            <input
+              type="color"
+              value={pageCustomColor}
+              onChange={(e) => setPageCustomColor(e.target.value)}
+            />
           </label>
           <br />
           <input
@@ -234,7 +234,7 @@ export default function CreatorPage() {
             style={{ color: "#000", width: "100%", marginTop: "0.5rem" }}
           />
           <br />
-          <button onClick={savePageTheme} style={{ marginTop: "0.5rem", color: pageThemeId === "custom" ? pageCustomColor : "#fff"}}>
+          <button onClick={savePageTheme} style={{ marginTop: "0.5rem", color: pageThemeId === "custom" ? pageCustomColor : "#fff" }}>
             Save Theme & Banner
           </button>
         </div>
