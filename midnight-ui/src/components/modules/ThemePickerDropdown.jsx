@@ -48,7 +48,7 @@ export default function ThemePickerDropdown({ unlockedThemes = [], selectedTheme
   const displayName = usingCustom ? "Custom" : THEMES[selectedTheme]?.name || "Select Theme";
 
   return (
-    <div ref={dropdownRef} style={{ position: "relative", display: "inline-block", marginTop: "1rem" }}>
+    <div ref={dropdownRef} style={{ position: "relative", display: "inline-block" }}>
       <button
         ref={buttonRef}
         onClick={() => setOpen(prev => !prev)}
