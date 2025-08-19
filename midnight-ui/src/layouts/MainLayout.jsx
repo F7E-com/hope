@@ -69,24 +69,25 @@ export default function MainLayout() {
               ) : (
                 <span style={{ color: "gray" }}>Profile (login first)</span>
               )}
-              
+
               {currentUser ? (
                 <Link to={`/creator-page/${currentUser.id}`}>View Creator Page</Link>
               ) : (
                 <span style={{ color: "gray" }}>View Creator Page (login first)</span>
               )}
-              
+
               <Link to="/active-projects" style={{ color: "red" }}></Link>
             </>
           )}
+
           {activePopup === "menu" && (
             <>
-              <a href="#">Watch</a>
-              <a href="#">Read</a>
-              <a href="#">Listen</a>
-              <a href="#">Play</a>
-              <a href="#">Events</a>
-              <a href="#">Search</a>
+              <Link to="/watch">Watch</Link>
+              <Link to="/read">Read</Link>
+              <Link to="/listen">Listen</Link>
+              <Link to="/play">Play</Link>
+              <Link to="/events">Events</Link>
+              <Link to="/search">Search</Link>
               <Link to="/">Home</Link>
             </>
           )}
