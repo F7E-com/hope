@@ -1,3 +1,4 @@
+// Profile.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -6,6 +7,7 @@ import BioBox from "../components/BioBox";
 import { useUser } from "../contexts/UserContext";
 import ThemePickerDropdown from "../components/modules/ThemePickerDropdown";
 import { THEMES } from "../themes/ThemeIndex";
+import { applyTheme } from "@/utils/themeUtils"; // 👈 bring in your util
 
 export default function Profile() {
   const { uid } = useParams();
@@ -57,6 +59,13 @@ export default function Profile() {
     fetchProfile();
   }, [uid]);
 
+  // 🔥 Apply the theme whenever selectedTheme/themeColor changes
+  useEffect(() => {
+    if (selectedTheme && THEMES[selectedTheme]) {
+      applyTheme(THEMES[selectedTheme], themeColor);
+    }
+  }, [selectedTheme, themeColor]);
+
   const handleSaveProfile = async () => {
     if (!uid) return;
     try {
@@ -73,6 +82,12 @@ export default function Profile() {
         themeId: selectedTheme,
       }));
       setBannerPreview(bannerUrlInput);
+
+      // 👇 immediately apply after saving too
+      if (THEMES[selectedTheme]) {
+        applyTheme(THEMES[selectedTheme], themeColor);
+      }
+
       setEditing(false);
     } catch (err) {
       console.error("Error saving profile:", err);
