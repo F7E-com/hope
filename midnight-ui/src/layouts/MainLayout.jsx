@@ -104,15 +104,10 @@ export default function MainLayout() {
         style={{
           display: "flex",
           justifyContent: "center",
-          alignItems: "center",
           gap: "1rem",
           marginTop: "0.5rem",
         }}
       >
-        <div style={{ flex: 1, maxWidth: "450px" }}>
-          <SearchBar />
-        </div>
-
         <div style={{ flexShrink: 0 }}>
           <ThemePickerDropdown
             unlockedThemes={Object.keys(THEMES)}
@@ -121,6 +116,9 @@ export default function MainLayout() {
             customColor={customColor}
             onCustomColorChange={setCustomColor}
           />
+        </div>
+        <div style={{ flex: 1, maxWidth: "450px" }}>
+          <SearchBar />
         </div>
       </div>
 
