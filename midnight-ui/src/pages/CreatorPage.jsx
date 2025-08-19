@@ -234,6 +234,7 @@ export default function CreatorPage() {
           <br />
           <textarea
             placeholder="Description"
+            style={{ width: "100%", maxWidth: "400px", height: "100px" }}
             value={newPost.description}
             onChange={(e) => setNewPost({ ...newPost, description: e.target.value })}
           />
