@@ -179,6 +179,7 @@ export default function CreatorPage() {
           />
           <input
             type="text"
+            length="50px"
             placeholder="Banner URL"
             value={banner}
             onChange={(e) => setBanner(e.target.value)}
