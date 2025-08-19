@@ -16,30 +16,6 @@ export default function MainLayout() {
   const [siteThemeID, setSiteThemeID] = useState("vale"); // default theme
   const [customColor, setCustomColor] = useState("#222222");
 
-  <style>
-        {`
-
-    .search-bar input {
-      color: #000;       /* black text */
-      width: 100%;       /* long and narrow */
-      padding: 0.4rem;
-      font-size: 0.9rem;
-    }
-
-    .search-bar select {
-      color: #000;       /* black text */
-      padding: 0.4rem;
-      font-size: 0.9rem;
-    }
-
-    .search-bar button {
-      color: #000;       /* black text */
-      padding: 0.4rem 0.8rem;
-      font-size: 0.9rem;
-      }
-    `}
-      </style>
-
   // ---- Popup logic ----
   const togglePopup = (id, e) => {
     if (activePopup === id) {
@@ -90,35 +66,62 @@ export default function MainLayout() {
     document.body.style.fontFamily = theme.fontFamily || "inherit";
 
     // Optional: set CSS variables for links/buttons
-    document.documentElement.style.setProperty("--primary-color", siteThemeID === "custom" ? customColor : theme.preview?.background || "#222");
+    document.documentElement.style.setProperty(
+      "--primary-color",
+      siteThemeID === "custom" ? customColor : theme.preview?.background || "#222"
+    );
     document.documentElement.style.setProperty("--secondary-color", theme.preview?.color || "#fff");
     document.documentElement.style.setProperty("--site-font-family", theme.fontFamily || "inherit");
   }, [siteThemeID, customColor]);
 
   return (
     <div className="min-h-screen flex flex-col site-wrapper">
+      <style>
+        {`
+        .search-bar input {
+          color: #000;       /* black text */
+          width: 100%;       /* long and narrow */
+          padding: 0.4rem;
+          font-size: 0.9rem;
+        }
 
+        .search-bar select {
+          color: #000;
+          padding: 0.4rem;
+          font-size: 0.9rem;
+        }
+
+        .search-bar button {
+          color: #000;
+          padding: 0.4rem 0.8rem;
+          font-size: 0.9rem;
+        }
+      `}
+      </style>
+
+      {/* Top row: Search + Theme Picker */}
       <div
         style={{
           display: "flex",
           justifyContent: "center",
-          marginTop: "0.5rem",   // move it closer to the top
+          alignItems: "center",
+          gap: "1rem",
+          marginTop: "0.5rem",
         }}
       >
-        <div style={{ width: "450px", maxWidth: "90%" }}>
+        <div style={{ flex: 1, maxWidth: "450px" }}>
           <SearchBar />
         </div>
-      </div>
 
-      {/* Theme Picker Dropdown */}
-      <div style={{ margin: "1rem" }}>
-        <ThemePickerDropdown
-          unlockedThemes={Object.keys(THEMES)}
-          selectedTheme={siteThemeID}
-          onChange={setSiteThemeID}
-          customColor={customColor}
-          onCustomColorChange={setCustomColor}
-        />
+        <div style={{ flexShrink: 0 }}>
+          <ThemePickerDropdown
+            unlockedThemes={Object.keys(THEMES)}
+            selectedTheme={siteThemeID}
+            onChange={setSiteThemeID}
+            customColor={customColor}
+            onCustomColorChange={setCustomColor}
+          />
+        </div>
       </div>
 
       {/* Profile Button */}
@@ -147,14 +150,20 @@ export default function MainLayout() {
         >
           {activePopup === "profile" && (
             <>
-              <Link to="/new-user" style={{ color: "var(--secondary-color)" }}>New User/Login</Link>
+              <Link to="/new-user" style={{ color: "var(--secondary-color)" }}>
+                New User/Login
+              </Link>
               {currentUser ? (
-                <Link to={`/profile/${currentUser.id}`} style={{ color: "var(--secondary-color)" }}>Profile</Link>
+                <Link to={`/profile/${currentUser.id}`} style={{ color: "var(--secondary-color)" }}>
+                  Profile
+                </Link>
               ) : (
                 <span style={{ color: "gray" }}>Profile (login first)</span>
               )}
               {currentUser ? (
-                <Link to={`/creator-page/${currentUser.id}`} style={{ color: "var(--secondary-color)" }}>View Creator Page</Link>
+                <Link to={`/creator-page/${currentUser.id}`} style={{ color: "var(--secondary-color)" }}>
+                  View Creator Page
+                </Link>
               ) : (
                 <span style={{ color: "gray" }}>View Creator Page (login first)</span>
               )}
@@ -163,20 +172,38 @@ export default function MainLayout() {
 
           {activePopup === "menu" && (
             <>
-              <Link to="/watch" style={{ color: "var(--secondary-color)" }}>Watch</Link>
-              <Link to="/read" style={{ color: "var(--secondary-color)" }}>Read</Link>
-              <Link to="/listen" style={{ color: "var(--secondary-color)" }}>Listen</Link>
-              <Link to="/play" style={{ color: "var(--secondary-color)" }}>Play</Link>
-              <Link to="/events" style={{ color: "var(--secondary-color)" }}>Events</Link>
-              <Link to="/search" style={{ color: "var(--secondary-color)" }}>Search</Link>
-              <Link to="/" style={{ color: "var(--secondary-color)" }}>Home</Link>
+              <Link to="/watch" style={{ color: "var(--secondary-color)" }}>
+                Watch
+              </Link>
+              <Link to="/read" style={{ color: "var(--secondary-color)" }}>
+                Read
+              </Link>
+              <Link to="/listen" style={{ color: "var(--secondary-color)" }}>
+                Listen
+              </Link>
+              <Link to="/play" style={{ color: "var(--secondary-color)" }}>
+                Play
+              </Link>
+              <Link to="/events" style={{ color: "var(--secondary-color)" }}>
+                Events
+              </Link>
+              <Link to="/search" style={{ color: "var(--secondary-color)" }}>
+                Search
+              </Link>
+              <Link to="/" style={{ color: "var(--secondary-color)" }}>
+                Home
+              </Link>
             </>
           )}
         </div>
       )}
 
-      <div className="title2" style={{ color: "var(--secondary-color)" }}>Faction Seven</div>
-      <div className="slogan" style={{ color: "var(--secondary-color)" }}>Your one-stop media source</div>
+      <div className="title2" style={{ color: "var(--secondary-color)" }}>
+        Faction Seven
+      </div>
+      <div className="slogan" style={{ color: "var(--secondary-color)" }}>
+        Your one-stop media source
+      </div>
 
       <main className="flex-grow container mx-auto p-4">
         <Outlet /> {/* Nested routes render here */}
