@@ -1,81 +1,95 @@
 /* Base Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--font-family, 'Times New Roman', serif); /* Use theme font if set */
+}
 
-*{ margin: 0; padding: 0; box-sizing: border-box; font-family: 'Times New Roman', serif; }
+body {
+  background: var(--background-color, url('bg-nightcity.jpg') no-repeat center center fixed);
+  background-size: cover;
+  color: var(--text-color, #e0e0f0); /* Default text color */
+  overflow-x: hidden;
+}
 
+.background::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 300%;
+  background: linear-gradient(to bottom, rgba(0,0,0,0) 60%, rgba(0,0,0,0.9));
+  pointer-events: none;
+  z-index: -1;
+}
 
-body { background: url('bg-nightcity.jpg') no-repeat center center fixed; background-size: cover; color: #e0e0f0; overflow-x: hidden; }
+/* Circle buttons */
+.circle-button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(200, 200, 212, 0.9);
+  border: 2px solid rgba(255,255,255,0.3);
+  position: fixed;
+  top: 20px;
+  cursor: pointer;
+  z-index: 10;
+  backdrop-filter: blur(6px);
+  transition: background 0.3s;
+}
 
-.background::after { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 300%; background: linear-gradient(to bottom, rgba(0,0,0,0) 60%, rgba(0,0,0,0.9)); pointer-events: none; z-index: -1; }
-
-.circle-button { width: 50px; height: 50px; border-radius: 50%; background: rgba(200, 200, 212, 0.9); border: 2px solid rgba(255,255,255,0.3); position: fixed; top: 20px; cursor: pointer; z-index: 10; backdrop-filter: blur(6px); transition: background 0.3s; }
-
+/* Profile and menu button positions */
 .profile-button { left: 20px; }
-
 .menu-button { right: 20px; }
 
-.popup { position: fixed; top: 80px; background: rgba(0, 0, 0, 0.7); border: 1px solid #444; padding: 10px; border-radius: 10px; backdrop-filter: blur(4px); z-index: 15; }
-
-.popup a { display: block; color: #ccc; padding: 5px 10px; text-decoration: none; }
-
-.popup a:hover { background: #222; color: #fff; }
-
-.banner { text-align: center; font-size: 3em; padding-top: 80px; color: rgba(200, 10, 100, 1.0); text-shadow: 0 0 10px rgba(100, 12, 50, 0.7); }
-
-.slogan { text-align: center; font-size: 1.2em; color: #ccccff; margin-top: 10px; font-style: italic; }
-
-.main-container { display: flex; flex-direction: row; justify-content: space-between; padding: 30px; flex-wrap: wrap; }
-
-.sidebar { width: 20%; display: flex; flex-direction: column; gap: 20px; }
-
-.left { align-items: flex-start; }
-
-.right { align-items: flex-end; }
-
-.suggested, .news { background: rgba(20, 20, 30, 0.7); padding: 10px; border-radius: 10px; box-shadow: 0 0 15px rgba(100, 255, 200, 0.2); }
-
-.suggested img, .featured img, .showcase-2 img, .showcase-3 img { 
-  width: 100%; 
-  border-radius: 10px; 
-}
-
-.featured { width: 55%; text-align: center; background: rgba(0, 0, 0, 0.5); padding: 20px; border-radius: 20px; box-shadow: 0 0 25px rgba(255, 255, 255, 0.1); }
-
-.showcases { 
-  width: 100%; 
-  display: flex; 
-  flex-wrap: wrap; 
-  justify-content: center;
-  margin-top: 20px; 
-  gap: 20px; 
-}
-
-.showcase-2, .showcase-3 { 
-  flex: 1 1 0;
-  min-width: 250px; /* Prevents boxes from getting too small */
-  background: rgba(10, 10, 20, 0.6);
+/* Popups */
+.popup {
+  position: fixed;
+  top: 80px;
+  background: var(--background-color, rgba(0, 0, 0, 0.7));
+  border: 1px solid #444;
   padding: 10px;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(100, 200, 255, 0.2);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  backdrop-filter: blur(4px);
+  z-index: 15;
 }
 
-.spotlight-list { width: 100%; margin-top: 20px; background: rgba(30, 30, 50, 0.6); padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(255, 100, 255, 0.2); }
+.popup a {
+  display: block;
+  color: var(--text-color, #ccc);
+  padding: 5px 10px;
+  text-decoration: none;
+}
 
-.spotlight-list ul { list-style: none; }
+.popup a:hover {
+  background: #222;
+  color: #fff;
+}
 
-.spotlight-list li { padding: 5px 0; }
+/* Banner and slogan */
+.banner {
+  text-align: center;
+  font-size: 3em;
+  padding-top: 80px;
+  color: rgba(200, 10, 100, 1.0);
+  text-shadow: 0 0 10px rgba(100, 12, 50, 0.7);
+}
 
-.spotlight-list a { color: #e0d0ff; text-decoration: none; }
+.slogan {
+  text-align: center;
+  font-size: 1.2em;
+  color: var(--text-color, #ccccff);
+  margin-top: 10px;
+  font-style: italic;
+}
 
-.spotlight-list a:hover { text-decoration: underline; }
-
+/* Titles */
 .title {
-  font-family: 'Cinzel', serif; /* Gothic authority with mythic weight */
+  font-family: var(--font-family, 'Cinzel', serif);
   font-size: 4.5rem;
-  color: #d7d7d7;
-
+  color: var(--text-color, #d7d7d7);
   letter-spacing: 0.12em;
   text-transform: uppercase;
 
@@ -108,4 +122,3 @@ body { background: url('bg-nightcity.jpg') no-repeat center center fixed; backgr
       2px 2px 1px #000;
   }
 }
-
