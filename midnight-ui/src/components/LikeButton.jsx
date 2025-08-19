@@ -1,6 +1,6 @@
 // src/components/LikeButton.jsx
 import React from "react";
-import { addKudos, checkMilestones } from "../utils/Kudos";
+import { addKudos, checkMilestones } from "../utils/kudos";
 import { useUser } from "../contexts/UserContext";
 import { factionIcons } from "../assets/factionIcons";
 
