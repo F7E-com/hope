@@ -179,7 +179,7 @@ export default function CreatorPage() {
           />
           <input
             type="text"
-            length="50px"
+            style={{ width: "100%", maxWidth: "400px" }}
             placeholder="Banner URL"
             value={banner}
             onChange={(e) => setBanner(e.target.value)}
@@ -195,12 +195,15 @@ export default function CreatorPage() {
         <div className="creator-controls">
           <h3>New Post</h3>
           <input
+            style={{ width: "100%", maxWidth: "400px" }}
             type="text"
             placeholder="Title"
             value={newPost.title}
             onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
           />
+          <br />
           <input
+            style={{ width: "100%", maxWidth: "400px" }}
             type="text"
             placeholder="Media URL"
             value={newPost.src}
