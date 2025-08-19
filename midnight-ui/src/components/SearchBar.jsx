@@ -29,7 +29,7 @@ export default function SearchBar() {
   }
 
   return (
-    <div style={{ display: "flex", gap: "0.5rem" }}>
+    <div className="search-bar" style={{ display: "flex", gap: "0.5rem" }}>
       <input
         type="text"
         placeholder="Search..."

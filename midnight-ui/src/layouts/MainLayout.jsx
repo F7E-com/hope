@@ -143,12 +143,37 @@ export default function MainLayout() {
       <div
         style={{
           display: "flex",
-          justifyContent: "center", // centers horizontally
-          margin: "2rem 0",
+          justifyContent: "center",
+          marginTop: "0.5rem",   // move it closer to the top
         }}
       >
-        <SearchBar />
+        <div style={{ width: "450px", maxWidth: "90%" }}>
+          <SearchBar />
+        </div>
       </div>
+
+      <style>
+        {`
+
+    .search-bar input {
+      color: #000;       /* black text */
+      width: 100%;       /* long and narrow */
+      padding: 0.4rem;
+      font-size: 0.9rem;
+    }
+
+    .search-bar select {
+      padding: 0.4rem;
+      font-size: 0.9rem;
+    }
+
+    .search-bar button {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.9rem;
+    }
+  `}
+      </style>
+
 
       <div className="title2" style={{ color: "var(--secondary-color)" }}>Faction Seven</div>
       <div className="slogan" style={{ color: "var(--secondary-color)" }}>Your one-stop media source</div>
