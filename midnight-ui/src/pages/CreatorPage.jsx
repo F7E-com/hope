@@ -183,7 +183,9 @@ export default function CreatorPage() {
             value={banner}
             onChange={(e) => setBanner(e.target.value)}
           />
+          <br />
           <button onClick={savePageTheme}>Save Theme & Banner</button>
+          <br />
         </div>
       )}
 
