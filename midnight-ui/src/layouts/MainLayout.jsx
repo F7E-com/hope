@@ -4,6 +4,7 @@ import { Link, Outlet } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
 import ThemePickerDropdown from "../components/modules/ThemePickerDropdown";
 import { THEMES } from "../themes/ThemeIndex";
+import SearchBar from "../components/modules/SearchBar";
 
 export default function MainLayout() {
   const { currentUser } = useUser();
