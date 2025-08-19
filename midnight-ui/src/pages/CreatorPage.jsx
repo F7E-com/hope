@@ -218,7 +218,7 @@ export default function CreatorPage() {
             onCustomColorChange={setPageCustomColor}
           />
           <label>
-                   Custom Theme Color:{" "}
+                <div style={{ color: pageCustomColor }}> Custom Theme Color:{" "} </div>
                 <input
                   type="color"
                   value={pageCustomColor}
