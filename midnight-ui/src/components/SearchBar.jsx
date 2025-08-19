@@ -48,7 +48,6 @@ export default function SearchBar() {
             </select>
             <button
                 style={{
-                    padding: "0.4rem 1rem", // same as search bar
                     borderRadius: "6px",
                     border: "1px solid #444",
                     background: "#222",
