@@ -6,7 +6,7 @@ export default function ParticlesLayer({ config }) {
   const opts = useMemo(() => {
     if (!config) return null;
     const {
-      number = 40,
+      number = 41,
       color = '#ffffff',
       size = 2,
       speed = 0.6,
