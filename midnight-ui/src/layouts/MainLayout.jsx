@@ -1,25 +1,58 @@
 import { useState, useEffect, useRef } from "react";
-import NavBar from "../components/modules/NavBar";
 import { Link, Outlet } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
+import { THEMES } from "../themes/ThemeIndex";
+import ThemePickerDropdown from "../components/modules/ThemePickerDropdown";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "@/utils/firebase";
 
 export default function MainLayout() {
   const { currentUser } = useUser();
   const [activePopup, setActivePopup] = useState(null);
   const [popupPos, setPopupPos] = useState({ x: 0, y: 0 });
+  const [siteThemeID, setSiteThemeID] = useState("background"); // default
+  const [customColor, setCustomColor] = useState("#222222");
   const popupRef = useRef(null);
 
+  useEffect(() => {
+    if (currentUser?.siteThemeID) setSiteThemeID(currentUser.siteThemeID);
+    if (currentUser?.siteCustomColor) setCustomColor(currentUser.siteCustomColor);
+  }, [currentUser]);
+
+  const siteThemeClass =
+    siteThemeID === "custom" ? "" : THEMES[siteThemeID]?.className || "background";
+
+  const handleChangeSiteTheme = async (themeId) => {
+    setSiteThemeID(themeId);
+    if (!currentUser?.id) return;
+    try {
+      const userRef = doc(db, "users", currentUser.id);
+      await updateDoc(userRef, { siteThemeID: themeId });
+    } catch (err) {
+      console.error("Error saving site theme:", err);
+    }
+  };
+
+  const handleChangeCustomColor = async (color) => {
+    setCustomColor(color);
+    if (!currentUser?.id) return;
+    try {
+      const userRef = doc(db, "users", currentUser.id);
+      await updateDoc(userRef, { siteCustomColor: color, siteThemeID: "custom" });
+    } catch (err) {
+      console.error("Error saving custom site color:", err);
+    }
+  };
+
   const togglePopup = (id, e) => {
-    if (activePopup === id) {
-      setActivePopup(null);
-    } else {
-      // Use pageX/pageY so the popup accounts for scroll
+    if (activePopup === id) setActivePopup(null);
+    else {
       setPopupPos({ x: e.pageX, y: e.pageY });
       setActivePopup(id);
     }
   };
 
-  // Close on outside click
+  // Close popups on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (popupRef.current && !popupRef.current.contains(e.target)) {
@@ -30,31 +63,30 @@ export default function MainLayout() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [activePopup]);
 
-  // Flip horizontally if out of viewport
-  useEffect(() => {
-    if (!activePopup || !popupRef.current) return;
-
-    const popup = popupRef.current.getBoundingClientRect();
-    const viewportWidth = window.innerWidth;
-    let newX = popupPos.x;
-
-    if (popup.right > viewportWidth) {
-      newX = Math.max(0, popupPos.x - popup.width);
-    }
-    setPopupPos((prev) => ({ ...prev, x: newX }));
-  }, [activePopup, popupPos.x]);
-
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="background"></div>
+    <div
+      className={`site-wrapper ${siteThemeClass} min-h-screen flex flex-col`}
+      style={{
+        background: siteThemeID === "custom" ? customColor : undefined,
+        transition: "all 0.3s ease",
+      }}
+    >
+      {/* Change Site Theme button using ThemePickerDropdown */}
+      {currentUser && (
+        <ThemePickerDropdown
+          unlockedThemes={Object.keys(THEMES)}
+          selectedTheme={siteThemeID}
+          onChange={handleChangeSiteTheme}
+          customColor={customColor}
+          onCustomColorChange={handleChangeCustomColor}
+        />
+      )}
 
-      {/* Profile Button */}
+      {/* Profile & Menu Buttons */}
       <div className="circle-button profile-button" onClick={(e) => togglePopup("profile", e)} />
-
-      {/* Menu Button */}
       <div className="circle-button menu-button" onClick={(e) => togglePopup("menu", e)} />
 
-      {/* Popup */}
+      {/* Popups */}
       {activePopup && (
         <div
           ref={popupRef}
@@ -64,22 +96,10 @@ export default function MainLayout() {
           {activePopup === "profile" && (
             <>
               <Link to="/new-user">New User/Login</Link>
-              {currentUser ? (
-                <Link to={`/profile/${currentUser.id}`}>Profile</Link>
-              ) : (
-                <span style={{ color: "gray" }}>Profile (login first)</span>
-              )}
-
-              {currentUser ? (
-                <Link to={`/creator-page/${currentUser.id}`}>View Creator Page</Link>
-              ) : (
-                <span style={{ color: "gray" }}>View Creator Page (login first)</span>
-              )}
-
-              <Link to="/active-projects" style={{ color: "red" }}></Link>
+              {currentUser ? <Link to={`/profile/${currentUser.id}`}>Profile</Link> : <span style={{ color: "gray" }}>Profile (login first)</span>}
+              {currentUser ? <Link to={`/creator-page/${currentUser.id}`}>View Creator Page</Link> : <span style={{ color: "gray" }}>View Creator Page (login first)</span>}
             </>
           )}
-
           {activePopup === "menu" && (
             <>
               <Link to="/watch">Watch</Link>
@@ -98,7 +118,7 @@ export default function MainLayout() {
       <div className="slogan">Your one-stop media source</div>
 
       <main className="flex-grow container mx-auto p-4">
-        <Outlet /> {/* Nested routes render here */}
+        <Outlet />
       </main>
     </div>
   );

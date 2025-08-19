@@ -1,5 +1,7 @@
-/* --- Creator Page Wrapper Base --- */
-.creator-page-wrapper {
+/* --- Base Wrappers --- */
+.creator-page-wrapper,
+.profile-page-wrapper,
+.site-wrapper {
   padding: 1rem;
   border-radius: 12px;
   max-width: 900px;
@@ -8,16 +10,28 @@
   transition: all 0.3s ease-in-out;
 }
 
-.creator-page-wrapper h1, 
-.creator-page-wrapper h2, 
-.creator-page-wrapper h3 {
+.creator-page-wrapper h1,
+.creator-page-wrapper h2,
+.creator-page-wrapper h3,
+.profile-page-wrapper h1,
+.profile-page-wrapper h2,
+.profile-page-wrapper h3,
+.site-wrapper h1,
+.site-wrapper h2,
+.site-wrapper h3 {
   margin: 0.5rem 0;
   transition: all 0.3s ease;
 }
 
 .creator-page-wrapper input,
 .creator-page-wrapper select,
-.creator-page-wrapper textarea {
+.creator-page-wrapper textarea,
+.profile-page-wrapper input,
+.profile-page-wrapper select,
+.profile-page-wrapper textarea,
+.site-wrapper input,
+.site-wrapper select,
+.site-wrapper textarea {
   margin-bottom: 0.5rem;
   padding: 0.5rem;
   border-radius: 4px;
@@ -25,13 +39,17 @@
   transition: all 0.2s ease;
 }
 
-.creator-page-wrapper button {
+.creator-page-wrapper button,
+.profile-page-wrapper button,
+.site-wrapper button {
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 /* --- Government: Black & White Marble --- */
-.creator-page-wrapper.government {
+.creator-page-wrapper.government,
+.profile-page-wrapper.government,
+.site-wrapper.government {
   background: repeating-linear-gradient(
     135deg,
     #ffffff 0 20px,
@@ -44,7 +62,11 @@
 }
 
 .creator-page-wrapper.government a,
-.creator-page-wrapper.government button {
+.creator-page-wrapper.government button,
+.profile-page-wrapper.government a,
+.profile-page-wrapper.government button,
+.site-wrapper.government a,
+.site-wrapper.government button {
   background: #000;
   color: #fff;
   border: 2px solid #333;
@@ -52,20 +74,30 @@
 }
 
 .creator-page-wrapper.government a:hover,
-.creator-page-wrapper.government button:hover {
+.creator-page-wrapper.government button:hover,
+.profile-page-wrapper.government a:hover,
+.profile-page-wrapper.government button:hover,
+.site-wrapper.government a:hover,
+.site-wrapper.government button:hover {
   background: #222;
   transform: scale(1.05);
 }
 
 /* --- Infrastructure: Blue/Yellow --- */
-.creator-page-wrapper.infrastructure {
+.creator-page-wrapper.infrastructure,
+.profile-page-wrapper.infrastructure,
+.site-wrapper.infrastructure {
   background: linear-gradient(to bottom right, #1e3f9e, #f9d300);
   color: #fff;
   font-family: 'Roboto', sans-serif;
 }
 
 .creator-page-wrapper.infrastructure a,
-.creator-page-wrapper.infrastructure button {
+.creator-page-wrapper.infrastructure button,
+.profile-page-wrapper.infrastructure a,
+.profile-page-wrapper.infrastructure button,
+.site-wrapper.infrastructure a,
+.site-wrapper.infrastructure button {
   background: #f9d300;
   color: #1e3f9e;
   border: 2px solid #fff;
@@ -73,21 +105,31 @@
 }
 
 .creator-page-wrapper.infrastructure a:hover,
-.creator-page-wrapper.infrastructure button:hover {
+.creator-page-wrapper.infrastructure button:hover,
+.profile-page-wrapper.infrastructure a:hover,
+.profile-page-wrapper.infrastructure button:hover,
+.site-wrapper.infrastructure a:hover,
+.site-wrapper.infrastructure button:hover {
   background: #ffd700;
   box-shadow: 0 0 8px #1e3f9e;
   transform: translateY(-2px);
 }
 
 /* --- Security: Blue/Grey --- */
-.creator-page-wrapper.security {
+.creator-page-wrapper.security,
+.profile-page-wrapper.security,
+.site-wrapper.security {
   background: linear-gradient(to bottom right, #3a5f9e, #7d7d7d);
   color: #e0e0e0;
   font-family: 'Arial', sans-serif;
 }
 
 .creator-page-wrapper.security a,
-.creator-page-wrapper.security button {
+.creator-page-wrapper.security button,
+.profile-page-wrapper.security a,
+.profile-page-wrapper.security button,
+.site-wrapper.security a,
+.site-wrapper.security button {
   background: #7d7d7d;
   color: #3a5f9e;
   border: 1px solid #e0e0e0;
@@ -95,21 +137,31 @@
 }
 
 .creator-page-wrapper.security a:hover,
-.creator-page-wrapper.security button:hover {
+.creator-page-wrapper.security button:hover,
+.profile-page-wrapper.security a:hover,
+.profile-page-wrapper.security button:hover,
+.site-wrapper.security a:hover,
+.site-wrapper.security button:hover {
   background: #5a5a5a;
   border-color: #3a5f9e;
   text-shadow: 0 0 2px #fff;
 }
 
 /* --- Commerce: Gold --- */
-.creator-page-wrapper.commerce {
+.creator-page-wrapper.commerce,
+.profile-page-wrapper.commerce,
+.site-wrapper.commerce {
   background: linear-gradient(135deg, #ffd700 0%, #fff8dc 100%);
   color: #333;
   font-family: 'Times New Roman', serif;
 }
 
 .creator-page-wrapper.commerce a,
-.creator-page-wrapper.commerce button {
+.creator-page-wrapper.commerce button,
+.profile-page-wrapper.commerce a,
+.profile-page-wrapper.commerce button,
+.site-wrapper.commerce a,
+.site-wrapper.commerce button {
   background: #fff8dc;
   color: #ffd700;
   border: 1px solid #ffd700;
@@ -117,13 +169,19 @@
 }
 
 .creator-page-wrapper.commerce a:hover,
-.creator-page-wrapper.commerce button:hover {
+.creator-page-wrapper.commerce button:hover,
+.profile-page-wrapper.commerce a:hover,
+.profile-page-wrapper.commerce button:hover,
+.site-wrapper.commerce a:hover,
+.site-wrapper.commerce button:hover {
   background: #ffef99;
   transform: scale(1.07);
 }
 
 /* --- Industry: Red/Russet/Orange --- */
-.creator-page-wrapper.industry {
+.creator-page-wrapper.industry,
+.profile-page-wrapper.industry,
+.site-wrapper.industry {
   background: linear-gradient(to bottom right, #b22222, #ff8c00, #a0522d);
   color: #fff;
   font-family: 'Courier New', monospace;
@@ -138,7 +196,11 @@
 }
 
 .creator-page-wrapper.industry a,
-.creator-page-wrapper.industry button {
+.creator-page-wrapper.industry button,
+.profile-page-wrapper.industry a,
+.profile-page-wrapper.industry button,
+.site-wrapper.industry a,
+.site-wrapper.industry button {
   background: #a0522d;
   color: #fff;
   border: 2px solid #ff8c00;
@@ -146,20 +208,30 @@
 }
 
 .creator-page-wrapper.industry a:hover,
-.creator-page-wrapper.industry button:hover {
+.creator-page-wrapper.industry button:hover,
+.profile-page-wrapper.industry a:hover,
+.profile-page-wrapper.industry button:hover,
+.site-wrapper.industry a:hover,
+.site-wrapper.industry button:hover {
   background: #b22222;
   transform: rotate(-1deg) scale(1.05);
 }
 
 /* --- Research: Cyan/White --- */
-.creator-page-wrapper.research {
+.creator-page-wrapper.research,
+.profile-page-wrapper.research,
+.site-wrapper.research {
   background: linear-gradient(to bottom right, #00ffff, #ffffff);
   color: #001f33;
   font-family: 'Verdana', sans-serif;
 }
 
 .creator-page-wrapper.research a,
-.creator-page-wrapper.research button {
+.creator-page-wrapper.research button,
+.profile-page-wrapper.research a,
+.profile-page-wrapper.research button,
+.site-wrapper.research a,
+.site-wrapper.research button {
   background: #00ffff;
   color: #001f33;
   border: 1px solid #001f33;
@@ -167,13 +239,19 @@
 }
 
 .creator-page-wrapper.research a:hover,
-.creator-page-wrapper.research button:hover {
+.creator-page-wrapper.research button:hover,
+.profile-page-wrapper.research a:hover,
+.profile-page-wrapper.research button:hover,
+.site-wrapper.research a:hover,
+.site-wrapper.research button:hover {
   background: #33ffff;
   box-shadow: 0 0 8px #00ffff;
 }
 
 /* --- Background: Black/Purple --- */
-.creator-page-wrapper.background {
+.creator-page-wrapper.background,
+.profile-page-wrapper.background,
+.site-wrapper.background {
   background: linear-gradient(to bottom right, #0d0d0d, #4b0082);
   color: #c0c0ff;
   font-family: 'Consolas', monospace;
@@ -188,7 +266,11 @@
 }
 
 .creator-page-wrapper.background a,
-.creator-page-wrapper.background button {
+.creator-page-wrapper.background button,
+.profile-page-wrapper.background a,
+.profile-page-wrapper.background button,
+.site-wrapper.background a,
+.site-wrapper.background button {
   background: #4b0082;
   color: #c0c0ff;
   border: 1px solid #6666cc;
@@ -196,7 +278,11 @@
 }
 
 .creator-page-wrapper.background a:hover,
-.creator-page-wrapper.background button:hover {
+.creator-page-wrapper.background button:hover,
+.profile-page-wrapper.background a:hover,
+.profile-page-wrapper.background button:hover,
+.site-wrapper.background a:hover,
+.site-wrapper.background button:hover {
   background: #3a0066;
   box-shadow: 0 0 10px #8a2be2;
 }

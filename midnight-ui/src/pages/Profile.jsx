@@ -22,19 +22,6 @@ export default function Profile() {
 
   const isOwner = currentUser?.id === uid;
 
-  const getActiveThemeStyles = () => {
-    const theme = THEMES[selectedTheme] || { preview: {}, className: "" };
-    return {
-      primaryColor: theme.preview.background || themeColor,
-      secondaryColor: theme.preview.color || "#fff",
-      fontFamily: theme.fontFamily || "inherit",
-      borderStyle: theme.borderStyle || "none",
-      bannerOverlay: theme.bannerOverlay || null,
-    };
-  };
-
-  const activeTheme = getActiveThemeStyles();
-
   useEffect(() => {
     if (!uid) return;
 
@@ -106,33 +93,17 @@ export default function Profile() {
   if (loading) return <p>Loading...</p>;
   if (!profileUser) return <p>User not found.</p>;
 
+  // Determine wrapper classes
+  const themeClass = THEMES[selectedTheme]?.className || "background";
+
   return (
-    <div
-      style={{
-        maxWidth: "900px",
-        margin: "2rem auto",
-        padding: "1rem",
-        borderRadius: "12px",
-        backgroundColor: activeTheme.primaryColor,
-        color: activeTheme.secondaryColor,
-        fontFamily: activeTheme.fontFamily,
-        border: activeTheme.borderStyle,
-        transition: "all 0.3s ease",
-      }}
-    >
+    <div className={`profile-page-wrapper ${themeClass}`}>
       {/* Banner */}
       <div
+        className="creator-banner"
         style={{
-          width: "100%",
-          height: "200px",
-          borderRadius: "12px",
-          marginBottom: "1rem",
           backgroundColor: !bannerPreview ? themeColor : undefined,
           backgroundImage: bannerPreview ? `url(${bannerPreview})` : undefined,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          position: "relative",
-          overflow: "hidden",
         }}
       >
         {editing && isOwner && (
@@ -182,26 +153,13 @@ export default function Profile() {
             isOwner={isOwner}
             editable={isOwner}
             onSave={handleSaveBio}
-            themeColor={activeTheme.secondaryColor}
-            textColor={activeTheme.secondaryColor}
-            backgroundColor={activeTheme.primaryColor}
+            themeColor={THEMES[selectedTheme]?.preview.color || "#fff"}
+            textColor={THEMES[selectedTheme]?.preview.color || "#fff"}
+            backgroundColor={THEMES[selectedTheme]?.preview.background || "#222"}
           />
 
           {isOwner && !editing && (
-            <button
-              onClick={() => setEditing(true)}
-              style={{
-                marginTop: "0.5rem",
-                padding: "0.5rem 1rem",
-                background: "#444",
-                color: "#fff",
-                border: "none",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
-            >
-              Edit Profile
-            </button>
+            <button onClick={() => setEditing(true)}>Edit Profile</button>
           )}
 
           {isOwner && editing && (
@@ -223,34 +181,8 @@ export default function Profile() {
                 onCustomColorChange={setThemeColor}
               />
 
-              <button
-                onClick={handleSaveProfile}
-                style={{
-                  marginTop: "0.5rem",
-                  padding: "0.5rem 1rem",
-                  background: "#444",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                }}
-              >
-                Save Profile
-              </button>
-              <button
-                onClick={() => setEditing(false)}
-                style={{
-                  marginLeft: "0.5rem",
-                  padding: "0.5rem 1rem",
-                  background: "gray",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                }}
-              >
-                Cancel
-              </button>
+              <button onClick={handleSaveProfile}>Save Profile</button>
+              <button onClick={() => setEditing(false)}>Cancel</button>
             </div>
           )}
 
