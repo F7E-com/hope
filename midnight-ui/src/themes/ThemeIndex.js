@@ -80,7 +80,7 @@ export const THEMES = {
     name: "Government",
     className: "government",
     preview: {
-      background: "linear-gradient(to bottom right, #ffffff, #dcdcdc)",
+      background: "linear-gradient(to bottom right, #ffffff, #1d1919ff)",
       color: "#111",
     },
     googleFont: "Playfair Display",

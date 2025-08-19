@@ -11,8 +11,7 @@ function ensureGoogleFontLoaded(googleFont) {
   document.head.appendChild(link);
 }
 
-export function applyTheme(theme, customColor = null) {
-  // Background & color bases
+export function applyTheme(theme, customColor = null, wrapper = document.documentElement) {
   const bg = theme?.id === 'custom'
     ? (customColor || '#222')
     : (theme?.preview?.background || '#222');
@@ -20,32 +19,26 @@ export function applyTheme(theme, customColor = null) {
   const fg = theme?.preview?.color || '#fff';
   const font = theme?.fontFamily || "'Cinzel', serif";
 
-  // Module surface styling
   const moduleBg = theme?.texture
     ? `${theme.texture}, ${bg}`
     : bg;
 
-  // Write CSS variables
-  const root = document.documentElement;
-  root.style.setProperty('--background-color', bg);
-  root.style.setProperty('--text-color', fg);
-  root.style.setProperty('--font-family', font);
+  wrapper.style.setProperty('--background-color', bg);
+  wrapper.style.setProperty('--text-color', fg);
+  wrapper.style.setProperty('--font-family', font);
 
-  root.style.setProperty('--module-bg', moduleBg);
-  root.style.setProperty('--module-color', fg);
-  root.style.setProperty('--module-border', theme?.border || 'none');
-  root.style.setProperty('--module-radius', theme?.borderRadius || '0');
-  root.style.setProperty('--module-shadow', theme?.boxShadow || 'none');
-  root.style.setProperty('--module-padding', theme?.modulePadding || '1rem');
-  root.style.setProperty('--module-margin', theme?.moduleMargin || '1rem');
+  wrapper.style.setProperty('--module-bg', moduleBg);
+  wrapper.style.setProperty('--module-color', fg);
+  wrapper.style.setProperty('--module-border', theme?.border || 'none');
+  wrapper.style.setProperty('--module-radius', theme?.borderRadius || '0');
+  wrapper.style.setProperty('--module-shadow', theme?.boxShadow || 'none');
+  wrapper.style.setProperty('--module-padding', theme?.modulePadding || '1rem');
+  wrapper.style.setProperty('--module-margin', theme?.moduleMargin || '1rem');
 
-  // Accent variables (optional for components)
-  if (theme?.accents?.primary) root.style.setProperty('--accent-primary', theme.accents.primary);
-  if (theme?.accents?.secondary) root.style.setProperty('--accent-secondary', theme.accents.secondary);
+  if (theme?.accents?.primary) wrapper.style.setProperty('--accent-primary', theme.accents.primary);
+  if (theme?.accents?.secondary) wrapper.style.setProperty('--accent-secondary', theme.accents.secondary);
 
-  // Particles flag (for conditional render)
-  root.style.setProperty('--particles-enabled', theme?.particles ? '1' : '0');
+  wrapper.style.setProperty('--particles-enabled', theme?.particles ? '1' : '0');
 
-  // Load Google Font if provided
   if (theme?.googleFont) ensureGoogleFontLoaded(theme.googleFont);
 }

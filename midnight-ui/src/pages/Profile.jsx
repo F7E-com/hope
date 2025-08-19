@@ -61,10 +61,12 @@ export default function Profile() {
 
   // 🔥 Apply the theme whenever selectedTheme/themeColor changes
   useEffect(() => {
-    if (selectedTheme && THEMES[selectedTheme]) {
-      applyTheme(THEMES[selectedTheme], themeColor);
-    }
-  }, [selectedTheme, themeColor]);
+  if (selectedTheme && THEMES[selectedTheme]) {
+    const wrapper = document.querySelector('.profile-page-wrapper');
+    if (wrapper) applyTheme(THEMES[selectedTheme], themeColor, wrapper);
+  }
+}, [selectedTheme, themeColor]);
+
 
   const handleSaveProfile = async () => {
     if (!uid) return;
