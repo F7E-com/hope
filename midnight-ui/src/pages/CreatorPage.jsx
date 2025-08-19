@@ -267,6 +267,10 @@ export default function CreatorPage() {
             <option value="youtube">YouTube</option>
             <option value="video">Video</option>
             <option value="gdrive">GDrive</option>
+            <option value="audio">Audio</option>
+            <option value="pdf">PDF</option>
+            <option value="text">Text</option>
+            <option value="webpage">Webpage</option>
           </select>
 
           {/* Conditional Instructions */}

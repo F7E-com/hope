@@ -37,6 +37,20 @@ export default function MediaViewer({ type, src, title = "" }) {
         </div>
       );
 
+      case "text":
+      return (
+        <div className="media-container text">
+          <p className="text-content">{src}</p>
+        </div>
+      );
+
+      case "webpage":
+      return (
+        <div className="media-container webpage">
+          <iframe src={src} title={title} className="webpage-embed"></iframe>
+        </div>
+      );
+
     case "audio":
       return (
         <div className="media-container audio">
