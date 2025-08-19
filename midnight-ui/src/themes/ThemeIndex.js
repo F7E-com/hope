@@ -1,5 +1,5 @@
 // THEMES.js or ThemeIndex.jsx
-import '../styles/FactionThemes.css'; // <- import the CSS so the classes render properly
+import 'midnight-ui\src\styles\FactionThemes.css'; // <- import the CSS so the classes render properly
 
 export const THEMES = {
   vale: {
