@@ -5,6 +5,9 @@ import ThemePickerDropdown from "../components/modules/ThemePickerDropdown";
 import { THEMES } from "../themes/ThemeIndex";
 import SearchBar from "../components/SearchBar";
 import { applyTheme } from "../utils/themeUtils"; // import the helper
+import SvgFiltersDefs from "../components/visual/SvgFiltersDefs";
+import ParticlesLayer from "../components/visual/ParticlesLayer";
+import "../styles/theme-surface.css"; // make sure this is imported once
 
 export default function MainLayout() {
   const { currentUser } = useUser();
@@ -60,6 +63,11 @@ export default function MainLayout() {
   const theme = THEMES[siteThemeID] || {};
   applyTheme(theme, siteThemeID === "custom" ? customColor : null);
 }, [siteThemeID, customColor]);
+
+<SvgFiltersDefs />
+  {THEMES[siteThemeID]?.particles && (
+    <ParticlesLayer config={THEMES[siteThemeID].particles} />
+  )}
 
   return (
     <div className="min-h-screen flex flex-col site-wrapper">

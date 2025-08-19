@@ -1,190 +1,247 @@
-import './FactionThemes.css';
-
+// src/themes/ThemeIndex.js
+// (You can still import './FactionThemes.css' if you have extra per-theme classes.)
 export const THEMES = {
   vale: {
     name: "Vale",
     className: "vale",
-    fontFamily: "'Cinzel', serif",
-    modulePadding: "32px",
-    moduleMargin: "24px auto",
     preview: {
       background: "linear-gradient(to bottom right, #1b2a2f, #2e3e3f)",
-      color: "#c0ffd4"
-    }
+      color: "#c0ffd4",
+    },
+    googleFont: "Cinzel",
+    fontFamily: "'Cinzel', serif",
+    border: "2px solid rgba(63,163,131,0.9)",
+    borderRadius: "12px",
+    boxShadow: "0 0 12px rgba(192,255,212,0.25)",
+    texture: "url('https://www.transparenttextures.com/patterns/white-paper.png')",
+    modulePadding: "28px",
+    moduleMargin: "20px auto",
+    accents: { primary: "#3fa383", secondary: "#9ee0c9" },
+    particles: {
+      number: 40,
+      color: "#9ee0c9",
+      size: 2,
+      speed: 0.5,
+      random: true,
+    },
   },
 
   neon: {
     name: "Neon Glow",
     className: "neon",
-    fontFamily: "'Orbitron', sans-serif",
-    modulePadding: "28px",
-    moduleMargin: "20px auto",
     preview: {
-      background: "black",
-      color: "#0ff"
-    }
+      background: "radial-gradient( circle at 20% 20%, #020202 0%, #000 70% )",
+      color: "#0ff",
+    },
+    googleFont: "Orbitron",
+    fontFamily: "'Orbitron', sans-serif",
+    border: "2px solid #0ff",
+    borderRadius: "6px",
+    boxShadow: "0 0 18px rgba(0,255,255,0.45), inset 0 0 8px rgba(0,255,255,0.25)",
+    texture: null,
+    modulePadding: "24px",
+    moduleMargin: "18px auto",
+    accents: { primary: "#0ff", secondary: "#ff00ff" },
+    particles: {
+      number: 60,
+      color: "#0ff",
+      size: 2,
+      speed: 1.2,
+      random: true,
+    },
   },
 
   pastel: {
     name: "Pastel Dreams",
     className: "pastel",
-    fontFamily: "'Comic Neue', cursive",
-    modulePadding: "30px",
-    moduleMargin: "22px auto",
     preview: {
-      background: "#ffd",
-      color: "#333"
-    }
+      background: "linear-gradient(135deg, #fff1f8, #e5f4ff)",
+      color: "#333",
+    },
+    googleFont: "Quicksand",
+    fontFamily: "'Quicksand', sans-serif",
+    border: "2px solid #f8b8d8",
+    borderRadius: "18px",
+    boxShadow: "0 6px 18px rgba(255, 182, 193, 0.35)",
+    texture: "url('https://www.transparenttextures.com/patterns/gplay.png')",
+    modulePadding: "26px",
+    moduleMargin: "18px auto",
+    accents: { primary: "#f8b8d8", secondary: "#a0c4ff" },
+    particles: {
+      number: 25,
+      color: "#f8b8d8",
+      size: 3,
+      speed: 0.6,
+      random: true,
+    },
   },
 
-  // --- Faction Themes ---
   government: {
     name: "Government",
     className: "government",
-    fontFamily: "'Merriweather', serif",
-    modulePadding: "32px",
-    moduleMargin: "24px auto",
     preview: {
-      background: "linear-gradient(to bottom right, #ffffff, #000000)",
-      color: "#111"
+      background: "linear-gradient(to bottom right, #ffffff, #dcdcdc)",
+      color: "#111",
     },
-    details: {
-      ui: "Black & white marble floors, polished hallways, statues, formal courts",
-      focus: "Community",
-      tasks: [
-        "Creating community guidelines",
-        "Proposing polls and policy alterations",
-        "Event hosting & announcements",
-        "Greeting & orienting new users"
-      ]
-    }
+    googleFont: "Playfair Display",
+    fontFamily: "'Playfair Display', serif",
+    border: "3px solid #222",
+    borderRadius: "8px",
+    boxShadow: "0 8px 18px rgba(0,0,0,0.2)",
+    texture: "url('https://www.transparenttextures.com/patterns/paper-fibers.png')",
+    modulePadding: "32px",
+    moduleMargin: "22px auto",
+    accents: { primary: "#222", secondary: "#555" },
+    particles: null, // off for this theme
   },
 
   infrastructure: {
     name: "Infrastructure",
     className: "infrastructure",
-    fontFamily: "'Roboto', sans-serif",
-    modulePadding: "30px",
-    moduleMargin: "22px auto",
     preview: {
       background: "linear-gradient(to bottom right, #1e3f9e, #f9d300)",
-      color: "#fff"
+      color: "#fff",
     },
-    details: {
-      ui: "Industrial-blueprints, construction beams, yellow warning accents",
-      focus: "Website",
-      tasks: [
-        "Community event planning & structure",
-        "Bug reporting / on-the-fly fixes",
-        "Website/platform updates and upgrades",
-        "Flagging/removing unsafe content"
-      ]
-    }
+    googleFont: "Roboto",
+    fontFamily: "'Roboto', sans-serif",
+    border: "2px solid rgba(255,255,255,0.75)",
+    borderRadius: "10px",
+    boxShadow: "0 10px 22px rgba(0,0,0,0.3)",
+    texture: "url('https://www.transparenttextures.com/patterns/asfalt-light.png')",
+    modulePadding: "30px",
+    moduleMargin: "20px auto",
+    accents: { primary: "#f9d300", secondary: "#1e3f9e" },
+    particles: {
+      number: 35,
+      color: "#f9d300",
+      size: 2,
+      speed: 0.8,
+      random: true,
+    },
   },
 
   security: {
     name: "Security",
     className: "security",
-    fontFamily: "'Roboto Mono', monospace",
-    modulePadding: "28px",
-    moduleMargin: "20px auto",
     preview: {
-      background: "linear-gradient(to bottom right, #3a5f9e, #7d7d7d)",
-      color: "#e0e0e0"
+      background: "linear-gradient(to bottom right, #384a66, #7d7d7d)",
+      color: "#e0e0e0",
     },
-    details: {
-      ui: "Panels, wiring, slightly scuffed tech surfaces",
-      focus: "Peacekeeping",
-      tasks: [
-        "Public security",
-        "Conflict resolution",
-        "Community standards enforcement"
-      ]
-    }
+    googleFont: "Roboto Mono",
+    fontFamily: "'Roboto Mono', monospace",
+    border: "1px solid rgba(255,255,255,0.35)",
+    borderRadius: "8px",
+    boxShadow: "0 8px 16px rgba(0,0,0,0.35)",
+    texture: "url('https://www.transparenttextures.com/patterns/subtle-carbon.png')",
+    modulePadding: "28px",
+    moduleMargin: "18px auto",
+    accents: { primary: "#9fb3d1", secondary: "#e0e0e0" },
+    particles: {
+      number: 20,
+      color: "#9fb3d1",
+      size: 2,
+      speed: 0.4,
+      random: true,
+    },
   },
 
   commerce: {
     name: "Commerce",
     className: "commerce",
-    fontFamily: "'Playfair Display', serif",
-    modulePadding: "32px",
-    moduleMargin: "24px auto",
     preview: {
       background: "linear-gradient(to bottom right, #ffd700, #fff8dc)",
-      color: "#333"
+      color: "#333",
     },
-    details: {
-      ui: "Splendor, grandeur, revolving glass doors, shiny surfaces",
-      focus: "Revenue",
-      tasks: [
-        "Product standards",
-        "Focus groups",
-        "Fundraising",
-        "Marketing"
-      ]
-    }
+    googleFont: "Playfair Display",
+    fontFamily: "'Playfair Display', serif",
+    border: "2px solid rgba(255,215,0,0.65)",
+    borderRadius: "14px",
+    boxShadow: "0 8px 16px rgba(255,215,0,0.25)",
+    texture: "url('https://www.transparenttextures.com/patterns/gold-scale.png')",
+    modulePadding: "30px",
+    moduleMargin: "22px auto",
+    accents: { primary: "#ffd700", secondary: "#b8860b" },
+    particles: {
+      number: 18,
+      color: "#ffd700",
+      size: 2,
+      speed: 0.4,
+      random: true,
+    },
   },
 
   industry: {
     name: "Industry",
     className: "industry",
-    fontFamily: "'Roboto', sans-serif",
-    modulePadding: "32px",
-    moduleMargin: "24px auto",
     preview: {
       background: "linear-gradient(to bottom right, #b22222, #ff8c00, #a0522d)",
-      color: "#fff"
+      color: "#fff",
     },
-    details: {
-      ui: "Foundry/factory, molten metal accents, rivets, gears",
-      focus: "Open Projects",
-      tasks: [
-        "In-progress project hosting and organization",
-        "Platform updates",
-        "Open-source firmware & plugins"
-      ]
-    }
+    googleFont: "Roboto",
+    fontFamily: "'Roboto', sans-serif",
+    border: "2px solid rgba(255,255,255,0.35)",
+    borderRadius: "10px",
+    boxShadow: "0 12px 22px rgba(0,0,0,0.35)",
+    texture: "url('https://www.transparenttextures.com/patterns/brushed-alum.png')",
+    modulePadding: "32px",
+    moduleMargin: "22px auto",
+    accents: { primary: "#ff8c00", secondary: "#a0522d" },
+    particles: {
+      number: 30,
+      color: "#ff8c00",
+      size: 2,
+      speed: 1.0,
+      random: true,
+    },
   },
 
   research: {
     name: "Research",
     className: "research",
-    fontFamily: "'Lora', serif",
-    modulePadding: "30px",
-    moduleMargin: "22px auto",
     preview: {
-      background: "linear-gradient(to bottom right, #00ffff, #ffffff)",
-      color: "#001f33"
+      background: "linear-gradient(to bottom right, #dafbff, #ffffff)",
+      color: "#001f33",
     },
-    details: {
-      ui: "Glossy white hallways, minimalist, austere academic spaces",
-      focus: "Development",
-      tasks: [
-        "It Could Be Better platform feature meetings",
-        "Polls and statistics",
-        "Record keeping and organization"
-      ]
-    }
+    googleFont: "Lora",
+    fontFamily: "'Lora', serif",
+    border: "2px solid rgba(0, 31, 51, 0.4)",
+    borderRadius: "12px",
+    boxShadow: "0 8px 18px rgba(0, 31, 51, 0.2)",
+    texture: "url('https://www.transparenttextures.com/patterns/pw-maze-white.png')",
+    modulePadding: "28px",
+    moduleMargin: "20px auto",
+    accents: { primary: "#00a2cc", secondary: "#88dbee" },
+    particles: {
+      number: 22,
+      color: "#00a2cc",
+      size: 2,
+      speed: 0.6,
+      random: true,
+    },
   },
 
   background: {
     name: "Background",
     className: "background",
-    fontFamily: "'Courier New', monospace",
-    modulePadding: "28px",
-    moduleMargin: "20px auto",
     preview: {
       background: "linear-gradient(to bottom right, #0d0d0d, #4b0082)",
-      color: "#c0c0ff"
+      color: "#c0c0ff",
     },
-    details: {
-      ui: "Sleek cyberpunk, dark metals, hidden corners, subtle glows",
-      focus: "Normalcy",
-      tasks: [
-        "Gathering community intel",
-        "Handling problems before they arise",
-        "Remaining elusive"
-      ]
-    }
-  }
+    googleFont: "Courier Prime",
+    fontFamily: "'Courier Prime', monospace",
+    border: "1px dashed rgba(192,192,255,0.5)",
+    borderRadius: "10px",
+    boxShadow: "0 0 16px rgba(75,0,130,0.35)",
+    texture: "url('https://www.transparenttextures.com/patterns/dark-denim-3.png')",
+    modulePadding: "24px",
+    moduleMargin: "18px auto",
+    accents: { primary: "#c0c0ff", secondary: "#8a2be2" },
+    particles: {
+      number: 28,
+      color: "#c0c0ff",
+      size: 2,
+      speed: 0.7,
+      random: true,
+    },
+  },
 };

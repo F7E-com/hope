@@ -1,0 +1,70 @@
+/* src/styles/theme-surface.css */
+
+:root {
+  --background-color: #222;
+  --text-color: #fff;
+  --font-family: 'Cinzel', serif;
+
+  --module-bg: #222;
+  --module-color: #fff;
+  --module-border: none;
+  --module-radius: 0;
+  --module-shadow: none;
+  --module-padding: 1rem;
+  --module-margin: 1rem;
+
+  --accent-primary: #66e;
+  --accent-secondary: #ccf;
+
+  --particles-enabled: 0;
+}
+
+/* Global font & body */
+html, body {
+  font-family: var(--font-family);
+  color: var(--text-color);
+  background: var(--background-color);
+}
+
+/* Content modules */
+.content-module {
+  background: var(--module-bg);
+  color: var(--module-color);
+  border: var(--module-border);
+  border-radius: var(--module-radius);
+  box-shadow: var(--module-shadow);
+  padding: var(--module-padding);
+  margin: var(--module-margin);
+  transition: transform 200ms ease, box-shadow 200ms ease, filter 200ms ease;
+}
+
+.content-module.edge-ink {
+  /* subtle edge wobble */
+  filter: url(#fx-ink);
+}
+
+.content-module:hover {
+  transform: translateY(-2px);
+}
+
+/* Buttons */
+.btn {
+  border: 1px solid var(--accent-primary);
+  background: transparent;
+  color: var(--module-color);
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: filter 200ms ease, transform 150ms ease, box-shadow 200ms ease;
+}
+
+.btn:hover {
+  filter: url(#fx-glow);
+  box-shadow: 0 0 10px var(--accent-primary);
+  transform: translateY(-1px);
+}
+
+/* Holo variant */
+.btn-holo:hover {
+  filter: url(#fx-holo);
+}
