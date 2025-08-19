@@ -57,9 +57,9 @@ export default function MainLayout() {
 
   // ---- Apply site theme globally via helper ----
   useEffect(() => {
-    const theme = THEMES[siteThemeID] || {};
-    applyTheme({ ...theme, id: siteThemeID }, customColor);
-  }, [siteThemeID, customColor]);
+  const theme = THEMES[siteThemeID] || {};
+  applyTheme(theme, siteThemeID === "custom" ? customColor : null);
+}, [siteThemeID, customColor]);
 
   return (
     <div className="min-h-screen flex flex-col site-wrapper">
