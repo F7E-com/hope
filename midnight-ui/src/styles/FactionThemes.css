@@ -1,133 +1,235 @@
+/* --- Creator Page Wrapper Base --- */
+.creator-page-wrapper {
+  padding: 1rem;
+  border-radius: 12px;
+  max-width: 900px;
+  margin: 2rem auto;
+  font-size: 1rem;
+  transition: all 0.3s ease-in-out;
+}
+
+.creator-page-wrapper h1, 
+.creator-page-wrapper h2, 
+.creator-page-wrapper h3 {
+  margin: 0.5rem 0;
+  transition: all 0.3s ease;
+}
+
+.creator-page-wrapper input,
+.creator-page-wrapper select,
+.creator-page-wrapper textarea {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  transition: all 0.2s ease;
+}
+
+.creator-page-wrapper button {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
 /* --- Government: Black & White Marble --- */
-.government {
-  background: linear-gradient(to bottom right, #ffffff, #000000);
+.creator-page-wrapper.government {
+  background: repeating-linear-gradient(
+    135deg,
+    #ffffff 0 20px,
+    #f0f0f0 20px 40px,
+    #000000 40px 60px,
+    #111 60px 80px
+  );
   color: #111;
   font-family: 'Georgia', serif;
 }
 
-.government a, .government button {
+.creator-page-wrapper.government a,
+.creator-page-wrapper.government button {
   background: #000;
   color: #fff;
-  border: 1px solid #333;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  text-decoration: none;
+  border: 2px solid #333;
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
 }
 
-.government a:hover, .government button:hover {
+.creator-page-wrapper.government a:hover,
+.creator-page-wrapper.government button:hover {
   background: #222;
+  transform: scale(1.05);
 }
 
 /* --- Infrastructure: Blue/Yellow --- */
-.infrastructure {
+.creator-page-wrapper.infrastructure {
   background: linear-gradient(to bottom right, #1e3f9e, #f9d300);
   color: #fff;
   font-family: 'Roboto', sans-serif;
 }
 
-.infrastructure a, .infrastructure button {
+.creator-page-wrapper.infrastructure a,
+.creator-page-wrapper.infrastructure button {
   background: #f9d300;
   color: #1e3f9e;
   border: 2px solid #fff;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
+  text-shadow: 1px 1px #1e3f9e;
 }
 
-.infrastructure a:hover, .infrastructure button:hover {
+.creator-page-wrapper.infrastructure a:hover,
+.creator-page-wrapper.infrastructure button:hover {
   background: #ffd700;
+  box-shadow: 0 0 8px #1e3f9e;
+  transform: translateY(-2px);
 }
 
 /* --- Security: Blue/Grey --- */
-.security {
+.creator-page-wrapper.security {
   background: linear-gradient(to bottom right, #3a5f9e, #7d7d7d);
   color: #e0e0e0;
   font-family: 'Arial', sans-serif;
 }
 
-.security a, .security button {
+.creator-page-wrapper.security a,
+.creator-page-wrapper.security button {
   background: #7d7d7d;
   color: #3a5f9e;
   border: 1px solid #e0e0e0;
-  padding: 0.4rem 0.8rem;
-  border-radius: 3px;
+  box-shadow: inset 0 0 5px #3a5f9e;
 }
 
-.security a:hover, .security button:hover {
+.creator-page-wrapper.security a:hover,
+.creator-page-wrapper.security button:hover {
   background: #5a5a5a;
+  border-color: #3a5f9e;
+  text-shadow: 0 0 2px #fff;
 }
 
 /* --- Commerce: Gold --- */
-.commerce {
-  background: linear-gradient(to bottom right, #ffd700, #fff8dc);
+.creator-page-wrapper.commerce {
+  background: linear-gradient(135deg, #ffd700 0%, #fff8dc 100%);
   color: #333;
   font-family: 'Times New Roman', serif;
 }
 
-.commerce a, .commerce button {
+.creator-page-wrapper.commerce a,
+.creator-page-wrapper.commerce button {
   background: #fff8dc;
   color: #ffd700;
   border: 1px solid #ffd700;
-  padding: 0.6rem 1.2rem;
-  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(255, 215, 0, 0.6);
 }
 
-.commerce a:hover, .commerce button:hover {
+.creator-page-wrapper.commerce a:hover,
+.creator-page-wrapper.commerce button:hover {
   background: #ffef99;
+  transform: scale(1.07);
 }
 
 /* --- Industry: Red/Russet/Orange --- */
-.industry {
+.creator-page-wrapper.industry {
   background: linear-gradient(to bottom right, #b22222, #ff8c00, #a0522d);
   color: #fff;
   font-family: 'Courier New', monospace;
+  background-size: 300% 300%;
+  animation: industryShift 10s ease infinite;
 }
 
-.industry a, .industry button {
+@keyframes industryShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.creator-page-wrapper.industry a,
+.creator-page-wrapper.industry button {
   background: #a0522d;
   color: #fff;
   border: 2px solid #ff8c00;
-  padding: 0.5rem 1rem;
-  border-radius: 3px;
+  box-shadow: 0 0 8px #ff8c00;
 }
 
-.industry a:hover, .industry button:hover {
+.creator-page-wrapper.industry a:hover,
+.creator-page-wrapper.industry button:hover {
   background: #b22222;
+  transform: rotate(-1deg) scale(1.05);
 }
 
 /* --- Research: Cyan/White --- */
-.research {
+.creator-page-wrapper.research {
   background: linear-gradient(to bottom right, #00ffff, #ffffff);
   color: #001f33;
   font-family: 'Verdana', sans-serif;
 }
 
-.research a, .research button {
+.creator-page-wrapper.research a,
+.creator-page-wrapper.research button {
   background: #00ffff;
   color: #001f33;
   border: 1px solid #001f33;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  text-shadow: 0 0 3px #001f33;
 }
 
-.research a:hover, .research button:hover {
+.creator-page-wrapper.research a:hover,
+.creator-page-wrapper.research button:hover {
   background: #33ffff;
+  box-shadow: 0 0 8px #00ffff;
 }
 
 /* --- Background: Black/Purple --- */
-.background {
+.creator-page-wrapper.background {
   background: linear-gradient(to bottom right, #0d0d0d, #4b0082);
   color: #c0c0ff;
   font-family: 'Consolas', monospace;
+  background-size: 200% 200%;
+  animation: bgPulse 15s ease infinite;
 }
 
-.background a, .background button {
+@keyframes bgPulse {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0% 0%; }
+}
+
+.creator-page-wrapper.background a,
+.creator-page-wrapper.background button {
   background: #4b0082;
   color: #c0c0ff;
   border: 1px solid #6666cc;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  text-shadow: 0 0 2px #c0c0ff;
 }
 
-.background a:hover, .background button:hover {
+.creator-page-wrapper.background a:hover,
+.creator-page-wrapper.background button:hover {
   background: #3a0066;
+  box-shadow: 0 0 10px #8a2be2;
+}
+
+/* --- Creator Banner --- */
+.creator-banner {
+  width: 100%;
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.creator-banner h1 {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.4);
+  color: inherit;
+  transition: all 0.3s ease;
+}
+
+.creator-banner:hover {
+  transform: scale(1.02);
+}
+
+/* --- Post list --- */
+.creator-posts {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }

@@ -1,13 +1,13 @@
 // CreatorPage.jsx
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { doc, getDoc, collection, getDocs, addDoc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs, addDoc, updateDoc, setDoc } from "firebase/firestore";
 import { db } from "@/utils/firebase";
 import { useUser } from "../contexts/UserContext";
 import ContentModule from "../components/modules/ContentModule";
 import ThemePickerDropdown from "../components/modules/ThemePickerDropdown";
 import { THEMES } from "../themes/ThemeIndex";
-import "../themes/FactionThemes.css"; // Make sure CSS is imported
+import "../themes/FactionThemes.css"; // Ensure CSS is imported
 
 export default function CreatorPage() {
   const { uid } = useParams();
@@ -18,7 +18,11 @@ export default function CreatorPage() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Creator profile theme/banner
   const [banner, setBanner] = useState("");
+  const [creatorTheme, setCreatorTheme] = useState("none");
+
+  // CreatorPage-specific theme
   const [pageThemeId, setPageThemeId] = useState("none");
   const [pageCustomColor, setPageCustomColor] = useState("#ffffff");
 
@@ -31,6 +35,7 @@ export default function CreatorPage() {
     banner: "",
   });
 
+  // Load creator profile + posts
   useEffect(() => {
     if (!uid) return;
 
@@ -46,22 +51,27 @@ export default function CreatorPage() {
               ...userSnap.data(),
             }
           : { name: "Unknown Creator", themeId: "none", banner: "" };
+
         setCreatorData(safeCreatorData);
         setBanner(safeCreatorData.banner);
+        setCreatorTheme(safeCreatorData.themeId);
 
         const postsSnap = await getDocs(collection(db, "users", uid, "posts"));
-        const postList = postsSnap.docs.map((docSnap) => ({
-          id: docSnap.id,
-          creatorId: uid,
-          creatorName: safeCreatorData.name,
-          creatorFaction: safeCreatorData.faction || "Unknown",
-          title: docSnap.data()?.title || "Untitled",
-          mediaType: docSnap.data()?.mediaType || "image",
-          mediaSrc: docSnap.data()?.src || "",
-          themeId: docSnap.data()?.themeId || "none",
-          description: docSnap.data()?.description || "",
-          date: docSnap.data()?.date || null,
-        }));
+        const postList = postsSnap.docs.map((docSnap) => {
+          const data = docSnap.data() || {};
+          return {
+            id: docSnap.id,
+            creatorId: uid,
+            creatorName: safeCreatorData.name,
+            creatorFaction: safeCreatorData.faction || "Unknown",
+            title: data.title || "Untitled",
+            mediaType: data.mediaType || "image",
+            mediaSrc: data.src || "",
+            themeId: data.themeId || "none",
+            description: data.description || "",
+            date: data.date || null,
+          };
+        });
         setPosts(postList);
 
         const pageSnap = await getDoc(doc(db, "creatorPages", uid));
@@ -80,12 +90,30 @@ export default function CreatorPage() {
     fetchCreator();
   }, [uid]);
 
+  // Save creator profile theme/banner
+  const saveCreatorTheme = async () => {
+    if (!isOwner || !creatorData) return;
+    try {
+      await updateDoc(doc(db, "users", uid), {
+        themeId: creatorTheme,
+        banner: banner,
+      });
+      setCreatorData({ ...creatorData, themeId: creatorTheme, banner });
+    } catch (err) {
+      console.error("Error saving creator theme/banner:", err);
+    }
+  };
+
+  // Save page-specific theme
   const savePageTheme = async () => {
     if (!isOwner) return;
     try {
       await setDoc(
         doc(db, "creatorPages", uid),
-        { creatorPageThemeId: pageThemeId, customColor: pageCustomColor },
+        {
+          creatorPageThemeId: pageThemeId,
+          customColor: pageCustomColor,
+        },
         { merge: true }
       );
       alert("Page theme saved!");
@@ -94,15 +122,35 @@ export default function CreatorPage() {
     }
   };
 
+  // Create new post
   const handleNewPostSubmit = async () => {
     if (!isOwner) return;
     try {
       const postRef = await addDoc(collection(db, "users", uid, "posts"), newPost);
       setPosts([
         ...posts,
-        { ...newPost, id: postRef.id, creatorName: creatorData?.name || "Unknown" },
+        {
+          id: postRef.id,
+          creatorId: uid,
+          creatorName: creatorData?.name || "Unknown Creator",
+          creatorFaction: creatorData?.faction || "Unknown",
+          title: newPost.title || "Untitled",
+          mediaType: newPost.mediaType || "image",
+          mediaSrc: newPost.src || "",
+          themeId: newPost.themeId || "none",
+          description: newPost.description || "",
+          banner: newPost.banner || "",
+          date: newPost.date || null,
+        },
       ]);
-      setNewPost({ title: "", mediaType: "image", src: "", themeId: "none", description: "", banner: "" });
+      setNewPost({
+        title: "",
+        mediaType: "image",
+        src: "",
+        themeId: "none",
+        description: "",
+        banner: "",
+      });
     } catch (err) {
       console.error("Error creating post:", err);
     }
@@ -111,28 +159,17 @@ export default function CreatorPage() {
   if (loading) return <p>Loading...</p>;
   if (!creatorData) return <p>Creator not found.</p>;
 
-  const pageThemeClass =
-    pageThemeId === "custom" ? "" : THEMES[pageThemeId]?.className || "";
-
-  const pageStyle =
-    pageThemeId === "custom"
-      ? { background: pageCustomColor, color: "#000" }
-      : {};
-
   return (
-    <div className={`creator-page ${pageThemeClass}`} style={pageStyle}>
+    <div className={`creator-page-wrapper ${pageThemeId}`}>
       {/* Banner */}
-      <div
-        className="creator-banner"
-        style={{ backgroundImage: `url(${banner})` }}
-      >
+      <div className="creator-banner" style={{ backgroundImage: `url(${banner})` }}>
         <h1>{creatorData.name}</h1>
       </div>
 
-      {/* Theme picker */}
+      {/* Creator profile/theme editor */}
       {isOwner && (
-        <div className="theme-editor">
-          <h3>Edit Creator Page Theme</h3>
+        <div className="creator-controls">
+          <h3>Edit Creator Theme & Banner</h3>
           <ThemePickerDropdown
             unlockedThemes={Object.keys(THEMES)}
             selectedTheme={pageThemeId}
@@ -140,18 +177,27 @@ export default function CreatorPage() {
             customColor={pageCustomColor}
             onCustomColorChange={setPageCustomColor}
           />
+          <label>
+            Custom Theme Color:
+            <input
+              type="color"
+              value={pageCustomColor}
+              onChange={(e) => setPageCustomColor(e.target.value)}
+            />
+          </label>
           <input
-            type="color"
-            value={pageCustomColor}
-            onChange={(e) => setPageCustomColor(e.target.value)}
+            type="text"
+            placeholder="Banner URL"
+            value={banner}
+            onChange={(e) => setBanner(e.target.value)}
           />
-          <button onClick={savePageTheme}>Save Theme</button>
+          <button onClick={savePageTheme}>Save Theme & Banner</button>
         </div>
       )}
 
-      {/* New Post */}
+      {/* New post panel */}
       {isOwner && (
-        <div className="new-post-panel">
+        <div className="creator-controls">
           <h3>New Post</h3>
           <input
             type="text"
@@ -183,7 +229,10 @@ export default function CreatorPage() {
             unlockedThemes={Object.keys(THEMES)}
             selectedTheme={newPost.themeId}
             onChange={(t) => setNewPost({ ...newPost, themeId: t })}
+            customColor={pageCustomColor}
+            onCustomColorChange={setPageCustomColor}
           />
+
           <textarea
             placeholder="Description"
             value={newPost.description}
@@ -193,10 +242,15 @@ export default function CreatorPage() {
         </div>
       )}
 
-      {/* Posts */}
-      <div className="posts-list">
+      {/* Content list */}
+      <div className="creator-posts">
         {posts.map((post) => (
-          <ContentModule key={post.id} post={post} currentUser={currentUser} />
+          <ContentModule
+            key={post.id}
+            post={post}
+            currentUser={currentUser}
+            className={THEMES[post.themeId]?.className || ""}
+          />
         ))}
       </div>
     </div>
