@@ -19,7 +19,7 @@ export default function SearchBar() {
         path = `/post/${query.trim()}`;
         break;
       case "creators":
-        path = `/creator/${query.trim()}`;
+        path = `/creator-page/${query.trim()}`;
         break;
       default:
         path = "/";
