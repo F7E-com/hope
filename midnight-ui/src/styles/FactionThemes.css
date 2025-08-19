@@ -1,0 +1,133 @@
+/* --- Government: Black & White Marble --- */
+.government {
+  background: linear-gradient(to bottom right, #ffffff, #000000);
+  color: #111;
+  font-family: 'Georgia', serif;
+}
+
+.government a, .government button {
+  background: #000;
+  color: #fff;
+  border: 1px solid #333;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.government a:hover, .government button:hover {
+  background: #222;
+}
+
+/* --- Infrastructure: Blue/Yellow --- */
+.infrastructure {
+  background: linear-gradient(to bottom right, #1e3f9e, #f9d300);
+  color: #fff;
+  font-family: 'Roboto', sans-serif;
+}
+
+.infrastructure a, .infrastructure button {
+  background: #f9d300;
+  color: #1e3f9e;
+  border: 2px solid #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+}
+
+.infrastructure a:hover, .infrastructure button:hover {
+  background: #ffd700;
+}
+
+/* --- Security: Blue/Grey --- */
+.security {
+  background: linear-gradient(to bottom right, #3a5f9e, #7d7d7d);
+  color: #e0e0e0;
+  font-family: 'Arial', sans-serif;
+}
+
+.security a, .security button {
+  background: #7d7d7d;
+  color: #3a5f9e;
+  border: 1px solid #e0e0e0;
+  padding: 0.4rem 0.8rem;
+  border-radius: 3px;
+}
+
+.security a:hover, .security button:hover {
+  background: #5a5a5a;
+}
+
+/* --- Commerce: Gold --- */
+.commerce {
+  background: linear-gradient(to bottom right, #ffd700, #fff8dc);
+  color: #333;
+  font-family: 'Times New Roman', serif;
+}
+
+.commerce a, .commerce button {
+  background: #fff8dc;
+  color: #ffd700;
+  border: 1px solid #ffd700;
+  padding: 0.6rem 1.2rem;
+  border-radius: 5px;
+}
+
+.commerce a:hover, .commerce button:hover {
+  background: #ffef99;
+}
+
+/* --- Industry: Red/Russet/Orange --- */
+.industry {
+  background: linear-gradient(to bottom right, #b22222, #ff8c00, #a0522d);
+  color: #fff;
+  font-family: 'Courier New', monospace;
+}
+
+.industry a, .industry button {
+  background: #a0522d;
+  color: #fff;
+  border: 2px solid #ff8c00;
+  padding: 0.5rem 1rem;
+  border-radius: 3px;
+}
+
+.industry a:hover, .industry button:hover {
+  background: #b22222;
+}
+
+/* --- Research: Cyan/White --- */
+.research {
+  background: linear-gradient(to bottom right, #00ffff, #ffffff);
+  color: #001f33;
+  font-family: 'Verdana', sans-serif;
+}
+
+.research a, .research button {
+  background: #00ffff;
+  color: #001f33;
+  border: 1px solid #001f33;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+}
+
+.research a:hover, .research button:hover {
+  background: #33ffff;
+}
+
+/* --- Background: Black/Purple --- */
+.background {
+  background: linear-gradient(to bottom right, #0d0d0d, #4b0082);
+  color: #c0c0ff;
+  font-family: 'Consolas', monospace;
+}
+
+.background a, .background button {
+  background: #4b0082;
+  color: #c0c0ff;
+  border: 1px solid #6666cc;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+}
+
+.background a:hover, .background button:hover {
+  background: #3a0066;
+}
