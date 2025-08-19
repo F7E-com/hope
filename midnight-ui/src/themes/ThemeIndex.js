@@ -1,5 +1,5 @@
 // THEMES.js or ThemeIndex.jsx
-import './FactionThemes'; // <- import the CSS so the classes render properly
+import 'FactionThemes'; // <- import the CSS so the classes render properly
 
 export const THEMES = {
   vale: {
