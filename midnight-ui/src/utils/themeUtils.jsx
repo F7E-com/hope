@@ -2,7 +2,7 @@
 export function applyTheme(theme, customColor = null) {
   const bg = theme.id === "custom" ? customColor : theme.preview?.background || "#222";
   const color = theme.preview?.color || "#fff";
-  const font = theme.fontFamily || "'Courier New', monospace"; // changed font for test
+  const font = theme.fontFamily || "'Times New Roman', serif"; // changed font for test
 
   document.documentElement.style.setProperty("--background-color", bg);
   document.documentElement.style.setProperty("--text-color", color);
