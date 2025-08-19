@@ -233,6 +233,8 @@ export default function CreatorPage() {
           />
           <br />
           <button onClick={handleNewPostSubmit}>Upload</button>
+          <br />
+          <br />
         </div>
       )}
 
