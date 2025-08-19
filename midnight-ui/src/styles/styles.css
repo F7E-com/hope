@@ -1,18 +1,19 @@
-/* Base Reset */
+/* --- Base Reset --- */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: var(--font-family, 'Times New Roman', serif); /* Use theme font if set */
+  font-family: var(--font-family, 'Times New Roman', serif);
 }
 
 body {
   background: var(--background-color, url('bg-nightcity.jpg') no-repeat center center fixed);
   background-size: cover;
-  color: var(--text-color, #e0e0f0); /* Default text color */
+  color: var(--text-color, #e0e0f0);
   overflow-x: hidden;
 }
 
+/* Background gradient overlay */
 .background::after {
   content: '';
   position: fixed;
@@ -25,7 +26,7 @@ body {
   z-index: -1;
 }
 
-/* Circle buttons */
+/* Circle Buttons */
 .circle-button {
   width: 50px;
   height: 50px;
@@ -40,7 +41,6 @@ body {
   transition: background 0.3s;
 }
 
-/* Profile and menu button positions */
 .profile-button { left: 20px; }
 .menu-button { right: 20px; }
 
@@ -48,17 +48,18 @@ body {
 .popup {
   position: fixed;
   top: 80px;
-  background: var(--background-color, rgba(0, 0, 0, 0.7));
+  background: var(--module-bg, rgba(0, 0, 0, 0.7));
   border: 1px solid #444;
-  padding: 10px;
+  padding: var(--module-padding, 10px);
   border-radius: 10px;
   backdrop-filter: blur(4px);
   z-index: 15;
+  color: var(--module-color, #ccc);
 }
 
 .popup a {
   display: block;
-  color: var(--text-color, #ccc);
+  color: var(--module-color, #ccc);
   padding: 5px 10px;
   text-decoration: none;
 }
@@ -68,57 +69,116 @@ body {
   color: #fff;
 }
 
-/* Banner and slogan */
+/* Banner and Slogan */
 .banner {
   text-align: center;
   font-size: 3em;
   padding-top: 80px;
-  color: rgba(200, 10, 100, 1.0);
+  color: var(--module-color, rgba(200, 10, 100, 1.0));
   text-shadow: 0 0 10px rgba(100, 12, 50, 0.7);
+  font-family: var(--font-family, 'Cinzel', serif);
 }
 
 .slogan {
   text-align: center;
   font-size: 1.2em;
-  color: var(--text-color, #ccccff);
+  color: var(--module-color, #ccccff);
   margin-top: 10px;
   font-style: italic;
+  font-family: var(--font-family, 'Cinzel', serif);
 }
+
+/* Main container and sidebars */
+.main-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 30px;
+  flex-wrap: wrap;
+}
+
+.sidebar {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.left { align-items: flex-start; }
+.right { align-items: flex-end; }
+
+/* Suggested / News / Featured / Showcases */
+.suggested, .news, .featured, .showcase-2, .showcase-3, .spotlight-list {
+  background: var(--module-bg, rgba(20, 20, 30, 0.7));
+  padding: var(--module-padding, 10px);
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(100, 255, 200, 0.2);
+  color: var(--module-color, #e0e0f0);
+}
+
+.featured {
+  width: 55%;
+  text-align: center;
+  padding: var(--module-padding, 20px);
+  border-radius: 20px;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
+}
+
+.showcases {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 20px;
+}
+
+.showcase-2, .showcase-3 {
+  flex: 1 1 0;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Images */
+.suggested img, .featured img, .showcase-2 img, .showcase-3 img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+/* Spotlight list */
+.spotlight-list ul { list-style: none; }
+.spotlight-list li { padding: 5px 0; }
+.spotlight-list a {
+  color: var(--module-color, #e0d0ff);
+  text-decoration: none;
+}
+.spotlight-list a:hover { text-decoration: underline; }
 
 /* Titles */
 .title {
   font-family: var(--font-family, 'Cinzel', serif);
   font-size: 4.5rem;
-  color: var(--text-color, #d7d7d7);
+  color: var(--module-color, #d7d7d7);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-
   background: linear-gradient(to bottom, #444, #111);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-
-  text-shadow:
-    0 0 5px rgba(255, 255, 255, 0.1),
-    0 0 10px rgba(255, 0, 0, 0.1),
-    2px 2px 1px #000;
-
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.1), 0 0 10px rgba(255, 0, 0, 0.1), 2px 2px 1px #000;
   border-bottom: 3px solid rgba(255, 0, 0, 0.2);
   display: inline-block;
   padding-bottom: 0.3em;
   margin-bottom: 0.6em;
-
   animation: pulseGlow 2s ease-in-out infinite alternate;
 }
 
 @keyframes pulseGlow {
   0% {
-    text-shadow:
-      0 0 3px rgba(255, 0, 0, 0.2),
-      2px 2px 1px #000;
+    text-shadow: 0 0 3px rgba(255, 0, 0, 0.2), 2px 2px 1px #000;
   }
   100% {
-    text-shadow:
-      0 0 8px rgba(255, 0, 0, 0.5),
-      2px 2px 1px #000;
+    text-shadow: 0 0 8px rgba(255, 0, 0, 0.5), 2px 2px 1px #000;
   }
 }
