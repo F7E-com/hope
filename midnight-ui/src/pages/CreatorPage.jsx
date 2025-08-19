@@ -177,14 +177,6 @@ export default function CreatorPage() {
             customColor={pageCustomColor}
             onCustomColorChange={setPageCustomColor}
           />
-          <label>
-            Custom Theme Color:
-            <input
-              type="color"
-              value={pageCustomColor}
-              onChange={(e) => setPageCustomColor(e.target.value)}
-            />
-          </label>
           <input
             type="text"
             placeholder="Banner URL"
@@ -205,12 +197,14 @@ export default function CreatorPage() {
             value={newPost.title}
             onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
           />
+          <br />
           <input
             type="text"
             placeholder="Media URL"
             value={newPost.src}
             onChange={(e) => setNewPost({ ...newPost, src: e.target.value })}
           />
+          <br />
           <select
             value={newPost.mediaType}
             onChange={(e) => setNewPost({ ...newPost, mediaType: e.target.value })}
@@ -232,7 +226,7 @@ export default function CreatorPage() {
             customColor={pageCustomColor}
             onCustomColorChange={setPageCustomColor}
           />
-
+          <br />
           <textarea
             placeholder="Description"
             value={newPost.description}
