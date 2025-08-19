@@ -2,81 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Midnight UI theme overrides */
+/* --- Dynamic theme variables --- */
+:root {
+  --background-color: #1a1a2a;   /* default background */
+  --text-color: #e0e0f0;         /* default text */
+  --font-family: 'Cinzel', serif; /* default font */
+  --module-bg: rgba(20, 20, 40, 0.85);
+  --module-color: #e0e0f0;
+}
+
+/* Apply variables globally */
 body {
-  @apply bg-gray-900 text-gray-100;
+  background: var(--background-color);
+  color: var(--text-color);
+  font-family: var(--font-family);
 }
 
-.youtube-embed-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  /* Optional: set a max-width for the container */
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.youtube-embed {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  border: none;
-  display: block;
-}
-
-.responsive-image {
-  width: 100vw;
-  height: 100vh;
-  object-fit: cover; /* or 'contain' if you want the whole image visible */
-  display: block;
-  margin: 0;
-  max-width: none;
-  max-height: none;
-}
-
-/* Add to midnight-ui/src/styles/globals.css or styles.css */
-.text-embed-container {
-  width: 100%;
-  max-width: 600px;
-  aspect-ratio: 4 / 3;
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: rgba(30, 30, 40, 0.7);
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.text-embed-container iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: block;
-}
-
-/* Midnight UI module styles */
+/* Module styles */
 .midnight-module {
-  background: rgba(20, 20, 40, 0.85);
+  background: var(--module-bg);
+  color: var(--module-color);
   border-radius: 16px;
   box-shadow: 0 0 24px rgba(100, 200, 255, 0.15);
   padding: 32px;
   margin: 24px auto;
   max-width: 600px;
-  color: #e0e0f0;
 }
 
+/* Titles */
 .midnight-title {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-family);
   font-size: 2rem;
   margin-bottom: 16px;
-  color: #a0c4ff;
+  color: var(--text-color);
   text-align: center;
 }
 
+/* Buttons */
 .midnight-btn {
   background: linear-gradient(90deg, #3a3a5a 0%, #1a1a2a 100%);
-  color: #e0e0f0;
+  color: var(--text-color);
   border: none;
   border-radius: 8px;
   padding: 12px 24px;
@@ -90,16 +55,29 @@ body {
   background: linear-gradient(90deg, #5a5a8a 0%, #2a2a4a 100%);
 }
 
-.midnight-file-preview {
-  margin-top: 24px;
-  text-align: center;
+/* Embeds */
+.youtube-embed-container,
+.text-embed-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0 auto;
+  background: rgba(30,30,40,0.7);
+  border-radius: 12px;
+  overflow: hidden;
 }
 
-.midnight-embed {
+.youtube-embed {
   width: 100%;
   aspect-ratio: 16 / 9;
   border: none;
-  margin-top: 12px;
-  border-radius: 8px;
-  background: #222;
+  display: block;
+}
+
+.text-embed-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
 }
