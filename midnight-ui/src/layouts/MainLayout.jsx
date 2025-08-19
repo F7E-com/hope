@@ -89,6 +89,42 @@ export default function MainLayout() {
       {/* Profile Button */}
       <div className="circle-button profile-button" onClick={(e) => togglePopup("profile", e)} />
 
+        <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          marginTop: "0.5rem",   // move it closer to the top
+        }}
+      >
+        <div style={{ width: "450px", maxWidth: "90%" }}>
+          <SearchBar />
+        </div>
+      </div>
+
+      <style>
+        {`
+
+    .search-bar input {
+      color: #000;       /* black text */
+      width: 100%;       /* long and narrow */
+      padding: 0.4rem;
+      font-size: 0.9rem;
+    }
+
+    .search-bar select {
+      color: #000;       /* black text */
+      padding: 0.4rem;
+      font-size: 0.9rem;
+    }
+
+    .search-bar button {
+      color: #000;       /* black text */
+      padding: 0.4rem 0.8rem;
+      font-size: 0.9rem;
+      }
+    `}
+      </style>
+
       {/* Menu Button */}
       <div className="circle-button menu-button" onClick={(e) => togglePopup("menu", e)} />
 
@@ -139,41 +175,6 @@ export default function MainLayout() {
           )}
         </div>
       )}
-
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          marginTop: "0.5rem",   // move it closer to the top
-        }}
-      >
-        <div style={{ width: "450px", maxWidth: "90%" }}>
-          <SearchBar />
-        </div>
-      </div>
-
-      <style>
-        {`
-
-    .search-bar input {
-      color: #000;       /* black text */
-      width: 100%;       /* long and narrow */
-      padding: 0.4rem;
-      font-size: 0.9rem;
-    }
-
-    .search-bar select {
-      padding: 0.4rem;
-      font-size: 0.9rem;
-    }
-
-    .search-bar button {
-      padding: 0.4rem 0.8rem;
-      font-size: 0.9rem;
-    }
-  `}
-      </style>
-
 
       <div className="title2" style={{ color: "var(--secondary-color)" }}>Faction Seven</div>
       <div className="slogan" style={{ color: "var(--secondary-color)" }}>Your one-stop media source</div>
