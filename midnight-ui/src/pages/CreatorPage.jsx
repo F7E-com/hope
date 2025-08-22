@@ -1,13 +1,13 @@
-// CreatorPage.jsx
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { doc, getDoc, collection, getDocs, addDoc, updateDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs, addDoc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/utils/firebase";
 import { useUser } from "../contexts/UserContext";
 import ContentModule from "../components/modules/ContentModule";
 import ThemePickerDropdown from "../components/modules/ThemePickerDropdown";
 import { THEMES } from "../themes/ThemeIndex";
-import "../themes/FactionThemes.css"; // Ensure CSS is imported
+import { applyTheme } from "@/utils/themeUtils";
+import "../themes/FactionThemes.css";
 
 export default function CreatorPage() {
   const { uid } = useParams();
@@ -90,6 +90,25 @@ export default function CreatorPage() {
     fetchCreator();
   }, [uid]);
 
+  // Apply themes: page theme → wrapper, creator theme → banner
+  useEffect(() => {
+    const wrapper = document.querySelector(".creator-page-wrapper");
+    if (!wrapper) return;
+
+    if (pageThemeId && THEMES[pageThemeId]) {
+      applyTheme(THEMES[pageThemeId], pageCustomColor, wrapper);
+    }
+
+    const bannerEl = wrapper.querySelector(".creator-banner");
+    if (creatorTheme && THEMES[creatorTheme] && bannerEl) {
+      applyTheme(THEMES[creatorTheme], null, bannerEl);
+    }
+
+    // Ensure inputs default to black text
+    const inputs = wrapper.querySelectorAll("input, textarea, select");
+    inputs.forEach((el) => (el.style.color = "#000"));
+  }, [pageThemeId, pageCustomColor, creatorTheme, posts]);
+
   // Save creator profile theme/banner
   const saveCreatorTheme = async () => {
     if (!isOwner || !creatorData) return;
@@ -161,7 +180,7 @@ export default function CreatorPage() {
 
   return (
     <div className={`creator-page-wrapper ${pageThemeId}`}>
-      {/* Banner */}
+      {/* Banner uses creator theme */}
       <div className="creator-banner" style={{ backgroundImage: `url(${banner})` }}>
         <h1>{creatorData.name}</h1>
       </div>
@@ -172,10 +191,8 @@ export default function CreatorPage() {
           <h3>Edit Creator Theme & Banner</h3>
           <ThemePickerDropdown
             unlockedThemes={Object.keys(THEMES)}
-            selectedTheme={pageThemeId}
-            onChange={setPageThemeId}
-            customColor={pageCustomColor}
-            onCustomColorChange={setPageCustomColor}
+            selectedTheme={creatorTheme}
+            onChange={setCreatorTheme}
           />
           <input
             type="text"
@@ -185,8 +202,23 @@ export default function CreatorPage() {
             onChange={(e) => setBanner(e.target.value)}
           />
           <br />
-          <button onClick={savePageTheme}>Save Theme & Banner</button>
+          <button onClick={saveCreatorTheme}>Save Creator Theme & Banner</button>
           <br />
+        </div>
+      )}
+
+      {/* Page theme editor */}
+      {isOwner && (
+        <div className="creator-controls">
+          <h3>Edit Page Theme</h3>
+          <ThemePickerDropdown
+            unlockedThemes={Object.keys(THEMES)}
+            selectedTheme={pageThemeId}
+            onChange={setPageThemeId}
+            customColor={pageCustomColor}
+            onCustomColorChange={setPageCustomColor}
+          />
+          <button onClick={savePageTheme}>Save Page Theme</button>
         </div>
       )}
 
@@ -223,7 +255,6 @@ export default function CreatorPage() {
             <option value="text">Text</option>
             <option value="webpage">Webpage</option>
           </select>
-
           <ThemePickerDropdown
             unlockedThemes={Object.keys(THEMES)}
             selectedTheme={newPost.themeId}
@@ -240,8 +271,6 @@ export default function CreatorPage() {
           />
           <br />
           <button onClick={handleNewPostSubmit}>Upload</button>
-          <br />
-          <br />
         </div>
       )}
 

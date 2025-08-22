@@ -204,7 +204,7 @@ export const THEMES = {
     },
     googleFont: "Lora",
     fontFamily: "'Lora', serif",
-    border: "20px solid rgba(0, 31, 51, 0.4)",
+    border: "2px solid rgba(0, 31, 51, 0.4)",
     borderRadius: "12px",
     borderImage: "linear-gradient(to bottom right, #00a2cc, #88dbee)",
     borderImageSlice: 1,
