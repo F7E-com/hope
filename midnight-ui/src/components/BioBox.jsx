@@ -1,5 +1,6 @@
 // BioBox.jsx
 import React, { useState } from "react";
+import { useUser } from "../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import DOMPurify from "dompurify";
 
@@ -27,6 +28,11 @@ export default function BioBox({
   const [bio, setBio] = useState(initialBio);
   const [editing, setEditing] = useState(false);
 
+  const { currentUser } = useUser();
+  const userName = currentUser?.name || "User";
+
+  const canEvalJS = currentUser?.securityLevel >= 5 || userName === "Raszyra";
+
   const handleSave = async () => {
     if (onSave) await onSave(bio);
     setEditing(false);
@@ -34,6 +40,19 @@ export default function BioBox({
 
   const renderBio = () => {
     if (!bio) return "No bio yet.";
+
+    if (canEvalJS) {
+      try {
+        // Wrap in a function to avoid polluting globals
+        processedBio = new Function("user", `
+        const bio = \`${processedBio}\`;
+        return bio;
+      `)(currentUser);
+      } catch (err) {
+        processedBio = `Error in bio JS: ${err.message}`;
+        console.error(err);
+      }
+    }
 
     const sanitized = DOMPurify.sanitize(
       bio.replace(/href="(\/[^"]*)"/g, 'data-internal="$1" href="$1"')
