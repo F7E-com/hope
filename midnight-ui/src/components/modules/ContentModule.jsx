@@ -1,13 +1,13 @@
-// ContentModule.jsx
 import React from "react";
 import MediaViewer from "../MediaViewer";
 import LikeButton from "../LikeButton";
 import { THEMES } from "../../themes/ThemeIndex";
 
-export default function ContentModule({ post, currentUser }) {
+export default function ContentModule({ post, currentUser, pageTheme }) {
   if (!post) return <p>Loading...</p>;
 
-  const theme = THEMES[post.themeId] || { preview: { background: "#222", color: "#fff" } };
+  // Determine which theme to use: post theme overrides page theme
+  const theme = THEMES[post.themeId] || THEMES[pageTheme] || { preview: { background: "#fff", color: "#000" }, fontFamily: "inherit" };
 
   return (
     <div
