@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, Outlet } from "react-router-dom";
-import { useUser } from "../contexts/UserContext";
+import { useUser, fetchAndSyncUser } from "../contexts/UserContext";
 import ThemePickerDropdown from "../components/modules/ThemePickerDropdown";
 import { THEMES } from "../themes/ThemeIndex";
 import SearchBar from "../components/SearchBar";
@@ -10,7 +10,17 @@ import ParticlesLayer from "../components/visual/ParticlesLayer";
 import "../styles/theme-surface.css"; // make sure this is imported once
 
 export default function MainLayout() {
-  const { currentUser } = useUser();
+  const { currentUser, setCurrentUser } = useUser();
+
+  useEffect(() => {
+    const initializeUser = async () => {
+      const user = await fetchAndSyncUser();
+      setCurrentUser(user); // ensures context is up-to-date everywhere
+    };
+
+    initializeUser();
+  }, [setCurrentUser]);
+
   const [activePopup, setActivePopup] = useState(null);
   const [popupPos, setPopupPos] = useState({ x: 0, y: 0 });
   const popupRef = useRef(null);
