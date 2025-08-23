@@ -4,20 +4,24 @@ import { useUser, fetchAndSyncUser } from "../contexts/UserContext";
 import ThemePickerDropdown from "../components/modules/ThemePickerDropdown";
 import { THEMES } from "../themes/ThemeIndex";
 import SearchBar from "../components/SearchBar";
-import { applyTheme } from "../utils/themeUtils"; // import the helper
+import { applyTheme } from "../utils/themeUtils";
 import SvgFiltersDefs from "../components/visual/SvgFiltersDefs";
 import ParticlesLayer from "../components/visual/ParticlesLayer";
-import "../styles/theme-surface.css"; // make sure this is imported once
+import "../styles/theme-surface.css";
 
 export default function MainLayout() {
   const { currentUser, setCurrentUser } = useUser();
 
+  // Initialize user once on layout mount
   useEffect(() => {
     const initializeUser = async () => {
-      const user = await fetchAndSyncUser();
-      setCurrentUser(user); // ensures context is up-to-date everywhere
+      try {
+        const user = await fetchAndSyncUser();
+        setCurrentUser(user); // ensures context gets synced early
+      } catch (err) {
+        console.error("Error initializing user in MainLayout:", err);
+      }
     };
-
     initializeUser();
   }, [setCurrentUser]);
 
@@ -26,7 +30,7 @@ export default function MainLayout() {
   const popupRef = useRef(null);
 
   // ---- SITE THEME STATE ----
-  const [siteThemeID, setSiteThemeID] = useState("vale"); // default theme
+  const [siteThemeID, setSiteThemeID] = useState("vale"); // default
   const [customColor, setCustomColor] = useState("#222222");
 
   // ---- Popup logic ----
@@ -68,19 +72,19 @@ export default function MainLayout() {
     setPopupPos({ x: newX, y: newY });
   }, [activePopup, popupPos.x, popupPos.y]);
 
-  // ---- Apply site theme globally via helper ----
+  // ---- Apply site theme globally ----
   useEffect(() => {
-  const theme = THEMES[siteThemeID] || {};
-  applyTheme(theme, siteThemeID === "custom" ? customColor : null);
-}, [siteThemeID, customColor]);
-
-<SvgFiltersDefs />
-  {THEMES[siteThemeID]?.particles && (
-    <ParticlesLayer config={THEMES[siteThemeID].particles} />
-  )}
+    const theme = THEMES[siteThemeID] || {};
+    applyTheme(theme, siteThemeID === "custom" ? customColor : null);
+  }, [siteThemeID, customColor]);
 
   return (
     <div className="min-h-screen flex flex-col site-wrapper">
+      <SvgFiltersDefs />
+      {THEMES[siteThemeID]?.particles && (
+        <ParticlesLayer config={THEMES[siteThemeID].particles} />
+      )}
+
       <style>
         {`
         .search-bar input {
