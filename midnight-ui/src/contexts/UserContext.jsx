@@ -28,32 +28,41 @@ const DEFAULT_USER_FIELDS = {
   totalKudos: 0,
 };
 
-async function fetchAndSyncUser(uid) {
-  const docRef = doc(db, "users", uid);
-  const snapshot = await getDoc(docRef);
+// 🔥 Exported fetch + sync function so MainLayout can import
+export async function fetchAndSyncUser(uid) {
+  if (!uid) return { ...DEFAULT_USER_FIELDS, id: null };
 
-  if (!snapshot.exists()) {
-    return null;
+  try {
+    const docRef = doc(db, "users", uid);
+    const snapshot = await getDoc(docRef);
+
+    if (!snapshot.exists()) {
+      return { ...DEFAULT_USER_FIELDS, id: uid };
+    }
+
+    const data = snapshot.data();
+
+    // Merge defaults
+    const merged = {
+      ...DEFAULT_USER_FIELDS,
+      ...data,
+      kudos: { ...DEFAULT_USER_FIELDS.kudos, ...(data.kudos || {}) },
+    };
+
+    // Recalculate total kudos
+    merged.totalKudos = Object.values(merged.kudos).reduce((a, b) => a + b, 0);
+
+    // Persist changes back to Firestore if anything was missing
+    await setDoc(docRef, merged, { merge: true });
+
+    // Attach UID
+    merged.id = uid;
+    return merged;
+  } catch (err) {
+    console.error("Error in fetchAndSyncUser:", err);
+    // Safe fallback stub to avoid crashing app
+    return { ...DEFAULT_USER_FIELDS, id: uid || null };
   }
-
-  const data = snapshot.data();
-
-  // Merge defaults
-  const merged = {
-    ...DEFAULT_USER_FIELDS,
-    ...data,
-    kudos: { ...DEFAULT_USER_FIELDS.kudos, ...(data.kudos || {}) },
-  };
-
-  // Recalculate total kudos
-  merged.totalKudos = Object.values(merged.kudos).reduce((a, b) => a + b, 0);
-
-  // Persist changes back to Firestore if anything was missing
-  await setDoc(docRef, merged, { merge: true });
-
-  // Attach UID
-  merged.id = uid;
-  return merged;
 }
 
 export const UserProvider = ({ children }) => {
