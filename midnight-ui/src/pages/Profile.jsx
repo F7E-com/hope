@@ -7,7 +7,7 @@ import BioBox from "../components/BioBox";
 import { useUser } from "../contexts/UserContext";
 import ThemePickerDropdown from "../components/modules/ThemePickerDropdown";
 import { THEMES } from "../themes/ThemeIndex";
-import { applyTheme } from "@/utils/themeUtils"; // 👈 bring in your util
+import { applyTheme } from "../utils/themeUtils"; // 👈 bring in your util
 
 export default function Profile() {
   const { uid } = useParams();
