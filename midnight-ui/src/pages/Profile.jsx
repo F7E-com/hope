@@ -7,7 +7,7 @@ import BioBox from "../components/BioBox";
 import { useUser } from "../contexts/UserContext";
 import ThemePickerDropdown from "../components/modules/ThemePickerDropdown";
 import { THEMES } from "../themes/ThemeIndex";
-import { applyTheme } from "../utils/themeUtils"; // 👈 bring in your util
+import { applyTheme } from "../utils/themeUtils";
 
 export default function Profile() {
   const { uid } = useParams();
@@ -36,15 +36,24 @@ export default function Profile() {
         const snapshot = await getDoc(userRef);
 
         if (snapshot.exists()) {
-          const data = snapshot.data();
+          const data = snapshot.data() || {};
+
+          // safe defaults
           data.id = uid;
+          data.name = data.name || "Unnamed Explorer";
+          data.faction = data.faction || "Unaffiliated";
+          data.bio = data.bio || "";
+          data.kudos = data.kudos || {};
           data.unlockedThemes = data.unlockedThemes || Object.keys(THEMES);
+          data.themeColor = data.themeColor || "#222222";
+          data.bannerUrl = data.bannerUrl || "";
+          data.themeId = data.themeId || "none";
 
           setProfileUser(data);
-          setThemeColor(data.themeColor || "#222222");
-          setBannerUrlInput(data.bannerUrl || "");
-          setBannerPreview(data.bannerUrl || data.themeColor || "#222222");
-          setSelectedTheme(data.themeId || "none");
+          setThemeColor(data.themeColor);
+          setBannerUrlInput(data.bannerUrl);
+          setBannerPreview(data.bannerUrl || data.themeColor);
+          setSelectedTheme(data.themeId);
         } else {
           setProfileUser(null);
         }
@@ -59,14 +68,13 @@ export default function Profile() {
     fetchProfile();
   }, [uid]);
 
-  // 🔥 Apply the theme whenever selectedTheme/themeColor changes
+  // Apply the theme safely
   useEffect(() => {
-  if (selectedTheme && THEMES[selectedTheme]) {
-    const wrapper = document.querySelector('.profile-page-wrapper');
-    if (wrapper) applyTheme(THEMES[selectedTheme], themeColor, wrapper);
-  }
-}, [selectedTheme, themeColor]);
-
+    if (selectedTheme && THEMES[selectedTheme]) {
+      const wrapper = document.querySelector(".profile-page-wrapper");
+      if (wrapper) applyTheme(THEMES[selectedTheme], themeColor, wrapper);
+    }
+  }, [selectedTheme, themeColor]);
 
   const handleSaveProfile = async () => {
     if (!uid) return;
@@ -83,9 +91,8 @@ export default function Profile() {
         bannerUrl: bannerUrlInput,
         themeId: selectedTheme,
       }));
-      setBannerPreview(bannerUrlInput);
+      setBannerPreview(bannerUrlInput || themeColor);
 
-      // 👇 immediately apply after saving too
       if (THEMES[selectedTheme]) {
         applyTheme(THEMES[selectedTheme], themeColor);
       }
@@ -110,7 +117,6 @@ export default function Profile() {
   if (loading) return <p>Loading...</p>;
   if (!profileUser) return <p>User not found.</p>;
 
-  // Determine wrapper classes
   const themeClass = THEMES[selectedTheme]?.className || "background";
 
   return (
@@ -149,30 +155,43 @@ export default function Profile() {
 
       {/* Two-column layout */}
       <div style={{ display: "flex", gap: "2rem" }}>
-        <div style={{ flex: "1", background: "#222", padding: "1rem", borderRadius: "8px" }}>
+        <div
+          style={{
+            flex: "1",
+            background: "#222",
+            padding: "1rem",
+            borderRadius: "8px",
+          }}
+        >
           <h2>Kudos</h2>
           <ul>
-            {profileUser.kudos &&
-              Object.entries(profileUser.kudos).map(([factionName, points]) => (
+            {Object.entries(profileUser.kudos || {}).map(
+              ([factionName, points]) => (
                 <li key={factionName}>
                   <strong>{factionName}:</strong> {points}
                 </li>
-              ))}
+              )
+            )}
           </ul>
         </div>
 
         <div style={{ flex: "2" }}>
-          <h1 style={{ marginBottom: "0.5rem" }}>{profileUser.name}</h1>
-          <p><strong>Faction:</strong> {profileUser.faction}</p>
+          <h1 style={{ marginBottom: "0.5rem" }}>
+            {profileUser.name || "Unnamed Explorer"}
+          </h1>
+          <p>
+            <strong>Faction:</strong> {profileUser.faction || "Unaffiliated"}
+          </p>
 
           <BioBox
             initialBio={profileUser.bio || ""}
             isOwner={isOwner}
             editable={isOwner}
             onSave={handleSaveBio}
-            themeColor={THEMES[selectedTheme]?.preview.color || "#fff"}
-            textColor={THEMES[selectedTheme]?.preview.color || "#fff"}
-            backgroundColor={THEMES[selectedTheme]?.preview.background || "#222"}
+            textColor={THEMES[selectedTheme]?.preview?.color || "#fff"}
+            backgroundColor={
+              THEMES[selectedTheme]?.preview?.background || "#222"
+            }
           />
 
           {isOwner && !editing && (
