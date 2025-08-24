@@ -11,18 +11,16 @@ import "../themes/FactionThemes.css";
 
 export default function CreatorPage() {
   const { uid } = useParams();
-  const { currentUser } = useUser();
+  const { currentUser, loading: userLoading } = useUser(); // ✅ now wait for context
   const isOwner = currentUser?.id === uid;
 
   const [creatorData, setCreatorData] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Creator profile theme/banner
   const [banner, setBanner] = useState("");
   const [creatorTheme, setCreatorTheme] = useState("none");
 
-  // CreatorPage-specific theme
   const [pageThemeId, setPageThemeId] = useState("none");
   const [pageCustomColor, setPageCustomColor] = useState("#ffffff");
 
@@ -35,9 +33,9 @@ export default function CreatorPage() {
     banner: "",
   });
 
-  // Load creator profile + posts
+  // Only fetch once we have currentUser context loaded
   useEffect(() => {
-    if (!uid) return;
+    if (!uid || userLoading) return;
 
     const fetchCreator = async () => {
       setLoading(true);
@@ -88,9 +86,9 @@ export default function CreatorPage() {
     };
 
     fetchCreator();
-  }, [uid]);
+  }, [uid, userLoading]);
 
-  // Apply themes: page theme → wrapper, creator theme → banner
+  // Apply themes
   useEffect(() => {
     const wrapper = document.querySelector(".creator-page-wrapper");
     if (!wrapper) return;
@@ -104,12 +102,10 @@ export default function CreatorPage() {
       applyTheme(THEMES[creatorTheme], null, bannerEl);
     }
 
-    // Ensure inputs default to black text
     const inputs = wrapper.querySelectorAll("input, textarea, select");
     inputs.forEach((el) => (el.style.color = "#000"));
   }, [pageThemeId, pageCustomColor, creatorTheme, posts]);
 
-  // Save creator profile theme/banner
   const saveCreatorTheme = async () => {
     if (!isOwner || !creatorData) return;
     try {
@@ -123,16 +119,12 @@ export default function CreatorPage() {
     }
   };
 
-  // Save page-specific theme
   const savePageTheme = async () => {
     if (!isOwner) return;
     try {
       await setDoc(
         doc(db, "creatorPages", uid),
-        {
-          creatorPageThemeId: pageThemeId,
-          customColor: pageCustomColor,
-        },
+        { creatorPageThemeId: pageThemeId, customColor: pageCustomColor },
         { merge: true }
       );
       alert("Page theme saved!");
@@ -141,7 +133,6 @@ export default function CreatorPage() {
     }
   };
 
-  // Create new post
   const handleNewPostSubmit = async () => {
     if (!isOwner) return;
     try {
@@ -175,106 +166,98 @@ export default function CreatorPage() {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (userLoading || loading) return <p>Loading...</p>;
   if (!creatorData) return <p>Creator not found.</p>;
 
   return (
     <div className={`creator-page-wrapper ${pageThemeId}`}>
-      {/* Banner uses creator theme */}
       <div className="creator-banner" style={{ backgroundImage: `url(${banner})` }}>
         <h1>{creatorData.name}</h1>
       </div>
 
-      {/* Creator profile/theme editor */}
       {isOwner && (
-        <div className="creator-controls">
-          <h3>Edit Creator Theme & Banner</h3>
-          <ThemePickerDropdown
-            unlockedThemes={Object.keys(THEMES)}
-            selectedTheme={creatorTheme}
-            onChange={setCreatorTheme}
-          />
-          <input
-            type="text"
-            style={{ width: "100%", maxWidth: "400px" }}
-            placeholder="Banner URL"
-            value={banner}
-            onChange={(e) => setBanner(e.target.value)}
-          />
-          <br />
-          <button onClick={saveCreatorTheme}>Save Creator Theme & Banner</button>
-          <br />
-        </div>
+        <>
+          <div className="creator-controls">
+            <h3>Edit Creator Theme & Banner</h3>
+            <ThemePickerDropdown
+              unlockedThemes={Object.keys(THEMES)}
+              selectedTheme={creatorTheme}
+              onChange={setCreatorTheme}
+            />
+            <input
+              type="text"
+              style={{ width: "100%", maxWidth: "400px" }}
+              placeholder="Banner URL"
+              value={banner}
+              onChange={(e) => setBanner(e.target.value)}
+            />
+            <br />
+            <button onClick={saveCreatorTheme}>Save Creator Theme & Banner</button>
+          </div>
+
+          <div className="creator-controls">
+            <h3>Edit Page Theme</h3>
+            <ThemePickerDropdown
+              unlockedThemes={Object.keys(THEMES)}
+              selectedTheme={pageThemeId}
+              onChange={setPageThemeId}
+              customColor={pageCustomColor}
+              onCustomColorChange={setPageCustomColor}
+            />
+            <button onClick={savePageTheme}>Save Page Theme</button>
+          </div>
+
+          <div className="creator-controls">
+            <h3>New Post</h3>
+            <input
+              style={{ width: "100%", maxWidth: "400px" }}
+              type="text"
+              placeholder="Title"
+              value={newPost.title}
+              onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
+            />
+            <br />
+            <input
+              style={{ width: "100%", maxWidth: "400px" }}
+              type="text"
+              placeholder="Media URL"
+              value={newPost.src}
+              onChange={(e) => setNewPost({ ...newPost, src: e.target.value })}
+            />
+            <br />
+            <select
+              value={newPost.mediaType}
+              onChange={(e) => setNewPost({ ...newPost, mediaType: e.target.value })}
+            >
+              <option value="image">Image</option>
+              <option value="youtube">YouTube</option>
+              <option value="video">Video</option>
+              <option value="gdrive">GDrive</option>
+              <option value="audio">Audio</option>
+              <option value="pdf">PDF</option>
+              <option value="text">Text</option>
+              <option value="webpage">Webpage</option>
+            </select>
+            <ThemePickerDropdown
+              unlockedThemes={Object.keys(THEMES)}
+              selectedTheme={newPost.themeId}
+              onChange={(t) => setNewPost({ ...newPost, themeId: t })}
+              customColor={pageCustomColor}
+              onCustomColorChange={setPageCustomColor}
+            />
+            <br />
+            <textarea
+              placeholder="Description"
+              style={{ width: "100%", maxWidth: "400px", height: "100px" }}
+              value={newPost.description}
+              onChange={(e) => setNewPost({ ...newPost, description: e.target.value })}
+            />
+            <br />
+            <button onClick={handleNewPostSubmit}>Upload</button>
+          </div>
+        </>
       )}
 
-      {/* Page theme editor */}
-      {isOwner && (
-        <div className="creator-controls">
-          <h3>Edit Page Theme</h3>
-          <ThemePickerDropdown
-            unlockedThemes={Object.keys(THEMES)}
-            selectedTheme={pageThemeId}
-            onChange={setPageThemeId}
-            customColor={pageCustomColor}
-            onCustomColorChange={setPageCustomColor}
-          />
-          <button onClick={savePageTheme}>Save Page Theme</button>
-        </div>
-      )}
-
-      {/* New post panel */}
-      {isOwner && (
-        <div className="creator-controls">
-          <h3>New Post</h3>
-          <input
-            style={{ width: "100%", maxWidth: "400px" }}
-            type="text"
-            placeholder="Title"
-            value={newPost.title}
-            onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
-          />
-          <br />
-          <input
-            style={{ width: "100%", maxWidth: "400px" }}
-            type="text"
-            placeholder="Media URL"
-            value={newPost.src}
-            onChange={(e) => setNewPost({ ...newPost, src: e.target.value })}
-          />
-          <br />
-          <select
-            value={newPost.mediaType}
-            onChange={(e) => setNewPost({ ...newPost, mediaType: e.target.value })}
-          >
-            <option value="image">Image</option>
-            <option value="youtube">YouTube</option>
-            <option value="video">Video</option>
-            <option value="gdrive">GDrive</option>
-            <option value="audio">Audio</option>
-            <option value="pdf">PDF</option>
-            <option value="text">Text</option>
-            <option value="webpage">Webpage</option>
-          </select>
-          <ThemePickerDropdown
-            unlockedThemes={Object.keys(THEMES)}
-            selectedTheme={newPost.themeId}
-            onChange={(t) => setNewPost({ ...newPost, themeId: t })}
-            customColor={pageCustomColor}
-            onCustomColorChange={setPageCustomColor}
-          />
-          <br />
-          <textarea
-            placeholder="Description"
-            style={{ width: "100%", maxWidth: "400px", height: "100px" }}
-            value={newPost.description}
-            onChange={(e) => setNewPost({ ...newPost, description: e.target.value })}
-          />
-          <br />
-          <button onClick={handleNewPostSubmit}>Upload</button>
-        </div>
-      )}
-
-      {/* Content list */}
       <div className="creator-posts">
         {posts.map((post) => (
           <ContentModule
