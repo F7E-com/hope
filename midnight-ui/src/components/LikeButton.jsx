@@ -2,7 +2,26 @@
 import React from "react";
 import { addKudos, checkMilestones } from "../utils/kudos";
 import { useUser } from "../contexts/UserContext";
-import { factionIcons } from "../assets/factionIcons";
+
+// Import all faction icons
+import Beaker from "../assets/Beaker.png";        // Research
+import Emblem from "../assets/Emblem.png";        // Security
+import f7 from "../assets/f7.png";                // Intelligence
+import Gears from "../assets/Gears.png";          // Industry
+import Hardhat from "../assets/Hardhat.png";      // Infrastructure
+import Scales from "../assets/Scales.png";        // Commerce
+import Star from "../assets/Star.png";            // Government
+
+// Map factions → icons
+const factionIcons = {
+  Research: Beaker,
+  Security: Emblem,
+  Intelligence: f7,
+  Industry: Gears,
+  Infrastructure: Hardhat,
+  Commerce: Scales,
+  Government: Star,
+};
 
 function LikeButton({ contentCreatorId, contentCreatorFaction }) {
   const { currentUser } = useUser();
@@ -38,7 +57,7 @@ function LikeButton({ contentCreatorId, contentCreatorFaction }) {
       {icon && (
         <img
           src={icon}
-          alt={`Faction ${contentCreatorFaction} icon`}
+          alt={`${contentCreatorFaction} icon`}
           className="w-6 h-6 object-contain"
         />
       )}
