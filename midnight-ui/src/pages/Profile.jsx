@@ -20,7 +20,7 @@ export default function Profile() {
   const [selectedTheme, setSelectedTheme] = useState("none");
   const [editing, setEditing] = useState(false);
 
-  const isOwner = currentUser?.id && currentUser.id === uid;
+  const isOwner = currentUser?.id === uid;
 
   useEffect(() => {
     if (!uid) {
@@ -67,12 +67,16 @@ export default function Profile() {
     fetchProfile();
   }, [uid]);
 
-  // Apply the theme safely
+  // Apply theme safely
   useEffect(() => {
     if (!profileUser) return;
     if (selectedTheme && THEMES[selectedTheme]) {
-      const wrapper = document.querySelector(".profile-page-wrapper");
-      if (wrapper) applyTheme(THEMES[selectedTheme], themeColor, wrapper);
+      try {
+        const wrapper = document.querySelector(".profile-page-wrapper");
+        if (wrapper) applyTheme(THEMES[selectedTheme], themeColor, wrapper);
+      } catch (err) {
+        console.error("Error applying theme:", err);
+      }
     }
   }, [selectedTheme, themeColor, profileUser]);
 
@@ -95,7 +99,6 @@ export default function Profile() {
 
       setBannerPreview(bannerUrlInput || themeColor);
 
-      // Safely apply theme
       const wrapper = document.querySelector(".profile-page-wrapper");
       if (wrapper && THEMES[selectedTheme]) {
         applyTheme(THEMES[selectedTheme], themeColor, wrapper);
@@ -119,7 +122,14 @@ export default function Profile() {
   };
 
   if (loading) return <p>Loading...</p>;
-  if (!profileUser) return <p>User not found.</p>;
+
+  if (!profileUser) {
+    return (
+      <div className="profile-page-wrapper background">
+        <p>User not found.</p>
+      </div>
+    );
+  }
 
   const themeClass = THEMES[selectedTheme]?.className || "background";
 
