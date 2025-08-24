@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { collection, addDoc, doc, setDoc, getDoc } from "firebase/firestore";
-import { db } from "@/utils/firebase"; // your Firebase initialization
-import { useUser } from "../contexts/UserContext"; // adjust path if needed
+import { collection, addDoc, doc, setDoc } from "firebase/firestore";
+import { db } from "@/utils/firebase";
+import { useUser } from "../contexts/UserContext"; 
 import { useNavigate } from "react-router-dom";
+import { fetchAndSyncUser } from "../contexts/UserContext"; // 🔥 import sync function
 
 // Default Kudos object for new users
 const initialKudos = {
@@ -120,8 +121,8 @@ const FACTION_INFO = {
 
 export default function NewUser() {
   const [name, setName] = useState("");
-  const [faction, setFaction] = useState("Government"); // default
-  const [userId, setUserId] = useState(""); // optional custom ID
+  const [faction, setFaction] = useState("Government");
+  const [userId, setUserId] = useState("");
   const [message, setMessage] = useState("");
 
   const { setCurrentUser } = useUser();
@@ -137,6 +138,10 @@ export default function NewUser() {
         kudos: initialKudos,
       });
       setMessage(`User created with auto-ID: ${docRef.id}`);
+      // 🔥 Sync immediately
+      const synced = await fetchAndSyncUser(docRef.id);
+      setCurrentUser(synced);
+      navigate(`/profile/${docRef.id}`);
     } catch (error) {
       console.error(error);
       setMessage("Error creating user.");
@@ -153,6 +158,10 @@ export default function NewUser() {
         kudos: initialKudos,
       });
       setMessage(`User created with custom ID: ${userId}`);
+      // 🔥 Sync immediately
+      const synced = await fetchAndSyncUser(userId);
+      setCurrentUser(synced);
+      navigate(`/profile/${userId}`);
     } catch (error) {
       console.error(error);
       setMessage("Error creating user.");
@@ -163,13 +172,11 @@ export default function NewUser() {
   const handleLogin = async () => {
     if (!userId) return setMessage("Enter your user ID to login.");
     try {
-      const docRef = doc(db, "users", userId);
-      const snapshot = await getDoc(docRef);
-
-      if (snapshot.exists()) {
-        const data = snapshot.data();
-        setCurrentUser({ id: userId, ...data });
-        setMessage(`Logged in as ${data.name} (Faction: ${data.faction})`);
+      // 🔥 Use sync function for persistence
+      const synced = await fetchAndSyncUser(userId);
+      if (synced) {
+        setCurrentUser(synced);
+        setMessage(`Logged in as ${synced.name} (Faction: ${synced.faction})`);
         navigate(`/profile/${userId}`);
       } else {
         setMessage("No such user found.");
