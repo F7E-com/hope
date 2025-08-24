@@ -16,8 +16,9 @@ export default function MainLayout() {
   useEffect(() => {
     const initializeUser = async () => {
       try {
-        const user = await fetchAndSyncUser();
-        setCurrentUser(user); // ensures context gets synced early
+        const uid = localStorage.getItem("currentUserId"); // get saved UID
+        const user = await fetchAndSyncUser(uid); // pass UID so fetch returns correct user
+        setCurrentUser(user);
       } catch (err) {
         console.error("Error initializing user in MainLayout:", err);
       }
@@ -157,15 +158,16 @@ export default function MainLayout() {
           {activePopup === "profile" && (
             <>
               <Link to="/new-user" style={{ color: "var(--secondary-color)" }}>New User/Login</Link>
-              {currentUser ? (
-                <Link to={`/profile/${currentUser.id}`} style={{ color: "var(--secondary-color)" }}>Profile</Link>
+              {currentUser?.id ? (
+                <>
+                  <Link to={`/profile/${currentUser.id}`} style={{ color: "var(--secondary-color)" }}>Profile</Link>
+                  <Link to={`/creator-page/${currentUser.id}`} style={{ color: "var(--secondary-color)" }}>View Creator Page</Link>
+                </>
               ) : (
-                <span style={{ color: "gray" }}>Profile (login first)</span>
-              )}
-              {currentUser ? (
-                <Link to={`/creator-page/${currentUser.id}`} style={{ color: "var(--secondary-color)" }}>View Creator Page</Link>
-              ) : (
-                <span style={{ color: "gray" }}>View Creator Page (login first)</span>
+                <>
+                  <span style={{ color: "gray" }}>Profile (login first)</span>
+                  <span style={{ color: "gray" }}>View Creator Page (login first)</span>
+                </>
               )}
             </>
           )}
