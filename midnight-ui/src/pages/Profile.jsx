@@ -20,12 +20,12 @@ export default function Profile() {
   const [selectedTheme, setSelectedTheme] = useState("none");
   const [editing, setEditing] = useState(false);
 
-  const isOwner = currentUser?.id === uid;
+  const isOwner = currentUser?.id?.toString() === uid?.toString();
 
   useEffect(() => {
     if (!uid) {
-      setLoading(false);
       setProfileUser(null);
+      setLoading(false);
       return;
     }
 
@@ -41,21 +41,23 @@ export default function Profile() {
         }
 
         const data = snapshot.data() || {};
-        data.id = uid;
-        data.name = data.name || "Unnamed Explorer";
-        data.faction = data.faction || "Unaffiliated";
-        data.bio = data.bio || "";
-        data.kudos = data.kudos || {};
-        data.unlockedThemes = data.unlockedThemes || Object.keys(THEMES);
-        data.themeColor = data.themeColor || "#222222";
-        data.bannerUrl = data.bannerUrl || "";
-        data.themeId = data.themeId || "none";
+        const safeData = {
+          id: uid,
+          name: data.name || "Unnamed Explorer",
+          faction: data.faction || "Unaffiliated",
+          bio: data.bio || "",
+          kudos: data.kudos || {},
+          unlockedThemes: data.unlockedThemes || Object.keys(THEMES),
+          themeColor: data.themeColor || "#222222",
+          bannerUrl: data.bannerUrl || "",
+          themeId: data.themeId || "none",
+        };
 
-        setProfileUser(data);
-        setThemeColor(data.themeColor);
-        setBannerUrlInput(data.bannerUrl);
-        setBannerPreview(data.bannerUrl || data.themeColor);
-        setSelectedTheme(data.themeId);
+        setProfileUser(safeData);
+        setThemeColor(safeData.themeColor);
+        setBannerUrlInput(safeData.bannerUrl);
+        setBannerPreview(safeData.bannerUrl || safeData.themeColor);
+        setSelectedTheme(safeData.themeId);
       } catch (error) {
         console.error("Error fetching profile:", error);
         setProfileUser(null);
@@ -67,16 +69,16 @@ export default function Profile() {
     fetchProfile();
   }, [uid]);
 
-  // Apply theme safely
+  // Safely apply theme
   useEffect(() => {
-    if (!profileUser) return;
-    if (selectedTheme && THEMES[selectedTheme]) {
-      try {
-        const wrapper = document.querySelector(".profile-page-wrapper");
-        if (wrapper) applyTheme(THEMES[selectedTheme], themeColor, wrapper);
-      } catch (err) {
-        console.error("Error applying theme:", err);
-      }
+    if (!profileUser || !selectedTheme) return;
+    const wrapper = document.querySelector(".profile-page-wrapper");
+    if (!wrapper) return;
+
+    try {
+      applyTheme(THEMES[selectedTheme], themeColor, wrapper);
+    } catch (err) {
+      console.error("Error applying theme:", err);
     }
   }, [selectedTheme, themeColor, profileUser]);
 
@@ -98,12 +100,10 @@ export default function Profile() {
       }));
 
       setBannerPreview(bannerUrlInput || themeColor);
-
       const wrapper = document.querySelector(".profile-page-wrapper");
       if (wrapper && THEMES[selectedTheme]) {
         applyTheme(THEMES[selectedTheme], themeColor, wrapper);
       }
-
       setEditing(false);
     } catch (err) {
       console.error("Error saving profile:", err);
@@ -123,101 +123,97 @@ export default function Profile() {
 
   if (loading) return <p>Loading...</p>;
 
-  if (!profileUser) {
-    return (
-      <div className="profile-page-wrapper background">
-        <p>User not found.</p>
-      </div>
-    );
-  }
-
-  const themeClass = THEMES[selectedTheme]?.className || "background";
-
   return (
-    <div className={`profile-page-wrapper ${themeClass}`}>
-      <div
-        className="creator-banner"
-        style={{
-          backgroundColor: !bannerPreview ? themeColor : undefined,
-          backgroundImage: bannerPreview ? `url(${bannerPreview})` : undefined,
-        }}
-      >
-        {editing && isOwner && (
-          <input
-            type="text"
-            placeholder="Banner Image URL"
-            value={bannerUrlInput}
-            onChange={(e) => {
-              setBannerUrlInput(e.target.value);
-              setBannerPreview(e.target.value);
-            }}
+    <div className={`profile-page-wrapper ${THEMES[selectedTheme]?.className || "background"}`}>
+      {!profileUser ? (
+        <p>User not found.</p>
+      ) : (
+        <>
+          <div
+            className="creator-banner"
             style={{
-              position: "absolute",
-              bottom: "10px",
-              left: "10px",
-              width: "70%",
-              padding: "0.3rem",
-              borderRadius: "6px",
-              border: "1px solid #555",
-              background: "#222",
-              color: "#fff",
+              backgroundColor: bannerPreview ? undefined : themeColor,
+              backgroundImage: bannerPreview ? `url(${bannerPreview})` : undefined,
             }}
-          />
-        )}
-      </div>
+          >
+            {editing && isOwner && (
+              <input
+                type="text"
+                placeholder="Banner Image URL"
+                value={bannerUrlInput}
+                onChange={(e) => {
+                  setBannerUrlInput(e.target.value);
+                  setBannerPreview(e.target.value);
+                }}
+                style={{
+                  position: "absolute",
+                  bottom: "10px",
+                  left: "10px",
+                  width: "70%",
+                  padding: "0.3rem",
+                  borderRadius: "6px",
+                  border: "1px solid #555",
+                  background: "#222",
+                  color: "#fff",
+                }}
+              />
+            )}
+          </div>
 
-      <div style={{ display: "flex", gap: "2rem" }}>
-        <div style={{ flex: "1", background: "#222", padding: "1rem", borderRadius: "8px" }}>
-          <h2>Kudos</h2>
-          <ul>
-            {Object.entries(profileUser.kudos || {}).map(([factionName, points]) => (
-              <li key={factionName}>
-                <strong>{factionName}:</strong> {points}
-              </li>
-            ))}
-          </ul>
-        </div>
+          <div style={{ display: "flex", gap: "2rem" }}>
+            <div style={{ flex: "1", background: "#222", padding: "1rem", borderRadius: "8px" }}>
+              <h2>Kudos</h2>
+              <ul>
+                {Object.entries(profileUser.kudos).map(([factionName, points]) => (
+                  <li key={factionName}>
+                    <strong>{factionName}:</strong> {points}
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-        <div style={{ flex: "2" }}>
-          <h1 style={{ marginBottom: "0.5rem" }}>{profileUser.name}</h1>
-          <p>
-            <strong>Faction:</strong> {profileUser.faction}
-          </p>
+            <div style={{ flex: "2" }}>
+              <h1 style={{ marginBottom: "0.5rem" }}>{profileUser.name}</h1>
+              <p>
+                <strong>Faction:</strong> {profileUser.faction}
+              </p>
 
-          <BioBox
-            initialBio={profileUser.bio || ""}
-            isOwner={isOwner}
-            editable={isOwner}
-            onSave={handleSaveBio}
-            textColor={THEMES[selectedTheme]?.preview?.color || "#fff"}
-            backgroundColor={THEMES[selectedTheme]?.preview?.background || "#222"}
-          />
-
-          {isOwner && !editing && <button onClick={() => setEditing(true)}>Edit Profile</button>}
-
-          {isOwner && editing && (
-            <div style={{ marginTop: "1rem" }}>
-              <label>
-                Theme Color:{" "}
-                <input type="color" value={themeColor} onChange={(e) => setThemeColor(e.target.value)} />
-              </label>
-
-              <ThemePickerDropdown
-                unlockedThemes={profileUser.unlockedThemes || Object.keys(THEMES)}
-                selectedTheme={selectedTheme}
-                onChange={setSelectedTheme}
-                customColor={themeColor}
-                onCustomColorChange={setThemeColor}
+              <BioBox
+                initialBio={profileUser.bio}
+                isOwner={isOwner}
+                editable={isOwner}
+                onSave={handleSaveBio}
+                textColor={THEMES[selectedTheme]?.preview?.color || "#fff"}
+                backgroundColor={THEMES[selectedTheme]?.preview?.background || "#222"}
               />
 
-              <button onClick={handleSaveProfile}>Save Profile</button>
-              <button onClick={() => setEditing(false)}>Cancel</button>
-            </div>
-          )}
+              {isOwner && !editing && <button onClick={() => setEditing(true)}>Edit Profile</button>}
 
-          {!isOwner && <p style={{ marginTop: "1rem" }}>View-only profile</p>}
-        </div>
-      </div>
+              {isOwner && editing && (
+                <div style={{ marginTop: "1rem" }}>
+                  <label>
+                    Theme Color:{" "}
+                    <input type="color" value={themeColor} onChange={(e) => setThemeColor(e.target.value)} />
+                  </label>
+
+                  <ThemePickerDropdown
+                    unlockedThemes={profileUser.unlockedThemes}
+                    selectedTheme={selectedTheme}
+                    onChange={setSelectedTheme}
+                    customColor={themeColor}
+                    onCustomColorChange={setThemeColor}
+                  />
+
+                  <button onClick={handleSaveProfile}>Save Profile</button>
+                  <button onClick={() => setEditing(false)}>Cancel</button>
+                </div>
+              )}
+
+              {!isOwner && <p style={{ marginTop: "1rem" }}>View-only profile</p>}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
