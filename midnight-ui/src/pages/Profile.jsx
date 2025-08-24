@@ -1,4 +1,3 @@
-// Profile.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -15,48 +14,48 @@ export default function Profile() {
 
   const [profileUser, setProfileUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
   const [themeColor, setThemeColor] = useState("#222222");
   const [bannerUrlInput, setBannerUrlInput] = useState("");
   const [bannerPreview, setBannerPreview] = useState("#222222");
   const [selectedTheme, setSelectedTheme] = useState("none");
   const [editing, setEditing] = useState(false);
 
-  const isOwner = currentUser?.id === uid;
+  const isOwner = currentUser?.id && currentUser.id === uid;
 
   useEffect(() => {
-    if (!uid) return;
-
-    setProfileUser(null);
-    setLoading(true);
+    if (!uid) {
+      setLoading(false);
+      setProfileUser(null);
+      return;
+    }
 
     const fetchProfile = async () => {
+      setLoading(true);
       try {
         const userRef = doc(db, "users", uid);
         const snapshot = await getDoc(userRef);
 
-        if (snapshot.exists()) {
-          const data = snapshot.data() || {};
-
-          // safe defaults
-          data.id = uid;
-          data.name = data.name || "Unnamed Explorer";
-          data.faction = data.faction || "Unaffiliated";
-          data.bio = data.bio || "";
-          data.kudos = data.kudos || {};
-          data.unlockedThemes = data.unlockedThemes || Object.keys(THEMES);
-          data.themeColor = data.themeColor || "#222222";
-          data.bannerUrl = data.bannerUrl || "";
-          data.themeId = data.themeId || "none";
-
-          setProfileUser(data);
-          setThemeColor(data.themeColor);
-          setBannerUrlInput(data.bannerUrl);
-          setBannerPreview(data.bannerUrl || data.themeColor);
-          setSelectedTheme(data.themeId);
-        } else {
+        if (!snapshot.exists()) {
           setProfileUser(null);
+          return;
         }
+
+        const data = snapshot.data() || {};
+        data.id = uid;
+        data.name = data.name || "Unnamed Explorer";
+        data.faction = data.faction || "Unaffiliated";
+        data.bio = data.bio || "";
+        data.kudos = data.kudos || {};
+        data.unlockedThemes = data.unlockedThemes || Object.keys(THEMES);
+        data.themeColor = data.themeColor || "#222222";
+        data.bannerUrl = data.bannerUrl || "";
+        data.themeId = data.themeId || "none";
+
+        setProfileUser(data);
+        setThemeColor(data.themeColor);
+        setBannerUrlInput(data.bannerUrl);
+        setBannerPreview(data.bannerUrl || data.themeColor);
+        setSelectedTheme(data.themeId);
       } catch (error) {
         console.error("Error fetching profile:", error);
         setProfileUser(null);
@@ -70,11 +69,12 @@ export default function Profile() {
 
   // Apply the theme safely
   useEffect(() => {
+    if (!profileUser) return;
     if (selectedTheme && THEMES[selectedTheme]) {
       const wrapper = document.querySelector(".profile-page-wrapper");
       if (wrapper) applyTheme(THEMES[selectedTheme], themeColor, wrapper);
     }
-  }, [selectedTheme, themeColor]);
+  }, [selectedTheme, themeColor, profileUser]);
 
   const handleSaveProfile = async () => {
     if (!uid) return;
@@ -85,16 +85,20 @@ export default function Profile() {
         bannerUrl: bannerUrlInput,
         themeId: selectedTheme,
       });
+
       setProfileUser((prev) => ({
         ...prev,
         themeColor,
         bannerUrl: bannerUrlInput,
         themeId: selectedTheme,
       }));
+
       setBannerPreview(bannerUrlInput || themeColor);
 
-      if (THEMES[selectedTheme]) {
-        applyTheme(THEMES[selectedTheme], themeColor);
+      // Safely apply theme
+      const wrapper = document.querySelector(".profile-page-wrapper");
+      if (wrapper && THEMES[selectedTheme]) {
+        applyTheme(THEMES[selectedTheme], themeColor, wrapper);
       }
 
       setEditing(false);
@@ -121,7 +125,6 @@ export default function Profile() {
 
   return (
     <div className={`profile-page-wrapper ${themeClass}`}>
-      {/* Banner */}
       <div
         className="creator-banner"
         style={{
@@ -153,34 +156,22 @@ export default function Profile() {
         )}
       </div>
 
-      {/* Two-column layout */}
       <div style={{ display: "flex", gap: "2rem" }}>
-        <div
-          style={{
-            flex: "1",
-            background: "#222",
-            padding: "1rem",
-            borderRadius: "8px",
-          }}
-        >
+        <div style={{ flex: "1", background: "#222", padding: "1rem", borderRadius: "8px" }}>
           <h2>Kudos</h2>
           <ul>
-            {Object.entries(profileUser.kudos || {}).map(
-              ([factionName, points]) => (
-                <li key={factionName}>
-                  <strong>{factionName}:</strong> {points}
-                </li>
-              )
-            )}
+            {Object.entries(profileUser.kudos || {}).map(([factionName, points]) => (
+              <li key={factionName}>
+                <strong>{factionName}:</strong> {points}
+              </li>
+            ))}
           </ul>
         </div>
 
         <div style={{ flex: "2" }}>
-          <h1 style={{ marginBottom: "0.5rem" }}>
-            {profileUser.name || "Unnamed Explorer"}
-          </h1>
+          <h1 style={{ marginBottom: "0.5rem" }}>{profileUser.name}</h1>
           <p>
-            <strong>Faction:</strong> {profileUser.faction || "Unaffiliated"}
+            <strong>Faction:</strong> {profileUser.faction}
           </p>
 
           <BioBox
@@ -189,24 +180,16 @@ export default function Profile() {
             editable={isOwner}
             onSave={handleSaveBio}
             textColor={THEMES[selectedTheme]?.preview?.color || "#fff"}
-            backgroundColor={
-              THEMES[selectedTheme]?.preview?.background || "#222"
-            }
+            backgroundColor={THEMES[selectedTheme]?.preview?.background || "#222"}
           />
 
-          {isOwner && !editing && (
-            <button onClick={() => setEditing(true)}>Edit Profile</button>
-          )}
+          {isOwner && !editing && <button onClick={() => setEditing(true)}>Edit Profile</button>}
 
           {isOwner && editing && (
             <div style={{ marginTop: "1rem" }}>
               <label>
                 Theme Color:{" "}
-                <input
-                  type="color"
-                  value={themeColor}
-                  onChange={(e) => setThemeColor(e.target.value)}
-                />
+                <input type="color" value={themeColor} onChange={(e) => setThemeColor(e.target.value)} />
               </label>
 
               <ThemePickerDropdown
