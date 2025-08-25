@@ -6,7 +6,6 @@ import { useUser } from "../../contexts/UserContext";
 import { THEMES } from "../../themes/ThemeIndex";
 import { applyTheme } from "../../utils/themeUtils";
 import ContentModule from "../../components/modules/ContentModule";
-import "../themes/FactionThemes.css";
 
 export default function ContentPage() {
   const { mediaId } = useParams();
