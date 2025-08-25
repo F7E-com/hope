@@ -27,7 +27,7 @@ export default function App() {
             <Route index element={<Home />} />
             <Route path="new-user" element={<NewUser />} />
             <Route path="profile/:uid" element={<Profile />} />
-            <Route path="creator/:uid" element={<CreatorPage />} />
+            <Route path="creator-page/:uid" element={<CreatorPage />} />
             <Route path="events" element={<Events />} />
             <Route path="search" element={<Search />} />
 
