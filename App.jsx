@@ -35,7 +35,13 @@ export default function App() {
             <Route path="listen" element={<Listen />} />
             <Route path="read" element={<Read />} />
             <Route path="play" element={<Play />} />
-          </Route>
+
+            {/* Media routes */}
+        <Route path="/content/:id" element={<ContentPage />} />
+
+        {/* fallback 404 */}
+        <Route path="*" element={<h2>404 - Page Not Found</h2>} /> </Route>
+
         </Routes>
       </Router>
     </UserProvider>
