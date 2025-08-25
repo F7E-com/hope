@@ -1,20 +1,48 @@
-<Routes>
-  <Route path="/" element={<MainLayout />}>
-    <Route index element={<Home />} />
-    <Route path="new-user" element={<NewUser />} />
-    <Route path="profile/:uid" element={<Profile />} />
-    <Route path="creator/:uid" element={<CreatorPage />} />
-    <Route path="events" element={<Events />} />
-    <Route path="search" element={<Search />} />
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-    {/* Content routes */}
-    <Route path="watch" element={<Watch />} />
-    <Route path="listen" element={<Listen />} />
-    <Route path="read" element={<Read />} />
-    <Route path="play" element={<Play />} />
-    <Route path="content/:id" element={<ContentPage />} />
-  </Route>
+import MainLayout from "./midnight-ui/src/layouts/MainLayout";
+import Home from "./midnight-ui/src/pages/Home";
+import NewUser from "./midnight-ui/src/pages/NewUser";
+import ActiveProjects from "./midnight-ui/src/pages/ActiveProjects";
+import Profile from "./midnight-ui/src/pages/Profile";
+import CreatorPage from "./midnight-ui/src/pages/CreatorPage";
+import Events from "./midnight-ui/src/pages/Events";
+import Search from "./midnight-ui/src/pages/Search";
 
-  {/* fallback 404 */}
-  <Route path="*" element={<h2>404 - Page Not Found</h2>} />
-</Routes>
+// Content pages
+import Watch from "./midnight-ui/src/pages/content/Watch";
+import Listen from "./midnight-ui/src/pages/content/Listen";
+import Read from "./midnight-ui/src/pages/content/Read";
+import Play from "./midnight-ui/src/pages/content/Play";
+import ContentPage from "./midnight-ui/src/pages/content/ContentPage";
+
+import { UserProvider } from "./midnight-ui/src/contexts/UserContext";
+
+export default function App() {
+  return (
+    <UserProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<MainLayout />}>
+            <Route index element={<Home />} />
+            <Route path="new-user" element={<NewUser />} />
+            <Route path="profile/:uid" element={<Profile />} />
+            <Route path="creator/:uid" element={<CreatorPage />} />
+            <Route path="events" element={<Events />} />
+            <Route path="search" element={<Search />} />
+
+            {/* Content routes */}
+            <Route path="watch" element={<Watch />} />
+            <Route path="listen" element={<Listen />} />
+            <Route path="read" element={<Read />} />
+            <Route path="play" element={<Play />} />
+            <Route path="content/:id" element={<ContentPage />} />
+          </Route>
+
+          {/* fallback 404 */}
+          <Route path="*" element={<h2>404 - Page Not Found</h2>} />
+        </Routes>
+      </Router>
+    </UserProvider>
+  );
+}
