@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { doc, getDoc, collection, getDocs, addDoc, setDoc, updateDoc } from "midnight-ui\src\utils\firebase.js";
+import { doc, getDoc, collection, getDocs, addDoc, setDoc, updateDoc } from "midnight-ui/src/utils/firebase.js";
 import { useUser } from "./midnight-ui/src/contexts/UserContext";
 import ContentModule from "./midnight-ui/src/components/modules/ContentModule";
 import ThemePickerDropdown from "./midnight-ui/src/components/modules/ThemePickerDropdown";
