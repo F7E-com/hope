@@ -8,7 +8,7 @@ import { applyTheme } from "@/utils/themeUtils";
 import ContentModule from "../components/modules/ContentModule";
 import "../themes/FactionThemes.css";
 
-export default function SingleMediaPage() {
+export default function ContentPage() {
   const { mediaId } = useParams();
   const { currentUser } = useUser();
   const navigate = useNavigate();
@@ -38,9 +38,8 @@ export default function SingleMediaPage() {
     fetchMedia();
   }, [mediaId]);
 
-  // Apply page theme
   useEffect(() => {
-    const wrapper = document.querySelector(".single-media-wrapper");
+    const wrapper = document.querySelector(".content-page-wrapper");
     if (!wrapper || !themeId || !THEMES[themeId]) return;
     applyTheme(THEMES[themeId], null, wrapper);
   }, [themeId]);
@@ -49,11 +48,16 @@ export default function SingleMediaPage() {
   if (!media) return <p>Media not found.</p>;
 
   return (
-    <div className={`single-media-wrapper ${themeId}`}>
+    <div className={`content-page-wrapper ${themeId}`}>
+
       {/* Top buttons */}
-      <div className="single-media-topbar">
+      <div className="content-page-topbar">
         <button
-          onClick={() => navigate(`/search?genre=${encodeURIComponent(media.genre || "all")}`)}
+          onClick={() =>
+            navigate(
+              `/search?genre=${encodeURIComponent(media.genre || "all")}`
+            )
+          }
         >
           More in Genre
         </button>
@@ -65,19 +69,21 @@ export default function SingleMediaPage() {
         </button>
       </div>
 
-      {/* Background behind module */}
+      {/* Background */}
       <div
-        className="single-media-background"
-        style={{ backgroundImage: `url(${media.banner || media.mediaSrc})` }}
+        className="content-page-background"
+        style={{
+          backgroundImage: `url(${media.banner || media.mediaSrc || ""})`,
+        }}
       />
 
       {/* Central media */}
-      <div className="single-media-content">
+      <div className="content-page-content">
         <ContentModule post={media} currentUser={currentUser} />
       </div>
 
       {/* Info + comments */}
-      <div className="single-media-info">
+      <div className="content-page-info">
         <h2>{media.title}</h2>
         <p>{media.description}</p>
         <p>
@@ -86,8 +92,7 @@ export default function SingleMediaPage() {
         <p>Genre: {media.genre || "Uncategorized"}</p>
       </div>
 
-      <div className="single-media-comments">
-        {/* You can plug your comments module here */}
+      <div className="content-page-comments">
         <h3>Comments</h3>
         <p>Comments section goes here...</p>
       </div>
