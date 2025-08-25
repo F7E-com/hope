@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/utils/firebase";
-import { useUser } from "../contexts/UserContext";
-import { THEMES } from "../themes/ThemeIndex";
-import { applyTheme } from "@/utils/themeUtils";
-import ContentModule from "../components/modules/ContentModule";
+import { useUser } from "../../contexts/UserContext";
+import { THEMES } from "../../themes/ThemeIndex";
+import { applyTheme } from "../../utils/themeUtils";
+import ContentModule from "../../components/modules/ContentModule";
 import "../themes/FactionThemes.css";
 
 export default function ContentPage() {
