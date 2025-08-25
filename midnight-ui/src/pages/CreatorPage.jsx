@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { doc, getDoc, collection, getDocs, addDoc, setDoc, updateDoc } from "midnight-ui/src/utils/firebase.js";
-import { useUser } from "./midnight-ui/src/contexts/UserContext";
-import ContentModule from "./midnight-ui/src/components/modules/ContentModule";
-import ThemePickerDropdown from "./midnight-ui/src/components/modules/ThemePickerDropdown";
-import { THEMES } from "./midnight-ui/src/themes/ThemeIndex";
-import { applyTheme } from "./midnight-ui/src/utils/themeUtils";
-import "./midnight-ui/src/themes/FactionThemes.css";
+import { doc, getDoc, collection, getDocs, addDoc, setDoc, updateDoc } from "../utils/firebase";
+import { useUser } from "../contexts/UserContext";
+import ContentModule from "../components/modules/ContentModule";
+import ThemePickerDropdown from "../components/modules/ThemePickerDropdown";
+import { THEMES } from "../themes/ThemeIndex";
+import { applyTheme } from "../utils/themeUtils";
+import "../themes/FactionThemes.css";
+
 
 export default function CreatorPage() {
   const { uid } = useParams();
