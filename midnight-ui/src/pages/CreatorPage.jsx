@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { doc, getDoc, collection, getDocs, addDoc, setDoc, updateDoc } from "../utils/firebase";
+import { doc, getDoc, collection, getDocs, addDoc, setDoc, updateDoc } from "firebase/firestore";
+import { db } from "../utils/firebase";
 import { useUser } from "../contexts/UserContext";
 import ContentModule from "../components/modules/ContentModule";
 import ThemePickerDropdown from "../components/modules/ThemePickerDropdown";
 import { THEMES } from "../themes/ThemeIndex";
 import { applyTheme } from "../utils/themeUtils";
 import "../themes/FactionThemes.css";
-
 
 export default function CreatorPage() {
   const { uid } = useParams();
