@@ -20,7 +20,7 @@ export default function ContentPage() {
     const fetchMedia = async () => {
       setLoading(true);
       try {
-        const snap = await getDoc(doc(db, "media", mediaId));
+        const snap = await getDoc(doc(db, "posts", mediaId));
         if (snap.exists()) {
           const data = snap.data();
           setMedia({ id: snap.id, ...data });
