@@ -1,8 +1,5 @@
-const admin = require("firebase-admin");
-
-// 🔑 download your service account key from Firebase console
-// (Project Settings > Service Accounts > Generate New Private Key)
-const serviceAccount = require("./serviceAccountKey.json");
+import admin from "firebase-admin";
+import serviceAccount from "./serviceAccountKey.json" assert { type: "json" };
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
