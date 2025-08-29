@@ -21,14 +21,17 @@ export default function ContentModule({ post, currentUser, pageTheme }) {
 
   // Background handling: allow gradient + texture layers
   let backgroundLayers = [];
+
+  if (theme.texture) {
+    backgroundLayers.push(theme.texture);
+  }
+  
   if (theme.preview?.background) {
     if (theme.preview.background.includes("gradient")) {
       backgroundLayers.push(theme.preview.background);
     }
   }
-  if (theme.texture) {
-    backgroundLayers.push(theme.texture);
-  }
+  
 
   const handleClick = () => {
     navigate(`/content/${post.id}`); // assumes media pages are served at /content/:id
@@ -71,15 +74,6 @@ export default function ContentModule({ post, currentUser, pageTheme }) {
         transition: "all 0.3s ease",
       }}
     >
-      {/* Delete button, only if user owns post */}
-      {currentUser?.id === post.creatorId && (
-        <button
-          onClick={handleDelete}
-          className="absolute top-2 left-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-700"
-        >
-          ✕
-        </button>
-      )}
 
       <h4
         style={{ marginBottom: "0.5rem" }}
@@ -96,6 +90,16 @@ export default function ContentModule({ post, currentUser, pageTheme }) {
           {post.creatorName}
         </a>
       </h4>
+
+      {/* Delete button, only if user owns post */}
+      {currentUser?.id === post.creatorId && (
+        <button
+          onClick={handleDelete}
+          className="absolute top-2 left-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-700"
+        >
+          ✕
+        </button>
+      )}
 
       <div className="media-viewer-wrapper">
         <MediaViewer type={post.mediaType} src={post.mediaSrc} />
