@@ -2,10 +2,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../utils/firebase";
-import ContentModule from "../components/modules/ContentModule";
-import { THEMES } from "../themes/ThemeIndex";
-import { applyTheme } from "../utils/themeUtils";
+import { db } from "../../utils/firebase";
+import ContentModule from "../../components/modules/ContentModule";
+import { THEMES } from "../../themes/ThemeIndex";
+import { applyTheme } from "../../utils/themeUtils";
 
 export default function MediaPage() {
   const { postId } = useParams();
