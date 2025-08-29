@@ -294,7 +294,7 @@ export default function CreatorPage() {
             key={post.id}
             post={post}
             currentUser={currentUser}
-            className={THEMES[post.themeId]?.className || ""}
+            pageTheme={pageThemeId}
           />
         ))}
       </div>
