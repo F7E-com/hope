@@ -9,6 +9,7 @@ import {
   setDoc,
   updateDoc,
   where,
+  query,
 } from "firebase/firestore";
 import { db } from "../utils/firebase";
 import { useUser } from "../contexts/UserContext";
@@ -63,11 +64,12 @@ export default function CreatorPage() {
         setBanner(safeCreatorData.banner);
         setCreatorTheme(safeCreatorData.themeId);
 
-        // Posts
-        const postsSnap = await getDocs(
+        // Posts (only by this creator)
+        const postsQuery = query(
           collection(db, "posts"),
           where("creatorId", "==", uid)
         );
+        const postsSnap = await getDocs(postsQuery);
 
         const postList = postsSnap.docs.map((docSnap) => {
           const data = docSnap.data() || {};
@@ -128,7 +130,7 @@ export default function CreatorPage() {
     try {
       await updateDoc(doc(db, "users", uid), {
         themeId: creatorTheme,
-        banner: banner,
+        banner,
       });
       setCreatorData({ ...creatorData, themeId: creatorTheme, banner });
     } catch (err) {
@@ -217,7 +219,9 @@ export default function CreatorPage() {
               onChange={(e) => setBanner(e.target.value)}
             />
             <br />
-            <button onClick={saveCreatorTheme}>Save Creator Theme & Banner</button>
+            <button onClick={saveCreatorTheme}>
+              Save Creator Theme & Banner
+            </button>
           </div>
 
           <div className="creator-controls">
@@ -239,7 +243,9 @@ export default function CreatorPage() {
               type="text"
               placeholder="Title"
               value={newPost.title}
-              onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
+              onChange={(e) =>
+                setNewPost({ ...newPost, title: e.target.value })
+              }
             />
             <br />
             <input
@@ -252,7 +258,9 @@ export default function CreatorPage() {
             <br />
             <select
               value={newPost.mediaType}
-              onChange={(e) => setNewPost({ ...newPost, mediaType: e.target.value })}
+              onChange={(e) =>
+                setNewPost({ ...newPost, mediaType: e.target.value })
+              }
             >
               <option value="image">Image</option>
               <option value="youtube">YouTube</option>
