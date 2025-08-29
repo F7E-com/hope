@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { doc, getDoc, collection, getDocs, addDoc, setDoc, updateDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  collection,
+  getDocs,
+  addDoc,
+  setDoc,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { db } from "../utils/firebase";
 import { useUser } from "../contexts/UserContext";
 import ContentModule from "../components/modules/ContentModule";
@@ -32,12 +41,14 @@ export default function CreatorPage() {
     banner: "",
   });
 
+  // Fetch creator info and posts
   useEffect(() => {
     if (!uid || userLoading) return;
 
     const fetchCreator = async () => {
       setLoading(true);
       try {
+        // Creator data
         const userSnap = await getDoc(doc(db, "users", uid));
         const safeCreatorData = userSnap.exists()
           ? {
@@ -52,7 +63,12 @@ export default function CreatorPage() {
         setBanner(safeCreatorData.banner);
         setCreatorTheme(safeCreatorData.themeId);
 
-        const postsSnap = await getDocs(collection(db, "posts"), where("creatorId", "==", uid));
+        // Posts
+        const postsSnap = await getDocs(
+          collection(db, "posts"),
+          where("creatorId", "==", uid)
+        );
+
         const postList = postsSnap.docs.map((docSnap) => {
           const data = docSnap.data() || {};
           return {
@@ -65,11 +81,13 @@ export default function CreatorPage() {
             mediaSrc: data.src || "",
             themeId: data.themeId || "none",
             description: data.description || "",
+            banner: data.banner || "",
             date: data.date || null,
           };
         });
         setPosts(postList);
 
+        // Page-specific theme
         const pageSnap = await getDoc(doc(db, "creatorPages", uid));
         if (pageSnap.exists()) {
           const pageData = pageSnap.data();
@@ -86,6 +104,7 @@ export default function CreatorPage() {
     fetchCreator();
   }, [uid, userLoading]);
 
+  // Apply themes
   useEffect(() => {
     const wrapper = document.querySelector(".creator-page-wrapper");
     if (!wrapper) return;
@@ -103,6 +122,7 @@ export default function CreatorPage() {
     inputs.forEach((el) => (el.style.color = "#000"));
   }, [pageThemeId, pageCustomColor, creatorTheme, posts]);
 
+  // Save creator theme/banner
   const saveCreatorTheme = async () => {
     if (!isOwner || !creatorData) return;
     try {
@@ -116,6 +136,7 @@ export default function CreatorPage() {
     }
   };
 
+  // Save page theme
   const savePageTheme = async () => {
     if (!isOwner) return;
     try {
@@ -130,10 +151,14 @@ export default function CreatorPage() {
     }
   };
 
+  // Create new post
   const handleNewPostSubmit = async () => {
     if (!isOwner) return;
     try {
-      const postRef = await addDoc(collection(db, "users", uid, "posts"), newPost);
+      const postRef = await addDoc(collection(db, "posts"), {
+        ...newPost,
+        creatorId: uid,
+      });
       setPosts([
         ...posts,
         {
@@ -168,7 +193,10 @@ export default function CreatorPage() {
 
   return (
     <div className={`creator-page-wrapper ${pageThemeId}`}>
-      <div className="creator-banner" style={{ backgroundImage: `url(${banner})` }}>
+      <div
+        className="creator-banner"
+        style={{ backgroundImage: `url(${banner})` }}
+      >
         <h1>{creatorData.name}</h1>
       </div>
 
@@ -247,7 +275,9 @@ export default function CreatorPage() {
               placeholder="Description"
               style={{ width: "100%", maxWidth: "400px", height: "100px" }}
               value={newPost.description}
-              onChange={(e) => setNewPost({ ...newPost, description: e.target.value })}
+              onChange={(e) =>
+                setNewPost({ ...newPost, description: e.target.value })
+              }
             />
             <br />
             <button onClick={handleNewPostSubmit}>Upload</button>
