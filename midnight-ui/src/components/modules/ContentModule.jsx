@@ -23,15 +23,16 @@ export default function ContentModule({ post, currentUser, pageTheme }) {
 
   // Background handling: allow gradient + texture layers
   let backgroundLayers = [];
+
+  if (theme.texture) {
+    backgroundLayers.push(theme.texture);
+  }
   if (theme.preview?.background) {
     if (theme.preview.background.includes("gradient")) {
       backgroundLayers.push(theme.preview.background);
     } else {
       // solid color will be handled separately
     }
-  }
-  if (theme.texture) {
-    backgroundLayers.push(theme.texture);
   }
 
   return (
@@ -41,7 +42,7 @@ export default function ContentModule({ post, currentUser, pageTheme }) {
       style={{
         backgroundColor:
           theme.preview?.background &&
-          !theme.preview.background.includes("gradient")
+            !theme.preview.background.includes("gradient")
             ? theme.preview.background
             : undefined,
         backgroundImage: backgroundLayers.length > 0 ? backgroundLayers.join(", ") : "none",
