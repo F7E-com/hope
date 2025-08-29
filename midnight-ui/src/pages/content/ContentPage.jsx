@@ -1,4 +1,4 @@
-// src/pages/MediaPage.jsx
+// src/pages/ContentPage.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
@@ -7,7 +7,7 @@ import ContentModule from "../../components/modules/ContentModule";
 import { THEMES } from "../../themes/ThemeIndex";
 import { applyTheme } from "../../utils/themeUtils";
 
-export default function MediaPage() {
+export default function ContentPage({ currentUser }) {
   const { postId } = useParams();
   const [media, setMedia] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -48,7 +48,11 @@ export default function MediaPage() {
 
   return (
     <div className={`media-page-wrapper ${themeId}`}>
-      <ContentModule post={media} />
+      <ContentModule
+        post={media}
+        currentUser={currentUser}
+        pageTheme={themeId}
+      />
     </div>
   );
 }

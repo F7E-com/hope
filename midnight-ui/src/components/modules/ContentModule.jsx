@@ -1,13 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MediaViewer from "../MediaViewer";
 import LikeButton from "../LikeButton";
 import { THEMES } from "../../themes/ThemeIndex";
+import { db } from "../../utils/firebase"; // make sure you’ve got this set up
+import { doc, deleteDoc } from "firebase/firestore";
 
 export default function ContentModule({ post, currentUser, pageTheme }) {
   const navigate = useNavigate();
+  const [deleting, setDeleting] = useState(false);
+  const [deleted, setDeleted] = useState(false);
 
   if (!post) return <p>Loading...</p>;
+  if (deleted) return <p style={{ color: "red" }}>✅ Post deleted</p>;
 
   // Theme: post overrides page theme
   const theme =
@@ -18,54 +23,78 @@ export default function ContentModule({ post, currentUser, pageTheme }) {
     };
 
   const handleClick = () => {
-    navigate(`/content/${post.id}`); // assumes media pages are served at /content/:id
+    navigate(`/content/${post.id}`);
   };
 
-  // Background handling: allow gradient + texture layers
-  let backgroundLayers = [];
+  const handleDelete = async (e) => {
+    e.stopPropagation(); // stop the post box click
+    const confirmDelete = window.confirm("Are you sure you want to delete this post?");
+    if (!confirmDelete) return;
 
-  if (theme.texture) {
-    backgroundLayers.push(theme.texture);
-  }
-  if (theme.preview?.background) {
-    if (theme.preview.background.includes("gradient")) {
-      backgroundLayers.push(theme.preview.background);
-    } else {
-      // solid color will be handled separately
+    try {
+      setDeleting(true);
+      await deleteDoc(doc(db, "posts", post.id));
+      setDeleted(true);
+    } catch (err) {
+      console.error("❌ Error deleting post:", err);
+      alert("Something went wrong while deleting.");
+    } finally {
+      setDeleting(false);
     }
-  }
+  };
 
   return (
     <div
-      className="content-module group cursor-pointer"
+      className="content-module group relative cursor-pointer"
       onClick={handleClick}
       style={{
-        backgroundColor:
-          theme.preview?.background &&
-            !theme.preview.background.includes("gradient")
-            ? theme.preview.background
-            : undefined,
-        backgroundImage: backgroundLayers.length > 0 ? backgroundLayers.join(", ") : "none",
-        backgroundSize: "cover",
-        color: theme.preview?.color || "#000",
+        background: theme.preview.background,
+        color: theme.preview.color,
         fontFamily: theme.fontFamily || "inherit",
         border: theme.border || "none",
         borderRadius: theme.borderRadius || "8px",
-        boxShadow: theme.boxShadow || "none",
         padding: theme.modulePadding || "1rem",
-        margin: theme.moduleMargin || "1rem auto",
+        margin: theme.moduleMargin || "1rem 0",
+        boxShadow: theme.boxShadow || "none",
+        backgroundImage: theme.texture ? `url(${theme.texture})` : "none",
+        backgroundSize: "cover",
+        backgroundBlendMode: "overlay",
         transition: "all 0.3s ease",
       }}
     >
+      {/* Delete button only if post owner */}
+      {post.creatorId === currentUser?.id && (
+        <button
+          onClick={handleDelete}
+          disabled={deleting}
+          style={{
+            position: "absolute",
+            top: "8px",
+            left: "8px",
+            background: "rgba(0,0,0,0.6)",
+            color: "white",
+            border: "none",
+            borderRadius: "50%",
+            width: "28px",
+            height: "28px",
+            cursor: "pointer",
+            fontWeight: "bold",
+          }}
+          title="Delete post"
+        >
+          ✕
+        </button>
+      )}
+
       <h4
         style={{ marginBottom: "0.5rem" }}
-        onClick={(e) => e.stopPropagation()} // stops bubbling so creator link still works
+        onClick={(e) => e.stopPropagation()}
       >
         {post.title} by{" "}
         <a
           href={`/profile/${post.creatorId}`}
           style={{
-            color: theme.preview?.color || "#000",
+            color: theme.preview.color,
             textDecoration: "underline",
           }}
         >
@@ -74,16 +103,14 @@ export default function ContentModule({ post, currentUser, pageTheme }) {
       </h4>
 
       <div className="media-viewer-wrapper">
-        <MediaViewer type={post.mediaType} src={post.mediaSrc} />
+        <MediaViewer type={post.mediaType} src={post.mediaSrc} title={post.title} />
       </div>
 
       {post.description && (
         <p className="content-description">{post.description}</p>
       )}
 
-      <div
-        onClick={(e) => e.stopPropagation()} // stop click bubbling so Like doesn’t navigate
-      >
+      <div onClick={(e) => e.stopPropagation()}>
         <LikeButton
           contentCreatorId={post.creatorId}
           contentCreatorFaction={post.creatorFaction}
