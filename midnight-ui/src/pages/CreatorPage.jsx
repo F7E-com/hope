@@ -205,12 +205,7 @@ export default function CreatorPage() {
       {isOwner && (
         <>
           <div className="creator-controls">
-            <h3>Edit Creator Theme & Banner</h3>
-            <ThemePickerDropdown
-              unlockedThemes={Object.keys(THEMES)}
-              selectedTheme={creatorTheme}
-              onChange={setCreatorTheme}
-            />
+            <h3>Edit Banner </h3>
             <input
               type="text"
               style={{ width: "100%", maxWidth: "400px" }}
@@ -220,7 +215,7 @@ export default function CreatorPage() {
             />
             <br />
             <button onClick={saveCreatorTheme}>
-              Save Creator Theme & Banner
+              Save Banner
             </button>
           </div>
 
