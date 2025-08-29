@@ -52,7 +52,7 @@ export default function CreatorPage() {
         setBanner(safeCreatorData.banner);
         setCreatorTheme(safeCreatorData.themeId);
 
-        const postsSnap = await getDocs(collection(db, "users", uid, "posts"));
+        const postsSnap = await getDocs(collection(db, "posts"), where("creatorId", "==", uid));
         const postList = postsSnap.docs.map((docSnap) => {
           const data = docSnap.data() || {};
           return {
