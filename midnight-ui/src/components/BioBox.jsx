@@ -41,6 +41,19 @@ export default function BioBox({
   const renderBio = () => {
     if (!bio) return "No bio yet.";
 
+    let processedBio = bio;
+
+    if (canEvalJS) {
+      try {
+        // Wrap in a function to allow access to currentUser
+        const func = new Function("currentUser", `return \`${bio}\`;`);
+        processedBio = func(currentUser);
+      } catch (err) {
+        console.error("Bio eval failed:", err);
+        processedBio = bio; // fallback to raw bio
+      }
+    }
+    
     const sanitized = DOMPurify.sanitize(
       bio.replace(/href="(\/[^"]*)"/g, 'data-internal="$1" href="$1"')
     );
