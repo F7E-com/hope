@@ -202,23 +202,23 @@ export default function NewUser() {
     <div style={{ maxWidth: "400px", margin: "auto", padding: "1rem" }}>
       <h2>User Login / Sign Up</h2>
 
-      <label>User ID (optional)</label>
+      <label>Enter User ID to login or sign up)</label>
       <input
         style={{ color: "black", marginBottom: "1rem" }}
         type="text"
         value={userId}
         onChange={(e) => setUserId(e.target.value)}
-        placeholder="Enter User ID to login or sign up"
+        placeholder="User ID"
       />
       <br />
 
-      <label>Name:</label>
+      <label>Password:</label>
       <input
         style={{ color: "black" }}
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        placeholder="Enter your name"
+        placeholder="Enter your password"
       />
       <br />
 
