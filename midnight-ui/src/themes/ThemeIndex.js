@@ -222,9 +222,9 @@ export const THEMES = {
     },
   },
 
-  background: {
-    name: "Background",
-    className: "background",
+  intelligence: {
+    name: "Intelligence",
+    className: "intelligence",
     preview: {
       background: "linear-gradient(to bottom right, #0d0d0d, #4b0082)",
       color: "#c0c0ff",
