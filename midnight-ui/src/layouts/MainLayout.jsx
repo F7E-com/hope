@@ -185,9 +185,6 @@ export default function MainLayout() {
         </div>
       )}
 
-      <div className="title2" style={{ color: "var(--secondary-color)" }}>Faction Seven</div>
-      <div className="slogan" style={{ color: "var(--secondary-color)" }}>Your one-stop media source</div>
-
       <main className="flex-grow container mx-auto p-4">
         <Outlet />
       </main>

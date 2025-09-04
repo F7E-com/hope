@@ -1,6 +1,11 @@
 export default function Home() {
   return (
     <div className="main-container">
+      <div className="header">
+        <div className="title2" style={{ color: "var(--secondary-color)" }}>Faction Seven</div>
+        <div className="slogan" style={{ color: "var(--secondary-color)" }}>Your one-stop media source</div>
+      </div>
+
       {/* Suggested Links (Left Sidebar) */}
       <div className="sidebar left">
         <div className="suggested">

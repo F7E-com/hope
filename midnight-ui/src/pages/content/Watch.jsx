@@ -1,8 +1,10 @@
 export default function Home() {
   return (
     <div className="main-container">
-
-    <h2>Theater</h2>
+ <div className="header">
+      <div className="title2" style={{ color: "var(--secondary-color)" }}>Theater</div>
+      <div className="slogan" style={{ color: "var(--secondary-color)" }}>For your viewing pleasure</div>
+    </div>
 
       {/* Suggested Links (Left Sidebar) */}
       <div className="sidebar left">
