@@ -1,18 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { doc, deleteDoc, updateDoc } from "firebase/firestore";
+import { doc, deleteDoc } from "firebase/firestore";
 import { db } from "../../utils/firebase";
 import MediaViewer from "../MediaViewer";
 import LikeButton from "../LikeButton";
-import PostKudosGraph from "../PostKudosGraph"; // import graph component
+import PostKudosGraph from "../PostKudosGraph";
 import { THEMES } from "../../themes/ThemeIndex";
 
-export default function ContentModule({ post, currentUser, pageTheme }) {
+export default function ContentModule({ post: initialPost, currentUser, pageTheme }) {
   const navigate = useNavigate();
+  const [post, setPost] = useState(initialPost);
+  const [liked, setLiked] = useState(false);
 
   if (!post) return <p>Loading...</p>;
 
-  // Theme: post overrides page theme
   const theme =
     THEMES[post.themeId] ||
     THEMES[pageTheme] || {
@@ -20,49 +21,30 @@ export default function ContentModule({ post, currentUser, pageTheme }) {
       fontFamily: "inherit",
     };
 
-  // Background handling: texture under gradient/solid
-  let backgroundLayers = [];
-  if (theme.texture) {
-    backgroundLayers.push(theme.texture); // texture first
-  }
-  if (theme.preview?.background) {
-    if (theme.preview.background.includes("gradient")) {
-      backgroundLayers.push(theme.preview.background); // gradient on top
-    }
-  }
-
-  const handleClick = () => {
-    navigate(`/content/${post.id}`);
-  };
+  const handleClick = () => navigate(`/content/${post.id}`);
 
   const handleDelete = async (e) => {
     e.stopPropagation();
     if (!currentUser || post.creatorId !== currentUser.id) return;
 
-    const confirmDelete = window.confirm("Are you sure you want to delete this post?");
-    if (!confirmDelete) return;
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
 
     try {
       await deleteDoc(doc(db, "posts", post.id));
       alert("Post deleted");
-      window.location.reload(); // refresh to remove the post
+      window.location.reload();
     } catch (err) {
-      console.error("Error deleting post:", err);
+      console.error(err);
       alert("Failed to delete post");
     }
   };
 
-  const handleFlag = async (e) => {
-    e.stopPropagation();
-    try {
-      await updateDoc(doc(db, "posts", post.id), {
-        security_flag: true, // create if missing
-      });
-      alert("Post flagged for security review");
-    } catch (err) {
-      console.error("Error flagging post:", err);
-      alert("Failed to flag post");
-    }
+  const handleLocalLike = (giverFaction, creatorFaction) => {
+    const newKudos = { ...post.kudos };
+    newKudos[giverFaction] = (newKudos[giverFaction] || 0) + 10;
+    newKudos[creatorFaction] = (newKudos[creatorFaction] || 0) + 1;
+    setPost({ ...post, kudos: newKudos });
+    setLiked(true);
   };
 
   return (
@@ -71,12 +53,14 @@ export default function ContentModule({ post, currentUser, pageTheme }) {
       onClick={handleClick}
       style={{
         backgroundColor:
-          theme.preview?.background &&
-          !theme.preview.background.includes("gradient")
+          theme.preview?.background && !theme.preview.background.includes("gradient")
             ? theme.preview.background
             : undefined,
-        backgroundImage:
-          backgroundLayers.length > 0 ? backgroundLayers.join(", ") : "none",
+        backgroundImage: theme.texture
+          ? `${theme.texture}${theme.preview?.background?.includes("gradient") ? `, ${theme.preview.background}` : ""}`
+          : theme.preview?.background?.includes("gradient")
+          ? theme.preview.background
+          : undefined,
         backgroundSize: "cover",
         color: theme.preview?.color || "#000",
         fontFamily: theme.fontFamily || "inherit",
@@ -96,10 +80,7 @@ export default function ContentModule({ post, currentUser, pageTheme }) {
           {post.title} by{" "}
           <a
             href={`/profile/${post.creatorId}`}
-            style={{
-              color: theme.preview?.color || "#000",
-              textDecoration: "underline",
-            }}
+            style={{ color: theme.preview?.color || "#000", textDecoration: "underline" }}
           >
             {post.creatorName}
           </a>
@@ -127,26 +108,18 @@ export default function ContentModule({ post, currentUser, pageTheme }) {
 
       {post.description && <p className="content-description">{post.description}</p>}
 
-      {/* Like button + kudos graph */}
-      <div
-        className="flex items-center gap-4"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <LikeButton
-          contentCreatorId={post.creatorId}
-          contentCreatorFaction={post.creatorFaction}
-          currentUser={currentUser}
-        />
-        <PostKudosGraph post={post} />
+      <div className="flex items-center gap-4" onClick={(e) => e.stopPropagation()}>
+        {!liked && (
+          <LikeButton
+            contentCreatorId={post.creatorId}
+            contentCreatorFaction={post.creatorFaction}
+            currentUser={currentUser}
+            postId={post.id}
+            onLocalLike={handleLocalLike}
+          />
+        )}
+        <PostKudosGraph post={post} theme={theme} />
       </div>
-
-      {/* Small red flag button, bottom-right */}
-      <button
-        onClick={handleFlag}
-        className="absolute bottom-2 right-2 px-2 py-1 text-xs font-bold text-white bg-red-600 rounded hover:bg-red-700"
-      >
-        Flag
-      </button>
     </div>
   );
 }
