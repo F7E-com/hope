@@ -9,8 +9,13 @@ import { THEMES } from "../../themes/ThemeIndex";
 
 export default function ContentModule({ post: initialPost, currentUser, pageTheme }) {
   const navigate = useNavigate();
-  const [post, setPost] = useState(initialPost);
+
+  const [post, setPost] = useState({
+    ...initialPost,
+    kudos: initialPost.kudos || {}, // ensure kudos exists
+  });
   const [liked, setLiked] = useState(false);
+  const [localKudos, setLocalKudos] = useState(null);
 
   if (!post) return <p>Loading...</p>;
 
@@ -26,7 +31,6 @@ export default function ContentModule({ post: initialPost, currentUser, pageThem
   const handleDelete = async (e) => {
     e.stopPropagation();
     if (!currentUser || post.creatorId !== currentUser.id) return;
-
     if (!window.confirm("Are you sure you want to delete this post?")) return;
 
     try {
@@ -40,10 +44,11 @@ export default function ContentModule({ post: initialPost, currentUser, pageThem
   };
 
   const handleLocalLike = (giverFaction, creatorFaction) => {
-    const newKudos = { ...post.kudos };
+    const newKudos = { ...(post.kudos || {}) };
     newKudos[giverFaction] = (newKudos[giverFaction] || 0) + 10;
     newKudos[creatorFaction] = (newKudos[creatorFaction] || 0) + 1;
     setPost({ ...post, kudos: newKudos });
+    setLocalKudos({ giverFaction, creatorFaction });
     setLiked(true);
   };
 
@@ -57,7 +62,11 @@ export default function ContentModule({ post: initialPost, currentUser, pageThem
             ? theme.preview.background
             : undefined,
         backgroundImage: theme.texture
-          ? `${theme.texture}${theme.preview?.background?.includes("gradient") ? `, ${theme.preview.background}` : ""}`
+          ? `${theme.texture}${
+              theme.preview?.background?.includes("gradient")
+                ? `, ${theme.preview.background}`
+                : ""
+            }`
           : theme.preview?.background?.includes("gradient")
           ? theme.preview.background
           : undefined,
@@ -73,10 +82,7 @@ export default function ContentModule({ post: initialPost, currentUser, pageThem
       }}
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h4
-          style={{ marginBottom: "0.5rem" }}
-          onClick={(e) => e.stopPropagation()}
-        >
+        <h4 style={{ marginBottom: "0.5rem" }} onClick={(e) => e.stopPropagation()}>
           {post.title} by{" "}
           <a
             href={`/profile/${post.creatorId}`}
@@ -118,7 +124,7 @@ export default function ContentModule({ post: initialPost, currentUser, pageThem
             onLocalLike={handleLocalLike}
           />
         )}
-        <PostKudosGraph post={post} theme={theme} />
+        <PostKudosGraph post={post} theme={theme} localKudos={localKudos} />
       </div>
     </div>
   );

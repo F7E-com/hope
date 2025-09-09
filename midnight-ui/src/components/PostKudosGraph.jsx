@@ -25,20 +25,18 @@ const factions = [
 export default function PostKudosGraph({ post, theme, localKudos }) {
   if (!post) return null;
 
-  // Always ensure kudos is an object with all factions as numbers
-  const getNormalizedKudos = (kudos) => {
-    const normalized = {};
+  const normalizeKudos = (kudos) => {
+    const values = {};
     factions.forEach((f) => {
-      normalized[f] = kudos && typeof kudos[f] === "number" ? kudos[f] : 0;
+      values[f] = kudos && typeof kudos[f] === "number" ? kudos[f] : 0;
     });
-    return normalized;
+    return values;
   };
 
-  const [animatedValues, setAnimatedValues] = useState(getNormalizedKudos(post.kudos));
+  const [animatedValues, setAnimatedValues] = useState(normalizeKudos(post.kudos));
 
-  // Animate from current to target on post.kudos change
   useEffect(() => {
-    const targetValues = getNormalizedKudos(post.kudos);
+    const targetValues = normalizeKudos(post.kudos);
     const frames = 20;
     let frame = 0;
 
@@ -56,7 +54,6 @@ export default function PostKudosGraph({ post, theme, localKudos }) {
     return () => clearInterval(interval);
   }, [post.kudos]);
 
-  // Handle local likes immediately
   useEffect(() => {
     if (!localKudos) return;
     setAnimatedValues((prev) => {
@@ -79,12 +76,10 @@ export default function PostKudosGraph({ post, theme, localKudos }) {
       className="relative flex flex-col items-center justify-end h-20 px-1"
       style={{ border: `1px solid ${borderColor}`, borderRadius: "4px", boxSizing: "border-box" }}
     >
-      {/* Average kudos */}
       <span className="text-xl font-bold pointer-events-none select-none mb-1">
         {Math.round(avgKudos)}
       </span>
-
-      <div className="flex flex-row items-end gap-[2px] w-full h-full justify-center">
+      <div className="flex flex-row flex-nowrap items-end gap-[2px] w-full h-full justify-center">
         {factions.map((faction) => {
           const value = animatedValues[faction];
           const barHeight = (value / maxKudos) * graphHeight;

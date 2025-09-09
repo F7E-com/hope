@@ -25,7 +25,7 @@ const factionIcons = {
   Populace: Like,
 };
 
-function LikeButton({ contentCreatorId, contentCreatorFaction, postId, onLocalLike }) {
+export default function LikeButton({ contentCreatorId, contentCreatorFaction, postId, onLocalLike }) {
   const { currentUser } = useUser();
 
   const handleLike = async () => {
@@ -44,6 +44,7 @@ function LikeButton({ contentCreatorId, contentCreatorFaction, postId, onLocalLi
         const postRef = doc(db, "posts", postId);
         await updateDoc(postRef, {
           [`kudos.${giverFaction}`]: increment(10),
+          [`kudos.${contentCreatorFaction}`]: increment(1),
         });
       }
 
@@ -72,5 +73,3 @@ function LikeButton({ contentCreatorId, contentCreatorFaction, postId, onLocalLi
     </button>
   );
 }
-
-export default LikeButton;
