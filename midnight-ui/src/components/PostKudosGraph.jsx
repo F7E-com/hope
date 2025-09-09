@@ -25,21 +25,21 @@ const factions = [
 export default function PostKudosGraph({ post, theme, localKudos }) {
   if (!post) return null;
 
-  // Initialize all factions to 0 if missing
-  const normalizeKudos = (kudos) => {
-    const values = {};
+  // Always ensure kudos is an object with all factions as numbers
+  const getNormalizedKudos = (kudos) => {
+    const normalized = {};
     factions.forEach((f) => {
-      values[f] = kudos && typeof kudos[f] === "number" ? kudos[f] : 0;
+      normalized[f] = kudos && typeof kudos[f] === "number" ? kudos[f] : 0;
     });
-    return values;
+    return normalized;
   };
 
-  const [animatedValues, setAnimatedValues] = useState(normalizeKudos(post.kudos));
+  const [animatedValues, setAnimatedValues] = useState(getNormalizedKudos(post.kudos));
 
-  // Animate from current state to new post.kudos whenever it changes
+  // Animate from current to target on post.kudos change
   useEffect(() => {
-    const targetValues = normalizeKudos(post.kudos);
-    const frames = 15;
+    const targetValues = getNormalizedKudos(post.kudos);
+    const frames = 20;
     let frame = 0;
 
     const interval = setInterval(() => {
@@ -51,12 +51,12 @@ export default function PostKudosGraph({ post, theme, localKudos }) {
         }, {})
       );
       if (frame >= frames) clearInterval(interval);
-    }, 25);
+    }, 20);
 
     return () => clearInterval(interval);
   }, [post.kudos]);
 
-  // Also animate local likes instantly for smooth feedback
+  // Handle local likes immediately
   useEffect(() => {
     if (!localKudos) return;
     setAnimatedValues((prev) => {
@@ -76,22 +76,22 @@ export default function PostKudosGraph({ post, theme, localKudos }) {
 
   return (
     <div
-      className="relative flex flex-row items-end justify-center h-16 px-1"
+      className="relative flex flex-col items-center justify-end h-20 px-1"
       style={{ border: `1px solid ${borderColor}`, borderRadius: "4px", boxSizing: "border-box" }}
     >
       {/* Average kudos */}
-      <span className="absolute top-0 text-xl font-bold pointer-events-none select-none bg-white/70 px-1 rounded">
+      <span className="text-xl font-bold pointer-events-none select-none mb-1">
         {Math.round(avgKudos)}
       </span>
 
-      <div className="flex flex-row items-end gap-[2px] w-full justify-center h-full">
+      <div className="flex flex-row items-end gap-[2px] w-full h-full justify-center">
         {factions.map((faction) => {
           const value = animatedValues[faction];
           const barHeight = (value / maxKudos) * graphHeight;
           const [color1, color2] = factionColors[faction] || ["#999", "#666"];
 
           return (
-            <div key={faction} className="flex flex-col items-center justify-end" style={{ height: "100%" }}>
+            <div key={faction} className="flex flex-col items-center justify-end">
               <span className="text-xs mb-1">{Math.round(value)}</span>
               <div
                 style={{
@@ -103,7 +103,7 @@ export default function PostKudosGraph({ post, theme, localKudos }) {
                     ${color1} 1px,
                     ${color2} 3px
                   )`,
-                  transition: "height 0.25s ease",
+                  transition: "height 0.2s ease",
                   transformOrigin: "bottom",
                 }}
               />
