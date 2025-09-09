@@ -7,15 +7,32 @@ import LikeButton from "../LikeButton";
 import PostKudosGraph from "../PostKudosGraph";
 import { THEMES } from "../../themes/ThemeIndex";
 
+const factions = [
+  "Research",
+  "Security",
+  "Intelligence",
+  "Industry",
+  "Infrastructure",
+  "Commerce",
+  "Government",
+  "Populace",
+];
+
+const normalizeKudos = (kudos) => {
+  const normalized = {};
+  factions.forEach((f) => {
+    normalized[f] = (kudos && typeof kudos[f] === "number") ? kudos[f] : 0;
+  });
+  return normalized;
+};
+
 export default function ContentModule({ post: initialPost, currentUser, pageTheme }) {
   const navigate = useNavigate();
-
   const [post, setPost] = useState({
     ...initialPost,
-    kudos: initialPost.kudos || {}, // ensure kudos exists
+    kudos: normalizeKudos(initialPost.kudos),
   });
   const [liked, setLiked] = useState(false);
-  const [localKudos, setLocalKudos] = useState(null);
 
   if (!post) return <p>Loading...</p>;
 
@@ -44,11 +61,10 @@ export default function ContentModule({ post: initialPost, currentUser, pageThem
   };
 
   const handleLocalLike = (giverFaction, creatorFaction) => {
-    const newKudos = { ...(post.kudos || {}) };
-    newKudos[giverFaction] = (newKudos[giverFaction] || 0) + 10;
-    newKudos[creatorFaction] = (newKudos[creatorFaction] || 0) + 1;
+    const newKudos = normalizeKudos(post.kudos);
+    newKudos[giverFaction] += 10;
+    newKudos[creatorFaction] += 1;
     setPost({ ...post, kudos: newKudos });
-    setLocalKudos({ giverFaction, creatorFaction });
     setLiked(true);
   };
 
@@ -62,11 +78,7 @@ export default function ContentModule({ post: initialPost, currentUser, pageThem
             ? theme.preview.background
             : undefined,
         backgroundImage: theme.texture
-          ? `${theme.texture}${
-              theme.preview?.background?.includes("gradient")
-                ? `, ${theme.preview.background}`
-                : ""
-            }`
+          ? `${theme.texture}${theme.preview?.background?.includes("gradient") ? `, ${theme.preview.background}` : ""}`
           : theme.preview?.background?.includes("gradient")
           ? theme.preview.background
           : undefined,
@@ -124,7 +136,7 @@ export default function ContentModule({ post: initialPost, currentUser, pageThem
             onLocalLike={handleLocalLike}
           />
         )}
-        <PostKudosGraph post={post} theme={theme} localKudos={localKudos} />
+        <PostKudosGraph post={post} theme={theme} />
       </div>
     </div>
   );
