@@ -1,9 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { doc, deleteDoc } from "firebase/firestore";
+import { doc, deleteDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../utils/firebase";
 import MediaViewer from "../MediaViewer";
 import LikeButton from "../LikeButton";
+import PostKudosGraph from "../PostKudosGraph"; // import graph component
 import { THEMES } from "../../themes/ThemeIndex";
 
 export default function ContentModule({ post, currentUser, pageTheme }) {
@@ -51,9 +52,22 @@ export default function ContentModule({ post, currentUser, pageTheme }) {
     }
   };
 
+  const handleFlag = async (e) => {
+    e.stopPropagation();
+    try {
+      await updateDoc(doc(db, "posts", post.id), {
+        security_flag: true, // create if missing
+      });
+      alert("Post flagged for security review");
+    } catch (err) {
+      console.error("Error flagging post:", err);
+      alert("Failed to flag post");
+    }
+  };
+
   return (
     <div
-      className="content-module group cursor-pointer"
+      className="content-module group cursor-pointer relative"
       onClick={handleClick}
       style={{
         backgroundColor:
@@ -113,13 +127,26 @@ export default function ContentModule({ post, currentUser, pageTheme }) {
 
       {post.description && <p className="content-description">{post.description}</p>}
 
-      <div onClick={(e) => e.stopPropagation()}>
+      {/* Like button + kudos graph */}
+      <div
+        className="flex items-center gap-4"
+        onClick={(e) => e.stopPropagation()}
+      >
         <LikeButton
           contentCreatorId={post.creatorId}
           contentCreatorFaction={post.creatorFaction}
           currentUser={currentUser}
         />
+        <PostKudosGraph post={post} />
       </div>
+
+      {/* Small red flag button, bottom-right */}
+      <button
+        onClick={handleFlag}
+        className="absolute bottom-2 right-2 px-2 py-1 text-xs font-bold text-white bg-red-600 rounded hover:bg-red-700"
+      >
+        Flag
+      </button>
     </div>
   );
 }
