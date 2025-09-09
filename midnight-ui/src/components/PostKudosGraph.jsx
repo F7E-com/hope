@@ -11,55 +11,88 @@ const factionColors = {
   Populace: ["#cccccc", "#999999"],
 };
 
-function PostKudosGraph({ post, theme }) {
+const factions = [
+  "Research",
+  "Security",
+  "Intelligence",
+  "Industry",
+  "Infrastructure",
+  "Commerce",
+  "Government",
+  "Populace",
+];
+
+export default function PostKudosGraph({ post, theme, localKudos }) {
   if (!post) return null;
 
-  const factions = [
-    "Research",
-    "Security",
-    "Intelligence",
-    "Industry",
-    "Infrastructure",
-    "Commerce",
-    "Government",
-    "Populace",
-  ];
+  // Initialize all factions to 0 if missing
+  const normalizeKudos = (kudos) => {
+    const values = {};
+    factions.forEach((f) => {
+      values[f] = kudos && typeof kudos[f] === "number" ? kudos[f] : 0;
+    });
+    return values;
+  };
 
-  // Initialize animatedValues from post.kudos or default to 0
-  const [animatedValues, setAnimatedValues] = useState(
-    factions.map(f => (post.kudos && post.kudos[f] ? post.kudos[f] : 0))
-  );
+  const [animatedValues, setAnimatedValues] = useState(normalizeKudos(post.kudos));
 
+  // Animate from current state to new post.kudos whenever it changes
   useEffect(() => {
-    const targetValues = factions.map(f => (post.kudos && post.kudos[f] ? post.kudos[f] : 0));
-    setAnimatedValues(targetValues); // directly update so initial load shows the correct values
+    const targetValues = normalizeKudos(post.kudos);
+    const frames = 15;
+    let frame = 0;
+
+    const interval = setInterval(() => {
+      frame++;
+      setAnimatedValues((prev) =>
+        factions.reduce((acc, f) => {
+          acc[f] = prev[f] + (targetValues[f] - prev[f]) / (frames - frame + 1);
+          return acc;
+        }, {})
+      );
+      if (frame >= frames) clearInterval(interval);
+    }, 25);
+
+    return () => clearInterval(interval);
   }, [post.kudos]);
 
-  const maxKudos = Math.max(...animatedValues, 1);
+  // Also animate local likes instantly for smooth feedback
+  useEffect(() => {
+    if (!localKudos) return;
+    setAnimatedValues((prev) => {
+      const next = { ...prev };
+      if (localKudos.giverFaction) next[localKudos.giverFaction] += 10;
+      if (localKudos.creatorFaction) next[localKudos.creatorFaction] += 1;
+      return next;
+    });
+  }, [localKudos]);
+
+  const maxKudos = Math.max(...Object.values(animatedValues), 1);
   const avgKudos =
-    animatedValues.reduce((sum, v) => sum + v, 0) / factions.length;
+    Object.values(animatedValues).reduce((sum, v) => sum + v, 0) / factions.length;
 
   const graphHeight = 40;
   const borderColor = theme?.preview?.color || "#000";
 
   return (
     <div
-      className="relative flex flex-row items-end justify-center w-full h-16 px-1"
-      style={{ border: `1px solid ${borderColor}`, borderRadius: "4px" }}
+      className="relative flex flex-row items-end justify-center h-16 px-1"
+      style={{ border: `1px solid ${borderColor}`, borderRadius: "4px", boxSizing: "border-box" }}
     >
       {/* Average kudos */}
       <span className="absolute top-0 text-xl font-bold pointer-events-none select-none bg-white/70 px-1 rounded">
         {Math.round(avgKudos)}
       </span>
 
-      <div className="flex flex-row items-end gap-[2px] h-full justify-center">
-        {factions.map((faction, i) => {
-          const barHeight = (animatedValues[i] / maxKudos) * graphHeight;
+      <div className="flex flex-row items-end gap-[2px] w-full justify-center h-full">
+        {factions.map((faction) => {
+          const value = animatedValues[faction];
+          const barHeight = (value / maxKudos) * graphHeight;
           const [color1, color2] = factionColors[faction] || ["#999", "#666"];
 
           return (
-            <div key={faction} className="flex flex-col items-center justify-end">
-              <span className="text-xs mb-1">{Math.round(animatedValues[i])}</span>
+            <div key={faction} className="flex flex-col items-center justify-end" style={{ height: "100%" }}>
+              <span className="text-xs mb-1">{Math.round(value)}</span>
               <div
                 style={{
                   width: "5px",
@@ -70,7 +103,7 @@ function PostKudosGraph({ post, theme }) {
                     ${color1} 1px,
                     ${color2} 3px
                   )`,
-                  transition: "height 0.3s ease",
+                  transition: "height 0.25s ease",
                   transformOrigin: "bottom",
                 }}
               />
@@ -81,5 +114,3 @@ function PostKudosGraph({ post, theme }) {
     </div>
   );
 }
-
-export default PostKudosGraph;
