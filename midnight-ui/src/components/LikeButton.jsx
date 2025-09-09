@@ -47,7 +47,7 @@ function LikeButton({ contentCreatorId, contentCreatorFaction }) {
     }
   };
 
-  const icon = factionIcons[giverFaction] || factionIcons[contentCreatorFaction];
+  const icon = factionIcons[contentCreatorFaction];
 
   return (
     <button
