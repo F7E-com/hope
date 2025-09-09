@@ -22,42 +22,29 @@ function PostKudosGraph({ post, theme }) {
     "Infrastructure",
     "Commerce",
     "Government",
-    "Populace", // always include Populace
+    "Populace",
   ];
 
+  // Initialize animatedValues from post.kudos or default to 0
   const [animatedValues, setAnimatedValues] = useState(
-    factions.map(f => post.kudos?.[f] ?? 0)
+    factions.map(f => (post.kudos && post.kudos[f] ? post.kudos[f] : 0))
   );
 
   useEffect(() => {
-    const targetValues = factions.map(f => post.kudos?.[f] ?? 0);
-    const animationFrames = 15;
-    let frame = 0;
-
-    const interval = setInterval(() => {
-      frame++;
-      setAnimatedValues(prev =>
-        prev.map((v, i) =>
-          v + (targetValues[i] - v) / (animationFrames - frame + 1)
-        )
-      );
-      if (frame >= animationFrames) clearInterval(interval);
-    }, 25);
-
-    return () => clearInterval(interval);
+    const targetValues = factions.map(f => (post.kudos && post.kudos[f] ? post.kudos[f] : 0));
+    setAnimatedValues(targetValues); // directly update so initial load shows the correct values
   }, [post.kudos]);
 
-  const kudosValues = animatedValues;
-  const maxKudos = Math.max(...kudosValues, 1);
+  const maxKudos = Math.max(...animatedValues, 1);
   const avgKudos =
-    kudosValues.reduce((sum, v) => sum + v, 0) / factions.length;
+    animatedValues.reduce((sum, v) => sum + v, 0) / factions.length;
 
   const graphHeight = 40;
   const borderColor = theme?.preview?.color || "#000";
 
   return (
     <div
-      className="relative flex items-end justify-center w-full h-16 px-1"
+      className="relative flex flex-row items-end justify-center w-full h-16 px-1"
       style={{ border: `1px solid ${borderColor}`, borderRadius: "4px" }}
     >
       {/* Average kudos */}
@@ -65,14 +52,14 @@ function PostKudosGraph({ post, theme }) {
         {Math.round(avgKudos)}
       </span>
 
-      <div className="flex items-end gap-[2px] w-full justify-center">
+      <div className="flex flex-row items-end gap-[2px] h-full justify-center">
         {factions.map((faction, i) => {
-          const barHeight = (kudosValues[i] / maxKudos) * graphHeight;
+          const barHeight = (animatedValues[i] / maxKudos) * graphHeight;
           const [color1, color2] = factionColors[faction] || ["#999", "#666"];
 
           return (
             <div key={faction} className="flex flex-col items-center justify-end">
-              <span className="text-xs mb-1">{Math.round(kudosValues[i])}</span>
+              <span className="text-xs mb-1">{Math.round(animatedValues[i])}</span>
               <div
                 style={{
                   width: "5px",

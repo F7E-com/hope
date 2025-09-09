@@ -44,7 +44,6 @@ function LikeButton({ contentCreatorId, contentCreatorFaction, postId, onLocalLi
         const postRef = doc(db, "posts", postId);
         await updateDoc(postRef, {
           [`kudos.${giverFaction}`]: increment(10),
-          [`kudos.${contentCreatorFaction}`]: increment(1),
         });
       }
 
