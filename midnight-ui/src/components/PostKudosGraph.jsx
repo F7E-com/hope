@@ -55,36 +55,44 @@ function PostKudosGraph({ post, theme }) {
   const borderColor = theme?.preview?.color || "#000";
 
   return (
-    <div className="relative flex items-center justify-center w-full h-10">
+    <div className="relative flex items-end justify-center w-full h-16">
+      {/* Graph border */}
       <div
         className="absolute inset-0 rounded pointer-events-none"
         style={{ border: `1px solid ${borderColor}` }}
       />
 
-      <span className="absolute text-xl font-bold pointer-events-none select-none bg-white/70 px-1 rounded">
+      {/* Average kudos */}
+      <span className="absolute top-0 text-xl font-bold pointer-events-none select-none bg-white/70 px-1 rounded">
         {Math.round(avgKudos)}
       </span>
 
-      <div className="flex items-end h-full z-10 px-1 gap-[2px]">
+      <div className="flex items-end h-full z-10 gap-[2px] px-1">
         {factions.map((faction, i) => {
           const barHeight = (kudosValues[i] / maxKudos) * graphHeight;
           const [color1, color2] = factionColors[faction] || ["#999", "#666"];
 
           return (
-            <div
-              key={faction}
-              style={{
-                width: "3px",
-                height: `${barHeight}px`,
-                backgroundImage: `repeating-linear-gradient(
-                  to bottom,
-                  ${color1},
-                  ${color1} 1px,
-                  ${color2} 3px
-                )`,
-                transition: "height 0.3s ease",
-              }}
-            />
+            <div key={faction} className="flex flex-col items-center">
+              {/* Kudos number */}
+              <span className="text-xs mb-1">{Math.round(kudosValues[i])}</span>
+
+              {/* Bar */}
+              <div
+                style={{
+                  width: "5px",
+                  height: `${barHeight}px`,
+                  backgroundImage: `repeating-linear-gradient(
+                    to bottom,
+                    ${color1},
+                    ${color1} 1px,
+                    ${color2} 3px
+                  )`,
+                  transition: "height 0.3s ease",
+                  transformOrigin: "bottom",
+                }}
+              />
+            </div>
           );
         })}
       </div>
