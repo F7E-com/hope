@@ -10,7 +10,7 @@ import f7 from "../assets/f7.png";                // Intelligence
 import Gears from "../assets/Gears.png";          // Industry
 import Hardhat from "../assets/Hardhat.png";      // Infrastructure
 import Scales from "../assets/Scales.png";        // Commerce
-import Star from "../assets/Star.png";            // Government
+import Like from "../assets/Like.png";            // Government
 
 // Map factions → icons
 const factionIcons = {
@@ -21,6 +21,7 @@ const factionIcons = {
   Infrastructure: Hardhat,
   Commerce: Scales,
   Government: Star,
+  Populace: Like,
 };
 
 function LikeButton({ contentCreatorId, contentCreatorFaction }) {
@@ -47,7 +48,7 @@ function LikeButton({ contentCreatorId, contentCreatorFaction }) {
     }
   };
 
-   const icon = currentUser ? factionIcons[currentUser.faction] : null;
+   const icon = currentUser ? factionIcons[currentUser.faction] : Like;
 
   return (
     <button
