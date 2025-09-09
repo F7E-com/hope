@@ -22,6 +22,7 @@ function PostKudosGraph({ post, theme }) {
     "Infrastructure",
     "Commerce",
     "Government",
+    "Populace", // always include Populace
   ];
 
   const [animatedValues, setAnimatedValues] = useState(
@@ -47,37 +48,31 @@ function PostKudosGraph({ post, theme }) {
   }, [post.kudos]);
 
   const kudosValues = animatedValues;
-  const maxKudos = Math.max(...factions.map(f => post.kudos?.[f] ?? 0), 1);
+  const maxKudos = Math.max(...kudosValues, 1);
   const avgKudos =
-    factions.reduce((sum, f) => sum + (post.kudos?.[f] ?? 0), 0) / factions.length;
+    kudosValues.reduce((sum, v) => sum + v, 0) / factions.length;
 
   const graphHeight = 40;
   const borderColor = theme?.preview?.color || "#000";
 
   return (
-    <div className="relative flex items-end justify-center w-full h-16">
-      {/* Graph border */}
-      <div
-        className="absolute inset-0 rounded pointer-events-none"
-        style={{ border: `1px solid ${borderColor}` }}
-      />
-
+    <div
+      className="relative flex items-end justify-center w-full h-16 px-1"
+      style={{ border: `1px solid ${borderColor}`, borderRadius: "4px" }}
+    >
       {/* Average kudos */}
       <span className="absolute top-0 text-xl font-bold pointer-events-none select-none bg-white/70 px-1 rounded">
         {Math.round(avgKudos)}
       </span>
 
-      <div className="flex items-end h-full z-10 gap-[2px] px-1">
+      <div className="flex items-end gap-[2px] w-full justify-center">
         {factions.map((faction, i) => {
           const barHeight = (kudosValues[i] / maxKudos) * graphHeight;
           const [color1, color2] = factionColors[faction] || ["#999", "#666"];
 
           return (
-            <div key={faction} className="flex flex-col items-center">
-              {/* Kudos number */}
+            <div key={faction} className="flex flex-col items-center justify-end">
               <span className="text-xs mb-1">{Math.round(kudosValues[i])}</span>
-
-              {/* Bar */}
               <div
                 style={{
                   width: "5px",
