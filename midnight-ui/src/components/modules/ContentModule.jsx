@@ -136,7 +136,7 @@ export default function ContentModule({ post: initialPost, currentUser, pageThem
             onLocalLike={handleLocalLike}
           />
         )}
-        <PostKudosGraph post={post} theme={theme} />
+        
       </div>
     </div>
   );
