@@ -47,6 +47,11 @@ export default function ContentPage({ currentUser }) {
   if (loading) return <p>Loading...</p>;
   if (!media) return <p>Media not found. {postId}</p>;
 
+  if (!postId) {
+  return <p>Invalid URL — no post ID provided.</p>;
+}
+
+
   return (
     <div className={`media-page-wrapper ${themeId}`}>
       <ContentModule
