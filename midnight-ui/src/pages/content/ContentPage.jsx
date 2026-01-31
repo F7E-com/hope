@@ -45,7 +45,7 @@ export default function ContentPage({ currentUser }) {
   }, [themeId]);
 
   if (loading) return <p>Loading...</p>;
-  if (!media) return <p>Media not found. ${postId}</p>;
+  if (!media) return <p>Media not found. {postId}</p>;
 
   return (
     <div className={`media-page-wrapper ${themeId}`}>
