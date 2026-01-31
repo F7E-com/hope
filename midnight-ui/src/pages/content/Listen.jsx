@@ -2,7 +2,7 @@ export default function Home() {
   return (
     <div className="main-container">
       <h2>
-        Listening Room
+        Retro City Airwaves
       </h2>
 
       {/* Suggested Links (Left Sidebar) */}

@@ -3,7 +3,7 @@ export default function Home() {
     <div className="main-container">
 
       <h2>
-        Game Room
+        Retro City Arcade
       </h2>
 
       {/* Suggested Links (Left Sidebar) */}

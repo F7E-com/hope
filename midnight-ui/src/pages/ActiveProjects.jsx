@@ -7,4 +7,4 @@ export default function ActiveProjects() {
       <p>List of ongoing projects will go here...</p>
     </div>
   );
-}
+{}}
