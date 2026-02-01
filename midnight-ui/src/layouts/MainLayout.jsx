@@ -187,6 +187,11 @@ export default function MainLayout() {
 
       <main className="flex-grow container mx-auto p-4">
         <Outlet />
+        <div className="header">
+        <div className="title2" style={{ color: "var(--secondary-color)" }}>RETRO CITY</div>
+        <div className="slogan" style={{ color: "var(--secondary-color)" }}>Arcade of Wonders</div>
+        </div>
+
       </main>
     </div>
   );
