@@ -184,6 +184,7 @@ export default function CreatorPage() {
         themeId: "none",
         description: "",
         banner: "",
+        tags: "",
       });
     } catch (err) {
       console.error("Error creating post:", err);
